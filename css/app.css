@@ -1,0 +1,8 @@
+.controls-container {
+    margin-right: 2em !important;
+    margin-left: 2em !important;
+}
+
+.controls-container .input-group {
+    margin-bottom: 10px;
+}
