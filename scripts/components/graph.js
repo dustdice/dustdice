@@ -88,6 +88,8 @@ define([
         });
         charData.unshift({ y: 0, color: 'green' });
 
+        charData[charData.length-1].radius = 7;
+
         //Create the won projection series
         var wonProjectionSeries = {
             color: "#12ff35",
@@ -97,7 +99,7 @@ define([
                     x: state.gameHistory.length
                 },
                 {
-                    y: profit + (state.wager * state.multiplier),
+                    y: profit + (state.wager * state.multiplier) - state.wager,
                     x: state.gameHistory.length + 1
                 }
             ]
@@ -112,7 +114,7 @@ define([
                     x: state.gameHistory.length
                 },
                 {
-                    y: profit - (state.wager * state.multiplier),
+                    y: profit - state.wager,
                     x: state.gameHistory.length + 1
                 }
             ]

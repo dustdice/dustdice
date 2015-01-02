@@ -28,20 +28,20 @@ define([
         componentDidMount: function() {
             Engine.addChangeListener(this.onChange);
 
-            KeyMaster.key('up', this.betHi);
-            KeyMaster.key('down', this.betLo);
-            KeyMaster.key('right', this.increaseMultiplier);
-            KeyMaster.key('left', this.decreaseMultiplier);
+            KeyMaster.key('up', this.doubleBet);
+            KeyMaster.key('down', this.halfBet);
+            KeyMaster.key('right', this.betHi);
+            KeyMaster.key('left', this.betLo);
         },
 
         componentWillUnmount: function() {
             Engine.removeChangeListener(this.onChange);
 
             //TODO: check unbind
-            KeyMaster.unbind('up', this.betHi);
-            KeyMaster.unbind('down', this.betLo);
-            KeyMaster.unbind('right', this.increaseMultiplier);
-            KeyMaster.unbind('left', this.decreaseMultiplier);
+            KeyMaster.unbind('up', this.doubleBet);
+            KeyMaster.unbind('down', this.halfBet);
+            KeyMaster.unbind('right', this.betHi);
+            KeyMaster.unbind('left', this.betLo);
         },
 
         wagerChange: function(e) {
@@ -57,12 +57,20 @@ define([
             Engine.bet(false)
         },
 
+        doubleBet: function() {
+            Engine.setWager(this.state.wager * 2);
+        },
+
+        halfBet: function() {
+            Engine.setWager(this.state.wager / 2);
+        },
+
         increaseMultiplier: function() {
-            Engine.setMultiplier(this.state.multiplier * 2);
+            Engine.setMultiplier(this.state.multiplier + 0.1);
         },
 
         decreaseMultiplier: function() {
-            Engine.setMultiplier(this.state.multiplier / 2);
+            Engine.setMultiplier(this.state.multiplier - 0.1);
         },
 
         render: function() {
