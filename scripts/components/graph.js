@@ -71,7 +71,7 @@ define([
         var profit = 0;
         var charData = data.map(function(game){
             if(game.win) {
-                profit += game.wager * game.multiplier;
+                profit += (game.wager * game.multiplier) - game.wager;
                 return {
                     color: 'green',
                     lineColor: 'green',
