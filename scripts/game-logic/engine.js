@@ -11,47 +11,55 @@ define([
     Clib,
     WebApi
 ){
-    var historyMaxLength = 28;
-
-    /** State of the controls view controller  **/
-    var multiplier = 2;
-    var wager = 100;
+    //var historyMaxLength = 100;
 
     var gameEngine = function() {
         _.extend(this, Events);
         var self = this;
 
-        self.gameHistory = []; // { wager: satoshis, multiplier: 2.03, win: boolean }
+        self.gameHistory = []; // { wager: satoshis, payout: 2.03, win: boolean }
+        self.gameProfit = 0; //The accumulated profit of this session
         self.gameState = 'STANDING_BY'; //STANDING_BY || BETTING
+
+        self.payout = 2;
+        self.wager = 100;
     };
 
 
     /** Engine API **/
 
     gameEngine.prototype.bet = function(hiLo) {
-        console.assert(Clib.isInteger(wager));
-        console.assert(Clib.isNumber(multiplier));
-        console.assert(typeof hiLo === 'boolean');
-
         var self = this;
+
+        console.assert(Clib.isInteger(self.wager));
+        console.assert(Clib.isNumber(self.payout));
+        console.assert(typeof hiLo === 'boolean');
 
         self.gameState = 'BETTING';
 
-        WebApi.bet(wager, multiplier, hiLo, function(err, game){
+        WebApi.bet(self.wager, self.payout, hiLo, function(err, game){
             if(err)
                 console.error('Do something: ', err);
 
+            if(game.win)
+                self.gameProfit += (game.wager * game.payout) - game.wager;
+            else
+                self.gameProfit -= game.wager;
+
             self.gameHistory.push(game);
 
-            if(self.gameHistory.length > historyMaxLength)
-                self.gameHistory.shift();
+            //if(self.gameHistory.length > historyMaxLength)
+            //    self.gameHistory.shift();
 
             self.gameState = 'STANDING_BY';
-            self.trigger('bet');
+
+            self.trigger('bet', game, {
+                wager: self.wager,
+                payout: self.payout,
+                gameProfit: self.gameProfit
+            });
         });
     };
-
-
 
 
     /** Event registration for view controllers **/
@@ -64,17 +72,31 @@ define([
         this.off('all', func);
     };
 
-
-    /** State getter for view controllers **/
-
-    gameEngine.prototype.getHistory = function() {
-        return _.clone(this.gameHistory, true);
+    gameEngine.prototype.addBetListener = function(func) {
+        this.on('bet', func)
     };
 
-    gameEngine.prototype.getBetValues = function() {
+    gameEngine.prototype.removeBetListener = function(func) {
+        this.off('bet', func)
+    };
+
+    gameEngine.prototype.addWagerListener = function(func) {
+        this.on('new-wager-data', func);
+    };
+
+    gameEngine.prototype.removeWagerListener = function(func) {
+        this.off('new-wager-data', func);
+    };
+
+
+    /** State getters for view controllers **/
+
+
+    gameEngine.prototype.getWagerValues = function() {
         return {
-            wager: wager,
-            multiplier: multiplier
+            wager: this.wager,
+            payout: this.payout,
+            gameProfit: this.gameProfit
         }
     };
 
@@ -82,14 +104,24 @@ define([
     /** Setters for controls view controller **/
 
     gameEngine.prototype.setWager = function(newWager) {
-        wager = newWager;
-        this.trigger('new-wager');
+        this.wager = newWager;
+        this.triggerBetValues();
+
     };
 
-    gameEngine.prototype.setMultiplier = function(newMultiplier) {
-        multiplier = newMultiplier;
-        this.trigger('new-multiplier');
+    gameEngine.prototype.setPayout = function(newPayout) {
+        this.payout = newPayout;
+        this.triggerBetValues();
     };
+
+    gameEngine.prototype.triggerBetValues = function() {
+        this.trigger('new-wager-data', {
+            wager: this.wager,
+            payout: this.payout,
+            gameProfit: this.gameProfit
+        });
+    };
+
 
     return new gameEngine();
 });

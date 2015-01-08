@@ -10,7 +10,7 @@ define([
     var D = React.DOM;
 
     function getState() {
-        return Engine.getBetValues();
+        return Engine.getWagerValues();
     }
 
     return React.createClass({
@@ -32,6 +32,8 @@ define([
             KeyMaster.key('down', this.halfBet);
             KeyMaster.key('right', this.betHi);
             KeyMaster.key('left', this.betLo);
+            KeyMaster.key('q', this.halfPayout);
+            KeyMaster.key('r', this.doublePayout);
         },
 
         componentWillUnmount: function() {
@@ -47,6 +49,11 @@ define([
         wagerChange: function(e) {
             var wagerValue = parseInt(e.target.value);
             Engine.setWager(wagerValue);
+        },
+
+        payoutChange: function(e) {
+            var payoutValue = parseFloat(e.target.value);
+            Engine.setWager(payoutValue);
         },
 
         betHi: function() {
@@ -65,12 +72,20 @@ define([
             Engine.setWager(this.state.wager / 2);
         },
 
-        increaseMultiplier: function() {
-            Engine.setMultiplier(this.state.multiplier + 0.1);
+        increasePayout: function() {
+            Engine.setPayout(this.state.payout + 0.1);
         },
 
-        decreaseMultiplier: function() {
-            Engine.setMultiplier(this.state.multiplier - 0.1);
+        decreasePayout: function() {
+            Engine.setPayout(this.state.payout - 0.1);
+        },
+
+        doublePayout: function() {
+            Engine.setPayout(this.state.payout * 2);
+        },
+
+        halfPayout: function() {
+            Engine.setPayout(this.state.payout / 2);
         },
 
         render: function() {
@@ -79,11 +94,11 @@ define([
                 D.div({ className: 'col-lg-6'},
                     D.div({ className: 'input-group' },
                         D.span({ className: 'input-group-btn' },
-                            D.button({ className: 'btn btn-default', onClick: this.decreaseMultiplier }, '-')
+                            D.button({ className: 'btn btn-default', onClick: this.decreasePayout }, '-')
                         ),
-                        D.input({ type: 'text', className: 'form-control', id: 'multiplier', value: this.state.multiplier.toFixed(2), readOnly: true }),
+                        D.input({ type: 'text', className: 'form-control', id: 'payout', value: this.state.payout.toFixed(2), onChange: this.payoutChange }),
                         D.span({ className: 'input-group-btn' },
-                            D.button({ className: 'btn btn-default', onClick: this.increaseMultiplier }, '+')
+                            D.button({ className: 'btn btn-default', onClick: this.increasePayout }, '+')
                         )
                     )
                 ),

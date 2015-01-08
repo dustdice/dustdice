@@ -1,6 +1,6 @@
 define([
     'lib/react',
-    'highcharts',
+    'highcharts-theme',
     'game-logic/engine'
 ],function(
     React,
@@ -9,10 +9,10 @@ define([
 ){
     var D = React.DOM;
 
-    function getState() {
-        var state = Engine.getBetValues();
-        state.gameHistory = Engine.getHistory();
-        return state;
+    var MAX_NUM_POINTS = 30;
+
+    function getBetValues() {
+        return Engine.getBetValues();
     }
 
     return React.createClass({
@@ -20,40 +20,70 @@ define([
 
         chart: null,
 
-        getInitialState: function() {
-            return getState();
+        onWagerChange: function(wagerData) {
+            if(!this.isMounted())
+                return;
+
+            var chartLength = this.chart.series[2].data.length-1;
+            var chartIndex = this.chart.series[2].data[this.chart.series[2].data.length - 1].x;
+            this.updateProjections(chartLength, chartIndex, wagerData);
         },
 
-        _onChange: function() {
-            if(this.isMounted())
-                this.setState(getState());
-        },
-
-        shouldComponentUpdate: function(nextProps, nextState){ //TODO: More efficient way
-            var series = createSeries(nextState);
-            this.chart.series[0].setData(series[0].data);
-            this.chart.series[1].setData(series[1].data);
-            this.chart.series[2].setData(series[2].data);
-
+        shouldComponentUpdate: function(nextProps, nextState){
             return false; //Never render
         },
 
+        onNewBet: function(game, wagerData) { //The position in the array of this bet
+            if(!this.isMounted())
+                return;
+
+            //Create the new point and add it without redrawing
+            var newPoint;
+            if(game.win)
+                newPoint = {
+                    color: 'green',
+                    lineColor: 'green',
+                    y: wagerData.gameProfit,
+                    radius: 7
+                };
+            else
+                newPoint = {
+                    color: 'red',
+                    y: wagerData.gameProfit,
+                    radius: 7
+                };
+
+            var chartLength = this.chart.series[2].data.length; //The real length of the chart
+            var chartIndex = this.chart.series[2].data[this.chart.series[2].data.length - 1].x + 1;
+
+            this.chart.series[2].data[chartLength-1].update({ radius: 4 }, false);
+            this.chart.series[2].addPoint(newPoint); //The length of the graph is not updated until render time
+
+            if(chartLength > MAX_NUM_POINTS)
+                this.chart.series[2].data[0].remove();
+
+            this.updateProjections(chartLength, chartIndex, wagerData);
+        },
+
+        updateProjections: function(chartLength, chartIndex, wagerData) {
+            var wonProjection = wagerData.gameProfit + (wagerData.wager * wagerData.payout) - wagerData.wager;
+            this.chart.series[0].data[0].update([chartIndex, wagerData.gameProfit], false);
+            this.chart.series[0].data[1].update([chartIndex + 1, wonProjection], false);
+
+            var LostProjection = wagerData.gameProfit - wagerData.wager;
+            this.chart.series[1].data[0].update([chartIndex, wagerData.gameProfit], false);
+            this.chart.series[1].data[1].update([chartIndex + 1, LostProjection]);
+        },
+
         componentDidMount: function() {
-
-            Engine.addChangeListener(this._onChange);
-            this.chart = createChart(this.refs.graphBox.getDOMNode(), this.state);
-
-            //For future reference
-            //var self = this;
-            //setTimeout(function(){
-            //    //chart.series[0].addPoint([4000]);
-            //    self.chart.destroy();
-            //}, 3000);
-
+            Engine.addWagerListener(this.onWagerChange);
+            Engine.addBetListener(this.onNewBet);
+            this.chart = createChart(this.refs.graphBox.getDOMNode(), Engine.getWagerValues());
         },
 
         componentWillUnmount: function() {
-            Engine.removeChangeListener(this._onChange);
+            Engine.removeWagerListener(this.onWagerChange);
+            Engine.removeBetListener(this.onNewBet);
 
             this.chart.destroy();
         },
@@ -63,44 +93,26 @@ define([
         }
     });
 
-    function createSeries(state) {
+    function createSeries(wagerData) {
         var series = [];
 
-        //Create the history series
-        var data = state.gameHistory;
-        var profit = 0;
-        var charData = data.map(function(game){
-            if(game.win) {
-                profit += (game.wager * game.multiplier) - game.wager;
-                return {
-                    color: 'green',
-                    lineColor: 'green',
-                    y: profit
-                }
-            } else {
-                profit -= game.wager;
-                return {
-                    color: 'red',
-                    y: profit
-                }
-            }
-
-        });
-        charData.unshift({ y: 0, color: 'green' });
-
-        charData[charData.length-1].radius = 7;
+        var profitSeries = {
+            data: [
+                { y: 0, color: 'green', radius: 7 }
+            ]
+        };
 
         //Create the won projection series
         var wonProjectionSeries = {
             color: "#12ff35",
             data: [
                 {
-                    y: profit,
-                    x: state.gameHistory.length
+                    y: 0,
+                    x: 0
                 },
                 {
-                    y: profit + (state.wager * state.multiplier) - state.wager,
-                    x: state.gameHistory.length + 1
+                    y: 0 + (wagerData.wager * wagerData.payout) - wagerData.wager,
+                    x: 1
                 }
             ]
         };
@@ -110,48 +122,59 @@ define([
             color: "#FA3C4F",
             data: [
                 {
-                    y: profit,
-                    x: state.gameHistory.length
+                    y: 0,
+                    x: 0
                 },
                 {
-                    y: profit - state.wager,
-                    x: state.gameHistory.length + 1
+                    y: 0 - wagerData.wager,
+                    x: 1
                 }
             ]
         };
 
         series.push(wonProjectionSeries);
         series.push(lostProjectionSeries);
-        series.push({
-            data: charData
-        });
+        series.push(profitSeries);
 
         return series;
     }
 
-    function createChart(node, state) {
+    function createChart(node, wagerData) {
         return new Highcharts.Chart({
             chart: {
                 renderTo: node,
-                type: 'scatter',
-                margin: [70, 50, 60, 80],
+                type: 'spline',
+                //margin: [70, 50, 60, 80], //Margin around the graph container
                 animation: {
-                    duration: 1
+                    duration: 0
                 }
+                //backgroundColor: '#272B30'
             },
             title: {
                 text: 'Dust Dice'
+                //style: {
+                //    color: '#ffffff',
+                //    fontWeight: 'bold'
+                //}
             },
             subtitle: {
                 text: 'The simplest casino you could find'
+                //style: {
+                //    color: '#ffffff',
+                //    fontWeight: 'bold'
+                //}
             },
             xAxis: {
-                gridLineWidth: 1,
-                minPadding: 0.2,
-                maxPadding: 0.2,
-                maxZoom: 60,
-                min: 0,
-                max: 30,
+                //gridLineWidth: 1,
+                //minPadding: 0.2,
+                //maxPadding: 0.2,
+                //maxZoom: 60,
+                //min: 0,
+                //max: 30,
+                //tickPixelInterval: 100,
+                //tickInterval: 1,
+                //minPadding: 0.2,
+                minRange: 30,
                 allowDecimals: false
             },
             yAxis: {
@@ -182,7 +205,7 @@ define([
                     }
                 }
             },
-            series: createSeries(state)
+            series: createSeries(wagerData)
         });
 
     }

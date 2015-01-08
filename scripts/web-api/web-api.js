@@ -4,12 +4,12 @@ define(function() {
 
     };
 
-    webApi.prototype.bet = function(wager, multiplier, hiLo, callback) {
-        var win = hiLo? (Math.random() < (1/multiplier)): (Math.random() < (1/multiplier));
+    webApi.prototype.bet = function(wager, payout, hiLo, callback) {
+        var win = hiLo? (Math.random() < (1/payout)): (Math.random() < (1/payout));
         callback(null, {
             win: win,
             wager: wager,
-            multiplier: multiplier
+            payout: payout
         });
     };
 
