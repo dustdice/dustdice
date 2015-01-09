@@ -1,7 +1,7 @@
 //State holder of the history of the game
 //And calls to the web api to handle bets
 define([
-    'lib/Events',
+    'lib/events',
     'lib/lodash',
     'lib/clib',
     'web-api/web-api'

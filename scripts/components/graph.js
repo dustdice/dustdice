@@ -60,19 +60,38 @@ define([
             this.chart.series[2].addPoint(newPoint); //The length of the graph is not updated until render time
 
             if(chartLength > MAX_NUM_POINTS)
-                this.chart.series[2].data[0].remove();
+                this.chart.series[2].data[0].remove(false);
 
-            this.updateProjections(chartLength, chartIndex, wagerData);
+            this.updateProjections(chartLength, chartIndex, wagerData, game);
         },
 
-        updateProjections: function(chartLength, chartIndex, wagerData) {
+        updateProjections: function(chartLength, chartIndex, wagerData, game) {
             var wonProjection = wagerData.gameProfit + (wagerData.wager * wagerData.payout) - wagerData.wager;
-            this.chart.series[0].data[0].update([chartIndex, wagerData.gameProfit], false);
-            this.chart.series[0].data[1].update([chartIndex + 1, wonProjection], false);
-
             var LostProjection = wagerData.gameProfit - wagerData.wager;
-            this.chart.series[1].data[0].update([chartIndex, wagerData.gameProfit], false);
-            this.chart.series[1].data[1].update([chartIndex + 1, LostProjection]);
+
+            if(game) {
+                if(game.win) {
+                    this.chart.series[0].data[0].remove(false);
+                    this.chart.series[0].addPoint([chartIndex + 1, wonProjection], false);
+
+                    this.chart.series[1].data[0].update([chartIndex, wagerData.gameProfit], false);
+                    this.chart.series[1].data[1].update([chartIndex + 1, LostProjection], false);
+                } else {
+                    this.chart.series[0].data[0].update([chartIndex, wagerData.gameProfit], false);
+                    this.chart.series[0].data[1].update([chartIndex + 1, wonProjection], false);
+
+                    this.chart.series[1].data[0].remove(false);
+                    this.chart.series[1].addPoint([chartIndex + 1, LostProjection], false);
+                }
+            } else {
+                this.chart.series[0].data[0].update([chartIndex, wagerData.gameProfit], false);
+                this.chart.series[0].data[1].update([chartIndex + 1, wonProjection], false);
+
+                this.chart.series[1].data[0].update([chartIndex, wagerData.gameProfit], false);
+                this.chart.series[1].data[1].update([chartIndex + 1, LostProjection], false);
+            }
+
+            this.chart.redraw();
         },
 
         componentDidMount: function() {
@@ -143,10 +162,15 @@ define([
         return new Highcharts.Chart({
             chart: {
                 renderTo: node,
-                type: 'spline',
+                type: 'line',
                 //margin: [70, 50, 60, 80], //Margin around the graph container
                 animation: {
-                    duration: 0
+                    duration: 600
+                },
+                events: {
+                    redraw: function () {
+                        //alert('The chart is being redrawn');
+                    }
                 }
                 //backgroundColor: '#272B30'
             },
