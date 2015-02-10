@@ -1,15 +1,19 @@
 define([
     'lib/react',
     'components/graph',
-    'components/controls'
+    'components/controls-container',
+    'lib/fastclick'
 ], function(
     React,
     GraphClass,
-    ControlsClass
+    ControlsContainerClass,
+    FastClick
 ){
     var Graph = React.createFactory(GraphClass);
-    var Controls = React.createFactory(ControlsClass);
+    var ControlsContainer = React.createFactory(ControlsContainerClass);
 
-    React.render(Graph(), document.getElementById('graphContainer'));
-    React.render(Controls(), document.getElementById('controlsContainer'));
+    FastClick.attach(document.body);
+
+    React.render(Graph(), document.getElementById('graph-container'));
+    React.render(ControlsContainer(), document.getElementById('controls-container'));
 });

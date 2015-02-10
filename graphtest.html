@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="/scripts/lib/jquery-ui-1.11.2/jquery-ui.min.js"></script>
+    <title></title>
+</head>
+<body>
+<div id="graph-box"></div>
+
+<script>
+    var MAX_NUM_POINTS = 30;
+    var balance = 1000;
+    var chart = null;
+
+    function createSeries(gameState) {
+        var series = [];
+
+        var profitSeries = {
+            data: [
+                { y: gameState.balance, color: 'green', radius: 7 }
+            ]
+        };
+
+        //Create the won projection series
+        var wonProjectionSeries = {
+            color: "#12ff35",
+            data: [
+                {
+                    y: gameState.balance,
+                    x: 0
+                },
+                {
+                    y: gameState.balance + (gameState.wager * (98/gameState.winProb)) - gameState.wager,
+                    x: 1
+                }
+            ]
+        };
+
+        //Create the lost projection series
+        var lostProjectionSeries = {
+            color: "#FA3C4F",
+            data: [
+                {
+                    y: gameState.balance,
+                    x: 0
+                },
+                {
+                    y: gameState.balance - gameState.wager,
+                    x: 1
+                }
+            ]
+        };
+
+        series.push(wonProjectionSeries);
+        series.push(lostProjectionSeries);
+        series.push(profitSeries);
+
+        return series;
+    }
+
+
+    function updateProjections(chartLength, chartIndex, game) {
+        var wonProjection = game.balance + (game.wager * (98/game.winProb)) - game.wager;
+        var LostProjection = game.balance - game.wager;
+
+        chart.series[0].data[0].update([chartIndex, game.balance], false);
+        chart.series[0].data[1].update([chartIndex + 1, wonProjection], false);
+
+        chart.series[1].data[0].update([chartIndex, game.balance], false);
+        chart.series[1].data[1].update([chartIndex + 1, LostProjection], false);
+
+        console.log(chart);
+        chart.redraw();
+    }
+
+    function generateRandomBet(){
+
+        //Create fake result of the game
+        var win = (Math.random()>0.5);
+        var amount;
+        if(win){
+            balance = balance + 100;
+            amount = 200;
+        } else {
+            balance = balance - 100;
+            amount = 100;
+        }
+        var game = {
+            amount: amount,
+            balance: balance,
+            wager: 100
+        };
+
+        //Create the new point and add it without redrawing
+        var newPoint;
+        if(game.win)
+            newPoint = {
+                color: 'green',
+                lineColor: 'green',
+                y: game.balance,
+                radius: 7
+            };
+        else
+            newPoint = {
+                color: 'red',
+                y: game.balance,
+                radius: 7
+            };
+
+        var chartLength = chart.series[2].data.length; //The real length of the chart
+        var chartIndex = chart.series[2].data[chart.series[2].data.length - 1].x + 1;
+
+        chart.series[2].data[chartLength-1].update({ radius: 4 }, false);
+        chart.series[2].addPoint(newPoint, false); //The length of the graph is not updated until render time
+
+        if(chartLength > MAX_NUM_POINTS)
+            chart.series[2].data[0].remove(false);
+
+        updateProjections(chartLength, chartIndex, game);
+
+    }
+
+
+    chart = new Highcharts.Chart({
+        chart: {
+            renderTo: document.getElementById('graph-box'),
+            type: 'line',
+            margin: [70, 50, 60, 80], //Margin around the graph container
+            animation: {
+                duration: 400
+                //easing: 'easeOutQuart'
+            },
+            events: {
+                redraw: function () {
+                    //alert('The chart is being redrawn');
+                    //console.log('redraw');
+                }
+            }
+            //backgroundColor: '#272B30'
+        },
+        plotOptions: {
+            series: {
+                lineWidth: 1,
+                marker: {
+                    //radius: 8,
+                    symbol: 'circle'
+                }
+                //animation: {
+                //    duration: 2000
+                //}
+            }
+        },
+        title: {
+            text: 'Dust Dice'
+            //style: {
+            //    color: '#ffffff',
+            //    fontWeight: 'bold'
+            //}
+        },
+        subtitle: {
+            text: 'The simplest casino you could find'
+            //style: {
+            //    color: '#ffffff',
+            //    fontWeight: 'bold'
+            //}
+        },
+        xAxis: {
+            //gridLineWidth: 1,
+            //minPadding: 0.2,
+            //maxPadding: 0.2,
+            //maxZoom: 60,
+            //min: 0,
+            //max: 30,
+            //tickPixelInterval: 100,
+            //tickInterval: 1,
+            //minPadding: 0.2,
+            minRange: 30,
+            allowDecimals: false
+        },
+        yAxis: {
+            title: {
+                text: 'Balance'
+            },
+            minPadding: 0.2,
+            maxPadding: 0.2,
+            maxZoom: 60,
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        legend: {
+            enabled: false
+        },
+        exporting: {
+            enabled: false
+        },
+        series: createSeries({
+            balance: balance,
+            wager: 100,
+            winProb: 49
+        })
+    });
+
+
+    setInterval(function(){
+        generateRandomBet();
+    }, 300);
+</script>
+</body>
+</html>

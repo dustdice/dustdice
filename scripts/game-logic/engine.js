@@ -18,11 +18,19 @@ define([
         var self = this;
 
         self.gameHistory = []; // { wager: satoshis, payout: 2.03, win: boolean }
-        self.gameProfit = 0; //The accumulated profit of this session
         self.gameState = 'STANDING_BY'; //STANDING_BY || BETTING
 
-        self.payout = 2;
+        self.winProb = 49;
         self.wager = 100;
+
+
+        /* Constants */
+        self.HOUSE_EDGE = 2;
+
+        /* Temporal Constants */
+        self.balance = 100000e2;
+        self.maxBet  = 10000e8;
+        self.jackpot = 10e8; //1BTC = 1,000,000bits = 100,000,000Satoshis
     };
 
 
@@ -32,19 +40,39 @@ define([
         var self = this;
 
         console.assert(Clib.isInteger(self.wager));
-        console.assert(Clib.isNumber(self.payout));
+        console.assert(Clib.isInteger(self.winProb));
         console.assert(typeof hiLo === 'boolean');
+
+        if(self.gameState === 'BETTING') {
+            console.warn('Already betting');
+            return;
+        }
+
 
         self.gameState = 'BETTING';
 
-        WebApi.bet(self.wager, self.payout, hiLo, function(err, game){
-            if(err)
-                console.error('Do something: ', err);
+        var bet = {
+            wager: self.wager,
+            winProb: self.winProb,
+            hiLo: hiLo,
+            balance: self.balance
+        };
+
+        self.trigger('bet-sent', bet);
+
+        //TODO: Assuming that the responses are received in the same order they are sent
+        WebApi.bet(self.wager, self.winProb, self.HOUSE_EDGE, hiLo, function(err, game){
+            if(err) {
+                alert('Error doing the bet: ' + err.message);
+                return console.error( new Error('Error on WebApi: ' + err) );
+            }
 
             if(game.win)
-                self.gameProfit += (game.wager * game.payout) - game.wager;
+                self.balance += game.amount - game.wager;
             else
-                self.gameProfit -= game.wager;
+                self.balance -= game.amount;
+
+            game.balance = self.balance;
 
             self.gameHistory.push(game);
 
@@ -53,11 +81,7 @@ define([
 
             self.gameState = 'STANDING_BY';
 
-            self.trigger('bet', game, {
-                wager: self.wager,
-                payout: self.payout,
-                gameProfit: self.gameProfit
-            });
+            self.trigger('bet-end', game);
         });
     };
 
@@ -73,11 +97,19 @@ define([
     };
 
     gameEngine.prototype.addBetListener = function(func) {
-        this.on('bet', func)
+        this.on('bet-sent', func)
     };
 
     gameEngine.prototype.removeBetListener = function(func) {
-        this.off('bet', func)
+        this.off('bet-sent', func)
+    };
+
+    gameEngine.prototype.addBetEndListener = function(func) {
+        this.on('bet-end', func);
+    };
+
+    gameEngine.prototype.removeBetEndListener = function(func) {
+        this.off('bet-end', func);
     };
 
     gameEngine.prototype.addWagerListener = function(func) {
@@ -91,12 +123,14 @@ define([
 
     /** State getters for view controllers **/
 
-
-    gameEngine.prototype.getWagerValues = function() {
+    gameEngine.prototype.getGameState = function() {
         return {
             wager: this.wager,
-            payout: this.payout,
-            gameProfit: this.gameProfit
+            winProb: this.winProb,
+            balance: this.balance,
+            maxBet: this.maxBet,
+            jackpot: this.jackpot,
+            gameState: this.gameState
         }
     };
 
@@ -104,21 +138,23 @@ define([
     /** Setters for controls view controller **/
 
     gameEngine.prototype.setWager = function(newWager) {
+        console.assert(Clib.isInteger(newWager));
         this.wager = newWager;
         this.triggerBetValues();
 
     };
 
-    gameEngine.prototype.setPayout = function(newPayout) {
-        this.payout = newPayout;
+    gameEngine.prototype.setWinProb = function(newWinProb) {
+        console.assert(Clib.isInteger(newWinProb) && newWinProb>=1 && newWinProb <=98);
+        this.winProb = newWinProb;
         this.triggerBetValues();
     };
 
     gameEngine.prototype.triggerBetValues = function() {
         this.trigger('new-wager-data', {
             wager: this.wager,
-            payout: this.payout,
-            gameProfit: this.gameProfit
+            winProb: this.winProb,
+            balance: this.balance
         });
     };
 

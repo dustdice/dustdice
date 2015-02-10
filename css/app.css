@@ -1,6 +1,41 @@
+html, body {
+    height:100%;
+}
+
+
+/* ==========================================================================
+   Fake Icons due they are not in Font Awesome
+   ========================================================================== */
+
+.icon-percent::before {
+    content: '%';
+    font-weight: bold;
+}
+
+
+/* ==========================================================================
+   General shit
+   ========================================================================== */
+.v-space-top-1{
+    margin-top: 1em;
+}
+.v-space-btm-2 {
+    margin-bottom: 2em;
+}
+
+.no-margin {
+    margin: 0 !important;
+}
+
+.no-padding {
+    padding: 0 !important;
+}
+
+
 /* ==========================================================================
    Top bar
    ========================================================================== */
+
 .navbar-img-container {
     padding-right: 1px;
 }
@@ -11,6 +46,153 @@
 }
 
 
+/* ==========================================================================
+   Graph
+   ========================================================================== */
+
+#graph-container {
+    height: 60%;
+    width: 100%;
+}
+
+#graph-box {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+
+/* ==========================================================================
+    Controls-Settings container
+    ========================================================================== */
+
+#controls-container {
+    position: absolute;
+    top: 60%;
+    width: 100%;
+    height: calc(40% - 42px);
+    overflow-y: scroll;
+}
+
+#controls-container-box {
+
+}
+
+.controls-selector-container {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+}
+
+.controls-selector {
+
+}
+
+
+/* ==========================================================================
+    Controls (The big buttons)
+    ========================================================================== */
+
+.btn-controls{
+
+}
+@media only screen and (max-width : 992px) {
+    .btn-controls {
+        padding: 1em 2em;
+    }
+}
+
+.bet-info .lbl {
+    margin-top: 5px;
+    color: #908f8f;
+    font-size: 12px;
+}
+
+.bet-info .txt {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.bet-info .lbl {
+    margin-top: 5px;
+    color: #908f8f;
+    font-size: 12px;
+}
+
+.bet-info .txt {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.btn .val {
+    font-size: 1em;
+}
+@media only screen and (max-width : 992px) {
+    .btn .val {
+        font-size: 4em;
+    }
+}
+
+.btn-default .mark {
+    background-color: #e4202b;
+}
+
+.btn .mark {
+    font-size: 1em;
+    padding: 0px 5px;
+    border: 1px solid #fff;
+    color: white;
+}
+@media only screen and (max-width : 992px) {
+    .btn .mark {
+        font-size: 4em;
+    }
+}
+
+.btn .dif {
+    font-size: 10px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+}
+
+.btn-primary {
+    color: #fff;
+    border: none;
+    background-color: #131313;
+    border: 1px solid #131313;
+}
+
+.btn-primary .mark {
+    background-color: #131313;
+}
+
+.btn .mark {
+    font-size: 15px;
+    padding: 0px 5px;
+    border: 1px solid #fff;
+    color: white;
+}
+
+
+/* ==========================================================================
+    Game settings
+    ========================================================================== */
+
+.set-h-divider {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    border-bottom: 1px solid grey;
+}
+
+
+/* ==========================================================================
+    ?
+    ========================================================================== */
 
 .controls-container {
     margin-right: 2em !important;
@@ -19,4 +201,34 @@
 
 .controls-container .input-group {
     margin-bottom: 10px;
+}
+
+
+/* ==========================================================================
+    Media queries
+    ========================================================================== */
+
+/* Custom, iPhone Retina */
+@media only screen and (min-width : 320px) {
+
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (min-width : 480px) {
+
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
+
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+
 }

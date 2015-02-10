@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <link href="css/bootstrap-theme.css" rel="stylesheet">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
         <link href="css/app.css" rel="stylesheet">
     </head>
     <body>
+
+    <div class="device-xs visible-xs"></div>
+    <div class="device-sm visible-sm"></div>
+    <div class="device-md visible-md"></div>
+    <div class="device-lg visible-lg"></div>
 
     <div class="navbar navbar-default navbar-fixed-top">
         <a class="navbar-brand navbar-img-container" href="#">
@@ -22,8 +30,10 @@
     </div>
 
 
-        <div id="graphContainer"></div>
-        <div id="controlsContainer"></div>
+    <div id="graph-container"></div>
+    <div id="controls-container"></div>
+
+
         <script data-main="scripts/config/config" src="scripts/lib/require.js"></script>
     </body>
 </html>
