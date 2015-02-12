@@ -4,14 +4,16 @@ define([
     'components/settings',
     'game-logic/engine',
     'lib/keymaster', //TODO: This is window
-    'lib/clib'
+    'lib/clib',
+    'jquery-text-width'
 ], function(
     React,
     ControlsClass,
     SettingsClass,
     Engine,
     KeyMaster,
-    Clib
+    Clib,
+    jQuery
 ){
     /* Constants */
     var _widthTrigger = 992;
@@ -52,6 +54,14 @@ define([
             KeyMaster.key('left', this._betLo);
             KeyMaster.key('q', this._decreaseWinProb);
             KeyMaster.key('r', this._increaseWinProb);
+
+            //Adjust the size of the input bet
+            this._resizeInput();
+
+        },
+
+        _resizeInput: function() {
+            this.setState({ betInputWidth: $(this.refs.bet.getDOMNode()).textWidth() });
         },
 
         componentWillUnmount: function() {
@@ -68,6 +78,7 @@ define([
             if(this.isMounted())
                 this.setState(getState());
         },
+
 
         _handleResize: function() {
             var smallViewPort = (window.innerWidth < _widthTrigger);
@@ -188,11 +199,112 @@ define([
                 );
             }
 
+            //D.div({ className: '' }, )
+            //D.div({ id: '' }, )
+            //D.span({ className: '' }, )
+            //D.input({ type: '', className: '' })
+            //D.i({ className: '' })
+
+            var btnDisable = (this.state.gameState.gameState === 'BETTING');
+
             return D.div({ id: 'controls-container-box' },
-                D.div({ className: 'row no-margin   ' },
-                    elements
+                D.div({ id: 'controls-container-box' },
+
+                    //Top Controls
+                    D.div({ id: 'controls-top' },
+
+                        D.div({ className: 'ctr-cont left' },
+                            D.div({ className: 'ctr-state' },
+                                D.input({ type: 'text', className: 'ctr-state-input', ref: 'bet', value: this.state.wagerInputText, onChange: this._setWager, onKeyUp: this._resizeInput, style: { width: this.state.betInputWidth } }),
+                                D.span({ className: 'ctrl-state-lbl' },
+                                    D.i({ className: 'fa fa-btc' }), 'its'
+                                )
+                            ),
+                            D.span({ className: 'ctr-lbl' }, 'BET')
+                        ),
+
+                        D.div({ className: 'ctr-cont right' },
+                            D.div({ className: 'ctr-state' },
+                                D.span({ className: 'ctrl-state-lbl' },
+                                    '2.97'
+                                ),
+                                D.span({ className: 'ctrl-state-lbl' },
+                                    D.i({ className: 'fa fa-times' })
+                                )
+                            ),
+                            D.span({ className: 'ctr-lbl' }, 'PAYOUT')
+                        )
+                    ),
+
+                    D.div({ id: 'controls-middle' },
+
+                        D.div({ className: 'row' },
+                            D.button({ type: 'button', className: 'btn btn-default btn-controls col-xs-2 col-xs-offset-5', onClick: this._doubleBet },
+                                D.span({ className: 'val' }, 'x2'),
+                                D.span({ className: 'mark'},
+                                    D.i({ className: 'fa fa-arrow-up' })
+                                )
+                            )
+
+                        ),
+
+                        D.div({ className: 'row'},
+                            D.button({ type: 'button', className: 'btn btn-default btn-controls col-xs-3 col-xs-offset-1', disabled: btnDisable, onClick: this._betLo },
+                                D.span({ className: 'mark'},
+                                    D.i({ className: 'fa fa-arrow-left' })
+                                ),
+                                D.span({ className: 'dif' },
+                                    '1 to ' + this.state.gameState.winProb
+                                )
+                            ),
+                            D.button({ type: 'button', className: 'btn btn-default btn-controls col-xs-2 col-xs-offset-1', onClick: this._halfBet },
+                                D.span({ className: 'val' }, '/2'),
+                                D.span({ className: 'mark'},
+                                    D.i({ className: 'fa fa-arrow-down' })
+                                )
+                            ),
+                            D.button({ type: 'button', className: 'btn btn-default btn-controls col-xs-3 col-xs-offset-1', disabled: btnDisable, onClick: this._betHi },
+                                D.span({ className: 'dif' },
+                                    (this.state.gameState.winProb+2) + ' to 100'
+                                ),
+                                D.span({ className: 'mark'},
+                                    D.i({ className: 'fa fa-arrow-right' })
+                                )
+
+                            )
+                        )
+                    ),
+
+                    //Bottom Controls
+                    D.div({ id: 'controls-bottom' },
+
+                        D.div({ className: 'ctr-cont ctr-jackpot left' },
+                            D.span({ className: 'ctr-lbl' }, 'JACKPOT PROBABILITY'),
+                            D.div({ className: 'ctr-state' },
+                                D.span({ className: 'ctr-state-val' },
+                                    '1 in 100,000,000'
+                                )
+                            )
+                        ),
+
+                        D.div({ className: 'ctr-cont right' },
+                            D.span({ className: 'ctr-lbl' }, 'WIN PROBABILITY'),
+                            D.div({ className: 'ctr-state' },
+                                D.span({ className: 'ctrl-state-lbl' },
+                                    '49'
+                                ),
+                                D.span({ className: 'ctrl-state-lbl' },
+                                    D.i({ className: 'icon-percent'})
+                                )
+                            ),
+                            D.input({ type: 'range', max: '97', min: '1', value: this.state.gameState.winProb, onChange: this._setWinProb })
+                        )
+                    )
+
+
                 )
             );
+
         }
     });
 });

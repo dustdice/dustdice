@@ -6,6 +6,9 @@
         <link href="css/bootstrap-theme.css" rel="stylesheet">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
         <link href="css/app.css" rel="stylesheet">
+
+        <script src="scripts/lib/jquery.js"></script>
+        <script src="scripts/lib/screenfull.js"></script>
     </head>
     <body>
 
@@ -15,25 +18,79 @@
     <div class="device-lg visible-lg"></div>
 
     <div class="navbar navbar-default navbar-fixed-top">
-        <a class="navbar-brand navbar-img-container" href="#">
-            <img class="navbar-img" src="img/powder2.png">
-        </a>
+
         <div class="navbar-header">
+            <a class="navbar-brand navbar-img-container" href="#">
+                <img class="navbar-img" src="img/powder2.png">
+            </a>
             <a href="../" class="navbar-brand">DustDice</a>
             <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-
+            <div class="visible-xs-block container-fluid right">
+                <button type="button" class="btn btn-default navbar-btn expand-btn" onClick="expand()"><i class="fa fa-expand"></i></button>
+            </div>
         </div>
+
+
     </div>
 
 
     <div id="graph-container"></div>
+
     <div id="controls-container"></div>
 
 
-        <script data-main="scripts/config/config" src="scripts/lib/require.js"></script>
+
+    <script data-main="scripts/config/config" src="scripts/lib/require.js"></script>
+
+    <script>
+//        (function($) {
+//            console.log('setting fn');
+//            $.fn.textWidth = function () {
+//                var $body = $('body');
+//                var $this =  $(this);
+//                var $text = $this.text();
+//                if($text=='') $text = $this.val();
+//                var calc = '<div style="clear:both;display:block;visibility:hidden;"><span style="width;inherit;margin:0;font-family:'  + $this.css('font-family') + ';font-size:'  + $this.css('font-size') + ';font-weight:' + $this.css('font-weight') + '">' + $text + '</span></div>';
+//                $body.append(calc);
+//                var width = $body.find('span:last').width();
+//                $body.find('span:last').parent().remove();
+//                return width;
+//            };
+//        })(jQuery);
+
+            var textWidth = function (obj) {
+                var $body = $('body');
+                var $this =  $(obj);
+                var $text = $this.text();
+                if($text=='') $text = $this.val();
+                var calc = '<div style="clear:both;display:block;visibility:hidden;"><span style="width;inherit;margin:0;font-family:'  + $this.css('font-family') + ';font-size:'  + $this.css('font-size') + ';font-weight:' + $this.css('font-weight') + '">' + $text + '</span></div>';
+                $body.append(calc);
+                var width = $body.find('span:last').width();
+                $body.find('span:last').parent().remove();
+                return width;
+            };
+
+
+        function resizeInput() {
+            $(this).width(textWidth(this));
+        }
+
+        $('input[type="text"]')
+            // event handler
+                .keyup(resizeInput)
+            // resize on page load
+                .each(resizeInput);
+
+        function expand() {
+            if (screenfull.enabled) {
+                screenfull.request();
+            }
+        }
+    </script>
+
     </body>
 </html>

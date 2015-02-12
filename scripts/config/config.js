@@ -4,16 +4,17 @@ requirejs.config({
         highcharts: 'lib/highcharts-src',
         'highcharts-theme': 'lib/dark-unica',
         jquery: 'lib/jquery',
-        jqueryui: 'lib/jquery-ui-1.11.2/jquery-ui.min'
+        jqueryui: 'lib/jquery-ui-1.11.2/jquery-ui.min',
+        'jquery-text-width': 'lib/jquery-plugins/text-width'
     },
     shim: {
         //jquery: {
         //    exports: '$'
         //},
-        jqueryui: {
-            deps: ['jquery'],
-            exports: '$'
-        },
+        'jquery-text-width': ['jquery'],
+
+        jqueryui: ['jquery'],
+
         highcharts: {
             deps: ['jquery'],
             exports: 'Highcharts'

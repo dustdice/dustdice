@@ -1,5 +1,7 @@
 html, body {
     height:100%;
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
 
 
@@ -31,6 +33,42 @@ html, body {
     padding: 0 !important;
 }
 
+.left {
+    float: left !important;
+}
+
+.right {
+    float: right !important;
+    text-align: right;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    outline: 0;
+    background: rgba(0,0,0,.1);
+    box-shadow: inset 0 -14px 0 -7px #272b30, inset 0 14px 0 -7px #272b30;
+    overflow: hidden;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+}
+
+input[type="range"]::-webkit-slider-thumb:after {
+    content: '';
+    width: 150px;
+    height: 6px;
+    position: absolute;
+    top: 7px;
+    right: 20px;
+    box-shadow: inset 0 0 0 10px rgba(255,255,255,.3);
+}
+
 
 /* ==========================================================================
    Top bar
@@ -43,6 +81,10 @@ html, body {
 .navbar-img {
     width: 2em;
     margin-top: -0.5em;
+}
+
+.expand-btn {
+    border-color: #272b2e;
 }
 
 
@@ -63,36 +105,78 @@ html, body {
 
 
 /* ==========================================================================
-    Controls-Settings container
+    Bet Controls
     ========================================================================== */
 
 #controls-container {
     position: absolute;
     top: 60%;
     width: 100%;
-    height: calc(40% - 42px);
-    overflow-y: scroll;
+    height: 40%;
 }
 
 #controls-container-box {
-
+    position: relative;
+    height: 100%;
+    width: 100%;
 }
 
-.controls-selector-container {
-    position: fixed;
-    left: 0;
+
+#controls-top {
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+#controls-middle {
+    position: absolute;
+    top: 30%;
+    width: 100%;
+}
+
+#controls-bottom {
+    position: absolute;
     bottom: 0;
+    width: 100%;
 }
 
-.controls-selector {
-
+.ctr-jackpot {
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
 
+.ctr-state {
+    line-height: 1;
+    margin-bottom: -0.2em;
+}
+
+.ctr-state-input {
+    font-size: 1.6em;
+    background: transparent;
+    border: none;
+    color: #c8c8c8;
+    width: auto;
+}
+
+.ctr-state-val {
+    font-size: 1.6em;
+}
+
+.ctrl-state-lbl {
+    font-size: 1.6em;
+}
+
+.ctr-lbl {
+    line-height: 1;
+    font-size: 0.5em;
+    margin-top: -0.3em;
+}
 
 /* ==========================================================================
     Controls (The big buttons)
     ========================================================================== */
-
+/*
 .btn-controls{
 
 }
@@ -177,32 +261,18 @@ html, body {
     border: 1px solid #fff;
     color: white;
 }
-
+*/
 
 /* ==========================================================================
     Game settings
     ========================================================================== */
-
+/*
 .set-h-divider {
     margin-top: 1em;
     margin-bottom: 1em;
     border-bottom: 1px solid grey;
 }
-
-
-/* ==========================================================================
-    ?
-    ========================================================================== */
-
-.controls-container {
-    margin-right: 2em !important;
-    margin-left: 2em !important;
-}
-
-.controls-container .input-group {
-    margin-bottom: 10px;
-}
-
+*/
 
 /* ==========================================================================
     Media queries
