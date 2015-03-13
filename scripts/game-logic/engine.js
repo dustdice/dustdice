@@ -1,5 +1,7 @@
-//State holder of the history of the game
-//And calls to the web api to handle bets
+/**
+ * Important: Do not edit the values sent by the event system
+ * Other modules could use the same values
+ */
 define([
     'lib/events',
     'lib/lodash',
@@ -13,16 +15,38 @@ define([
 ){
     //var historyMaxLength = 100;
 
+    function requestHash(callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = handleStateChange;
+        if (!xhr) throw new Error("Browser doesn't support xhr");
+        xhr.open('GET', 'http://localhost:3000/api/generate-hash', true);
+        xhr.send();
+
+        function handleStateChange() {
+            if(xhr.readyState === 4) {
+                //TODO: Validate shit responses
+                callback(JSON.parse(xhr.response));
+            }
+        }
+    }
+
     var gameEngine = function() {
         _.extend(this, Events);
         var self = this;
+
+        requestHash(function(hash) {
+            self.nextGameHash = hash;
+            self.trigger('new-hash');
+        });
 
         self.gameHistory = []; // { wager: satoshis, payout: 2.03, win: boolean }
         self.gameState = 'STANDING_BY'; //STANDING_BY || BETTING
 
         self.winProb = 49;
-        self.wager = 100;
 
+        //Wager is a float but is rounded when betting and when showing it to the user, this allows to chase bet on small qty's to actually work
+        //Use Math.round(), is as close as you can get.
+        self.wager = 1e2;
 
         /* Constants */
         self.HOUSE_EDGE = 2;
@@ -30,7 +54,9 @@ define([
         /* Temporal Constants */
         self.balance = 100000e2;
         self.maxBet  = 10000e8;
-        self.jackpot = 10e8; //1BTC = 1,000,000bits = 100,000,000Satoshis
+        self.jackpot = 1e8; //1BTC = 1,000,000bits = 100,000,000Satoshis
+        self.nextGameHash = null; //TODO: Show that there is no gameHash on settings
+        self.clientSeed = 4294967296; //Max 2^32
     };
 
 
@@ -39,40 +65,41 @@ define([
     gameEngine.prototype.bet = function(hiLo) {
         var self = this;
 
-        console.assert(Clib.isInteger(self.wager));
-        console.assert(Clib.isInteger(self.winProb));
         console.assert(typeof hiLo === 'boolean');
-
-        if(self.gameState === 'BETTING') {
-            console.warn('Already betting');
-            return;
-        }
-
+        console.assert(self.balance >= self.wager && self.wager > 0);
+        console.assert(self.gameState != 'BETTING');
 
         self.gameState = 'BETTING';
 
-        var bet = {
-            wager: self.wager,
+        /** Save the current state of the engine, do not send it by reference to other modules
+            This object will be modified and saved in the graph history */
+        var currentBet = {
+            wager: Clib.roundSatToTwo(self.wager), //Round the wager by two decimal places since we only bet bits
             winProb: self.winProb,
             hiLo: hiLo,
-            balance: self.balance
+            balance: self.balance,
+            hash: self.nextGameHash,
+            seed: self.clientSeed
         };
 
-        self.trigger('bet-sent', bet);
-
-        //TODO: Assuming that the responses are received in the same order they are sent
-        WebApi.bet(self.wager, self.winProb, self.HOUSE_EDGE, hiLo, function(err, game){
+        WebApi.bet(currentBet.wager, currentBet.winProb, currentBet.hash, currentBet.seed, currentBet.hiLo, function(err, game){
             if(err) {
-                alert('Error doing the bet: ' + err.message);
+                alert('Error doing the bet, reload the page: ' + err.message);
                 return console.error( new Error('Error on WebApi: ' + err) );
             }
 
-            if(game.win)
-                self.balance += game.amount - game.wager;
-            else
-                self.balance -= game.amount;
+            //Set the new balance in the engine
+            self.balance += game.profit;
+            //Set the new hash in the engine
+            self.nextGameHash = game.next_hash;
 
+            //Append the new balance in the game
             game.balance = self.balance;
+            //Append game info to the result
+            game.wager = currentBet.wager;
+            game.winProb = currentBet.winProb;
+            game.hiLo = currentBet.hiLo;
+
 
             self.gameHistory.push(game);
 
@@ -81,81 +108,54 @@ define([
 
             self.gameState = 'STANDING_BY';
 
+            //Send a copy of the game result values, do not edit this object in components!
+            Object.seal(game);//Avoid some component do weird things on the object
             self.trigger('bet-end', game);
         });
+
+        self.nextGameHash = null; //The hash was used so we kill it
+
+        //Send a copy of the current values of the bet, do not edit this object in components!
+        var betSent = {
+            wager: self.wager,
+            balance: self.balance,
+            winProb: self.winProb,
+            hiLo: hiLo
+        };
+        Object.seal(betSent); //Avoid some component do weird things on the object
+        self.trigger('bet-sent', betSent);
     };
 
 
-    /** Event registration for view controllers **/
-
-    gameEngine.prototype.addChangeListener = function(func) {
-        this.on('all', func);
-    };
-
-    gameEngine.prototype.removeChangeListener = function(func) {
-        this.off('all', func);
-    };
-
-    gameEngine.prototype.addBetListener = function(func) {
-        this.on('bet-sent', func)
-    };
-
-    gameEngine.prototype.removeBetListener = function(func) {
-        this.off('bet-sent', func)
-    };
-
-    gameEngine.prototype.addBetEndListener = function(func) {
-        this.on('bet-end', func);
-    };
-
-    gameEngine.prototype.removeBetEndListener = function(func) {
-        this.off('bet-end', func);
-    };
-
-    gameEngine.prototype.addWagerListener = function(func) {
-        this.on('new-wager-data', func);
-    };
-
-    gameEngine.prototype.removeWagerListener = function(func) {
-        this.off('new-wager-data', func);
-    };
-
-
-    /** State getters for view controllers **/
-
-    gameEngine.prototype.getGameState = function() {
-        return {
-            wager: this.wager,
-            winProb: this.winProb,
-            balance: this.balance,
-            maxBet: this.maxBet,
-            jackpot: this.jackpot,
-            gameState: this.gameState
-        }
-    };
-
-
-    /** Setters for controls view controller **/
+    /** Engine API **/
 
     gameEngine.prototype.setWager = function(newWager) {
-        console.assert(Clib.isInteger(newWager));
+        //console.assert(Clib.isInteger(newWager/100));
+        //console.assert(newWager <= this.balance && newWager <= this.maxBet);
         this.wager = newWager;
-        this.triggerBetValues();
+        this.trigger('new-wager-data')
 
     };
 
     gameEngine.prototype.setWinProb = function(newWinProb) {
-        console.assert(Clib.isInteger(newWinProb) && newWinProb>=1 && newWinProb <=98);
+        console.assert(Clib.isInteger(newWinProb) && newWinProb>=1 && newWinProb <=98); //TODO: Is this up to date?
         this.winProb = newWinProb;
-        this.triggerBetValues();
+        this.trigger('new-wager-data');
     };
 
-    gameEngine.prototype.triggerBetValues = function() {
-        this.trigger('new-wager-data', {
-            wager: this.wager,
-            winProb: this.winProb,
-            balance: this.balance
-        });
+    gameEngine.prototype.setClientSeed = function(newSeed) {
+        this.clientSeed = newSeed;
+        this.trigger('set-client-seed');
+    };
+
+    gameEngine.prototype.clearHistory = function() {
+        this.gameHistory = [];
+        this.trigger('history-clear');
+    };
+
+    gameEngine.prototype.genClientSeed = function() {
+        this.clientSeed = Math.floor(Math.random()*4294967296) + 1;  //TODO: Use window.crypto or something like that
+        this.trigger('new-client-seed');
     };
 
 

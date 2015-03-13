@@ -1,96 +1,80 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-        <link href="css/bootstrap-theme.css" rel="stylesheet">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-        <link href="css/app.css" rel="stylesheet">
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>DustDice Casino</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <script src="scripts/lib/jquery.js"></script>
-        <script src="scripts/lib/screenfull.js"></script>
-    </head>
-    <body>
+    <!-- Loading Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/font-awesome.css">
+    <link rel="shortcut icon" href="img/favicon-black.ico" type="image/x-icon"/>
 
-    <div class="device-xs visible-xs"></div>
-    <div class="device-sm visible-sm"></div>
-    <div class="device-md visible-md"></div>
-    <div class="device-lg visible-lg"></div>
+    <!-- Loading Flat UI -->
+    <!-- <link href="css/flat-ui.css" rel="stylesheet"> -->
+    <!--<link href="css/app.css" rel="stylesheet">-->
 
-    <div class="navbar navbar-default navbar-fixed-top">
+    <link href="css/landing.css" rel="stylesheet">
 
-        <div class="navbar-header">
-            <a class="navbar-brand navbar-img-container" href="#">
-                <img class="navbar-img" src="img/powder2.png">
-            </a>
-            <a href="../" class="navbar-brand">DustDice</a>
-            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <div class="visible-xs-block container-fluid right">
-                <button type="button" class="btn btn-default navbar-btn expand-btn" onClick="expand()"><i class="fa fa-expand"></i></button>
+</head>
+<body>
+
+<div id="landing-background">
+    <div id="landing-container" class="container">
+        <div class="header">
+            <nav>
+                <ul class="nav nav-pills pull-right">
+                    <li role="presentation" class="active"><a href="#">Home</a></li>
+                    <li role="presentation"><a href="/faq.html">FAQ</a></li>
+                    <li role="presentation"><a href="http://vault.moneypot.com/">MoneyPot</a></li>
+                </ul>
+            </nav>
+            <h3 class="text-muted">DustDice</h3>
+        </div>
+
+        <div class="jumbotron">
+            <h1>Bitcoin Casino</h1>
+            <p class="lead">A new way of bet bitoins.</p>
+            <p><a class="btn btn-lg btn-success" href="/game.html" role="button">Register Now<br/>With MoneyPot Secure System</a></p>
+        </div>
+
+        <div class="row marketing">
+            <div class="col-lg-6">
+                <h4>1% House Edge</h4>
+                <p>We give you the same grate deal that most casinos on line.</p>
+
+                <h4>Fully Responsive</h4>
+                <p>Wanna play in your phone? Done. And it looks great!</p>
+
+                <h4>MoneyPot Secured</h4>
+                <p>MP Keep your bitcoins secured, is as wallet and a 3rd party login system.<br/>Never store your bitcoins in a dodgy casino Again!</p>
+            </div>
+
+            <div class="col-lg-6">
+                <h4>Probably Fair</h4>
+                <p>Of course you can prove every single game is fair with maths .</p>
+
+                <h4>1 Bitcoin Jackpot</h4>
+                <p>Every game you play can make you win a Bitcoin :p.</p>
+
+                <h4>The same shit but better</h4>
+                <p>We have the same shit that most casinos but our is better :D.</p>
             </div>
         </div>
 
+        <footer class="footer">
+            <p>&copy; DustDice 2015</p>
+        </footer>
 
-    </div>
+    </div> <!-- /container -->
+</div>
 
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="scripts/lib/jquery.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<!--<script src="scripts/lib/flat-ui-deprecated.js"></script>->
 
-    <div id="graph-container"></div>
+<!--<script src="../assets/js/application.js"></script>-->
 
-    <div id="controls-container"></div>
-
-
-
-    <script data-main="scripts/config/config" src="scripts/lib/require.js"></script>
-
-    <script>
-//        (function($) {
-//            console.log('setting fn');
-//            $.fn.textWidth = function () {
-//                var $body = $('body');
-//                var $this =  $(this);
-//                var $text = $this.text();
-//                if($text=='') $text = $this.val();
-//                var calc = '<div style="clear:both;display:block;visibility:hidden;"><span style="width;inherit;margin:0;font-family:'  + $this.css('font-family') + ';font-size:'  + $this.css('font-size') + ';font-weight:' + $this.css('font-weight') + '">' + $text + '</span></div>';
-//                $body.append(calc);
-//                var width = $body.find('span:last').width();
-//                $body.find('span:last').parent().remove();
-//                return width;
-//            };
-//        })(jQuery);
-
-            var textWidth = function (obj) {
-                var $body = $('body');
-                var $this =  $(obj);
-                var $text = $this.text();
-                if($text=='') $text = $this.val();
-                var calc = '<div style="clear:both;display:block;visibility:hidden;"><span style="width;inherit;margin:0;font-family:'  + $this.css('font-family') + ';font-size:'  + $this.css('font-size') + ';font-weight:' + $this.css('font-weight') + '">' + $text + '</span></div>';
-                $body.append(calc);
-                var width = $body.find('span:last').width();
-                $body.find('span:last').parent().remove();
-                return width;
-            };
-
-
-        function resizeInput() {
-            $(this).width(textWidth(this));
-        }
-
-        $('input[type="text"]')
-            // event handler
-                .keyup(resizeInput)
-            // resize on page load
-                .each(resizeInput);
-
-        function expand() {
-            if (screenfull.enabled) {
-                screenfull.request();
-            }
-        }
-    </script>
-
-    </body>
+</body>
 </html>

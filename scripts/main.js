@@ -1,19 +1,16 @@
 define([
     'lib/react',
-    'components/graph',
-    'components/controls-container',
+    'components/game',
     'lib/fastclick'
 ], function(
     React,
-    GraphClass,
-    ControlsContainerClass,
+    GameClass,
     FastClick
 ){
-    var Graph = React.createFactory(GraphClass);
-    var ControlsContainer = React.createFactory(ControlsContainerClass);
+    var Game = React.createFactory(GameClass);
 
     FastClick.attach(document.body);
 
-    React.render(Graph(), document.getElementById('graph-container'));
-    React.render(ControlsContainer(), document.getElementById('controls-container'));
+    React.render(Game(), document.getElementById('game-container'));
+
 });

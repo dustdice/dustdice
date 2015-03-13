@@ -1,7 +1,5 @@
 define([
-
 ], function(
-
 ) {
     return {
         isInteger: function (nVal) {
@@ -12,19 +10,12 @@ define([
             return typeof nVal === "number" && isFinite(nVal) && nVal > -9007199254740992 && nVal < 9007199254740992;
         },
 
-        validateBitsBet: function(bet, maxBet) {
-            bet = Number(bet);
-            if(!this.isInteger(bet))
-                return new Error('The bet should be an integer.');
-            if(bet > maxBet)
-                return new Error('Your bet is bigger than the max bet.');
-            if(bet < 1)
-                return new Error('Your bet should be bigger than  one.');
-            return bet;
-        },
-
         satToBit: function(satoshis) {
             return satoshis/100;
+        },
+
+        satToBitRounded: function(satoshis) {
+            return Math.round(this.satToBit(satoshis));
         },
 
         bitToSat: function(bits) {
@@ -32,26 +23,40 @@ define([
         },
 
         /**
-         * Probability of winning a jackpot of 10BTC
+         * Probability ratio(1 = 100%) of winning a jackpot of 10BTC
          * using 1% of your bet for the jackpot
          * with no house edge:
-         *
-         * WinProb: Probability a user has to win given a wager
-         *
-         * UserProb/WinProb = Payout
-         *
-         * WinAmount = Payout * Wager
-         *
-         * UserProb/WinProb = WinAmount/Wager
-         *
-         * WinProb = UserProb/WinAmount * Wager
          **/
-        jackWinProbBits: function(wager) {
-            return 1/1000000000*wager;
+        jackWinProbSatoshisRatio: function(wager, jackpot) {
+            return (wager/100)/jackpot;
         },
 
-        jackWinProbBitsPerX: function(wager) {
-            return 1/this.jackWinProbBits(wager);
+        formatSatoshis: function (n, decimals) {
+            return this.formatDecimals(n/100, decimals);
+        },
+
+        formatDecimals: function (n, decimals) {
+            if (typeof decimals === 'undefined') {
+                if (n % 100 === 0)
+                    decimals = 0;
+                else
+                    decimals = 2;
+            }
+            return n.toFixed(decimals).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+        },
+
+        bitsTextTerm: function(bits) {
+            return (bits >= 2)? 'its' : 'it';
+        },
+
+        roundTo100: function(number) {
+            return Math.round(number/100)*100;
+        },
+
+        roundSatToTwo: function(satoshis) {
+            return this.roundTo100(satoshis);
         }
+
+
     }
 });

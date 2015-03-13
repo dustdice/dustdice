@@ -5,21 +5,26 @@ requirejs.config({
         'highcharts-theme': 'lib/dark-unica',
         jquery: 'lib/jquery',
         jqueryui: 'lib/jquery-ui-1.11.2/jquery-ui.min',
-        'jquery-text-width': 'lib/jquery-plugins/text-width'
+        //jqueryui: 'lib/flat-ui', //this is jquery ui plus the flat shit
+        'jquery-text-width': 'lib/jquery-plugins/text-width',
+        screenfull: 'lib/screenfull',
+        'react-bootstrap': 'lib/react-bootstrap'
+
+
     },
     shim: {
-        //jquery: {
-        //    exports: '$'
-        //},
-        'jquery-text-width': ['jquery'],
+
+        'react-bootstrap': {
+            deps: ['lib/react']
+        },
 
         jqueryui: ['jquery'],
 
         highcharts: {
             deps: ['jquery'],
             exports: 'Highcharts'
-
         },
+
         'highcharts-theme': {
             deps: ['highcharts', 'jqueryui'],
             exports: 'Highcharts'
