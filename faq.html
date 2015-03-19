@@ -34,19 +34,30 @@
 
         <div class="row faq">
             <div class="col-xs-12">
-                <h4>How the game works?</h4>
-                <p>The game generates a number between one and one hundred randomly every game and you bet that the number will be between a range.</p>
-                <p>For example if you bet that the result will be between 1 to 49 that mean you have a 48% of winning and your payout is two times your bet.</p>
-                <p>As you can see there is 1% missing given that the house edge is 1%, that is used to make a simultaneous bet to win the jackpot of 1BTC, the probability for you to win the bitcoin is: (Your wager/100)/1BTC.<br/>
-                This means that if you bet 1BTC you have one in a hundred ods to win the jackpot.
+                <h4>How does the game works?</h4>
+                <p>The game generates a number between 1 and 100, and allows you to bet on what you think it will be.
                 </p>
-                <p>If you bet 100BTC you are warranted to get the 1BTC jackpot.</p>
-                <p>If you bet more than 100BTC you are warranted to get 1% of your bet back to ensure the 1% house edge for big bets.</p>
-                <p>For the sake of simplicity the only two parameters that you can edit of your bet are the wager and the probability from 1% to 97% in integer units, this let us do a simple and fun interface to bet.</p>
+                <p>Your probability of winning, and payout for guessing correctly is proportional to how specific the range
+                you bet. The payout of guessing correct is such that the house edge would be 2%</p>
 
+                <p>However, the house edge is 1%, not 2%. This is because we use the 1% as a chance to win the jackpot. For
+                  instance if the jackpot is 1 BTC, your probability of winning it is: <code>wager/100/(wager + 1 BTC)</code>
+                  <br />
+                  You can always see your chance of winning the jackpot while in the game.
+                </p>
 
                 <h4>What is MoneyPot?</h4>
-                <p>It is a 3rd party company that provides a secure wallet for your bitcoins, accounts on MP let you register in casinos trough it avoiding the tedious process of deposit and withdrawal your bits on a bunch of different casinos, you can remove the access to the casino to your account any time you want or set a max budget to every casino. It's the coolest thing since Eminem! xD. For more info go to <a href="http://vault.moneypot.com/">MoneyPot</a>.</p>
+                <p>We are an app that uses MoneyPot for all gambling services, this means your balance and bets live there.
+                  We are not much more than a UI that places and verifies the bets for you. We have no access to your money, can only
+                  bet what you authorize us to bet.
+                </p>
+
+                <h4>Can I invest?</h4>
+                <p>
+                  We do not have our own bankroll, but bet against MoneyPot's. You can however invest there if you like
+                  but investments are not specific to DustDice (any MoneyPot app can gamble against it). Bankroll investing
+                  is risky business. Never invest more than you are prepared to lose.
+                </p>
             </div>
 
         </div> <!-- /faq -->

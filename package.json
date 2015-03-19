@@ -1,7 +1,11 @@
 {
-  "name": "PartyMode",
+  "name": "DustDice",
   "version": "1.0.0",
-  "description": "TODO",
+  "description": "Dice Site",
+
+  "scripts": {
+    "start": "node --harmony server"
+  },
 
   "engines": {
     "node": ">= 0.6.0",
