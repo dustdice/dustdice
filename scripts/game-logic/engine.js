@@ -15,17 +15,39 @@ define([
 ){
     //var historyMaxLength = 100;
 
-    function requestHash(callback) {
+    function requestNextGameHash(callback) {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = handleStateChange;
         if (!xhr) throw new Error("Browser doesn't support xhr");
-        xhr.open('GET', 'http://localhost:3000/api/generate-hash', true);
+        xhr.open('GET', 'http://localhost:3000/v1/bet/generate-hash');
         xhr.send();
 
         function handleStateChange() {
             if(xhr.readyState === 4) {
-                //TODO: Validate shit responses
+
+                if(!xhr.response)
+                    throw new Error('Bad response'); //TODO: Reload the page and alert the user
+
                 callback(JSON.parse(xhr.response));
+            }
+        }
+    }
+
+    function requestAccountData(accessToken, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = handleStateChange;
+        if (!xhr) throw new Error("Browser doesn't support xhr"); //TODO: Alert the user
+        xhr.open('GET', 'http://localhost:3000/oauth/tokens/'+accessToken);
+        xhr.send();
+
+        function handleStateChange() {
+            if (xhr.readyState === 4) {
+
+                if(!xhr.response)
+                    throw new Error('Bad response'); //TODO: Reload the page and alert the user
+
+                callback(JSON.parse(xhr.response));
+
             }
         }
     }
@@ -33,11 +55,6 @@ define([
     var gameEngine = function() {
         _.extend(this, Events);
         var self = this;
-
-        requestHash(function(hash) {
-            self.nextGameHash = hash;
-            self.trigger('new-hash');
-        });
 
         self.gameHistory = []; // { wager: satoshis, payout: 2.03, win: boolean }
         self.gameState = 'STANDING_BY'; //STANDING_BY || BETTING
@@ -52,11 +69,26 @@ define([
         self.HOUSE_EDGE = 2;
 
         /* Temporal Constants */
-        self.balance = 100000e2;
-        self.maxBet  = 10000e8;
-        self.jackpot = 1e8; //1BTC = 1,000,000bits = 100,000,000Satoshis
+        self.balance = null;
+        self.maxBet  = 10000e8; //TODO: Remove Max Bet, it will be added later
+        self.jackpot = 1e8; //1BTC = 1,000,000bits = 100,000,000 Satoshis //TODO: Add the jackpot to the settings?
         self.nextGameHash = null; //TODO: Show that there is no gameHash on settings
-        self.clientSeed = 4294967296; //Max 2^32
+
+        self.clientSeed = 4294967295; //Max 2^32b TODO: Generate this
+
+        /* Hardcoded vars */
+        self.accessToken =  '82c5bbe7-d9fd-4f5d-a06c-e34e588db2fd'; //TODO: This is sent by the server in the hash
+        self.state = 'xyz'; //TODO: Check that the stored state and the returned by the server are equals
+
+        requestAccountData(self.accessToken, function(data) {
+            self.balance = data.balance;
+
+            requestNextGameHash(function(hash) {
+                self.nextGameHash = hash;
+                self.trigger('get-user-data');
+            });
+        });
+
     };
 
 
@@ -79,11 +111,13 @@ define([
             hiLo: hiLo,
             balance: self.balance,
             hash: self.nextGameHash,
-            seed: self.clientSeed
+            seed: self.clientSeed,
+            accessToken: self.accessToken
         };
 
-        WebApi.bet(currentBet.wager, currentBet.winProb, currentBet.hash, currentBet.seed, currentBet.hiLo, function(err, game){
+        WebApi.bet(currentBet.wager, currentBet.winProb, currentBet.hash, currentBet.seed, currentBet.hiLo, currentBet.accessToken, function(err, game){
             if(err) {
+                console.log('alert');
                 alert('Error doing the bet, reload the page: ' + err.message);
                 return console.error( new Error('Error on WebApi: ' + err) );
             }

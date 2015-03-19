@@ -32,19 +32,25 @@ function(
         getInitialState: function() {
             return {
                 showSettings: false,
-                showTutorial: false
+                showTutorial: false,
+                engine: Engine
             }
         },
 
         componentDidMount: function() {
             KeyMaster.key('c', this._clearHistory);
             KeyMaster.key('s', this._toggleSettings);
-
+            Engine.on('get-user-data', this._getUserData);
         },
 
         componentWillUnmount: function() {
             KeyMaster.key.unbind('c', this._clearHistory);
             KeyMaster.key.unbind('s', this._toggleSettings);
+            Engine.off('get-user-data', this._getUserData);
+        },
+
+        _getUserData: function() {
+            this.setState({ engine: Engine }); //Just to re render
         },
 
         _toggleSettings: function() {
@@ -60,6 +66,12 @@ function(
         },
 
         render: function() {
+
+            //If the engine does not have the user's data
+            if(!Engine.balance)
+                return D.div({ id: 'loading-container'},
+                    D.img({ src: '/img/loading-7.gif' })
+                );
 
             var set = this.state.showSettings ? Settings({
                 _toggleSettings: this._toggleSettings,

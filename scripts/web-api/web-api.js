@@ -4,24 +4,30 @@ define(function() {
 
 
 
-    webApi.prototype.bet = function(wager, winProb, hash, seed, hiLo, callback) {
+    webApi.prototype.bet = function(wager, winProb, hash, seed, hiLo, accessToken, callback) {
 
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = handleStateChange;
         if (!xhr) throw new Error("Browser doesn't support xhr");
-        xhr.open('POST', 'http://localhost:3000/api/jackpot-dice', true);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); //Default
+        xhr.open('POST', 'http://localhost:3000/v1/bet/jackpot-dice');
+        xhr.setRequestHeader("Content-Type", "application/json");
 
-        var direction = hiLo ? 'gt' : 'lt';
-        var number = hiLo? (101-winProb) : winProb;
-        xhr.send(
-            'hash'          +   '=' +   encodeURIComponent(hash)            +'&'+
-            'wager'         +   '=' +   encodeURIComponent(wager)           +'&'+
-            'client_seed'   +   '=' +   encodeURIComponent(seed)            +'&'+
-            'direction'     +   '=' +   encodeURIComponent(direction)       +'&'+
-            'number'        +   '=' +   encodeURIComponent(String(number))
+        var cond = hiLo ? '>' : '<';
+        var number = hiLo? (100-winProb) : winProb+1;
+
+        var body = {
+            hash: hash,
+            wager: wager,
+            client_seed: seed,
+            cond: cond,
+            number: number,
+            access_token: accessToken
             //Jackpot is 1btc more than your bet by default on Vault API
-        );
+        };
+
+        body = JSON.stringify(body);
+
+        xhr.send(body);
 
          function handleStateChange() {
             if (xhr.readyState === 4) { //If the operation is complete

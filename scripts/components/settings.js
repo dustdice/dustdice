@@ -1,6 +1,6 @@
 define([
     'lib/react',
-    'lib/Clib',
+    'lib/clib',
     'game-logic/engine',
     'stores/game-settings'
 ],function(
