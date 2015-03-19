@@ -2,23 +2,15 @@
   "name": "DustDice",
   "version": "1.0.0",
   "description": "Dice Site",
-
   "scripts": {
     "start": "node --harmony server"
   },
-
   "engines": {
-    "node": ">= 0.6.0",
-    "npm": ">= 1.0.0"
+    "node": "0.12.x"
   },
-
   "dependencies": {
     "express": "4.3.1"
   },
-
-  "devDependencies": {},
-  "bundleDependencies": [],
-
   "private": true,
   "main": "server.js"
 }
