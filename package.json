@@ -1,15 +1,19 @@
 {
   "name": "DustDice",
   "version": "1.0.0",
-  "description": "Dice Site",
+  "description": "DustDice Site",
   "scripts": {
-    "start": "node --harmony server"
+    "start": "node --harmony src/server.js",
+    "start-dev": "nodemon --harmony src/server.js"
   },
   "engines": {
     "node": "0.12.x"
   },
   "dependencies": {
-    "express": "4.3.1"
+    "koa": "^0.18.1",
+    "koa-router": "^4.2.0",
+    "koa-static": "^1.4.9",
+    "koa-swig": "^1.3.0"
   },
   "private": true,
   "main": "server.js"

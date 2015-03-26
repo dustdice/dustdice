@@ -1,0 +1,520 @@
+html, body {
+    height:100%;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    background-color: #2C3E50;
+    color: #E0E0E3;
+    font-size: 18px;
+}
+
+#game-container {
+    width: 100%;
+    height: 100%;
+}
+
+#game-container>div {
+    width: 100%;
+    height: 100%;
+}
+
+/* ==========================================================================
+   Fake Icons due they are not in Font Awesome
+   ========================================================================== */
+
+.icon-percent::before {
+    content: '%';
+    font-weight: bold;
+}
+
+
+/* ==========================================================================
+   General shit
+   ========================================================================== */
+.v-space-top-1{
+    margin-top: 1em;
+}
+.v-space-btm-2 {
+    margin-bottom: 2em;
+}
+
+.no-margin {
+    margin: 0 !important;
+}
+
+.no-padding {
+    padding: 0 !important;
+}
+
+.left {
+    float: left !important;
+}
+
+.right {
+    float: right !important;
+    text-align: right;
+}
+
+.clear {
+    clear: both;
+}
+
+
+/* ==========================================================================
+   Fatal Error
+   ========================================================================== */
+#fatal-error-container {
+    position: absolute;
+    top: calc(40% - 10em);
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+#fatal-error-container img {
+    display: inline;
+    width: 20em;
+    height: 20em;
+}
+
+/* ==========================================================================
+   Loading
+   ========================================================================== */
+#loading-container img{
+    position: absolute;
+    top: calc(50% - 64px);
+    left: calc(50% - 64px);
+}
+
+/* ==========================================================================
+   Top bar
+   ========================================================================== */
+
+#top-bar-box{
+    position: relative;
+    text-align: right;
+}
+
+#top-bar-balance {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0 0.3em 0.3em 0.3em;
+    border-radius: 4px;
+}
+
+#top-bar-logo {
+    position: absolute;
+    top: 0;
+    left: 45%;
+}
+
+#top-bar-logo > img {
+    width: 1em;
+}
+
+#top-bar-logo > * {
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+h1 {
+    font-size: 1em;
+    margin: 0;
+}
+
+.top-bar-menu-btn {
+    background-color: rgba(189, 195, 199, 0.5);
+    opacity: 0.5;
+    padding: 0.6em 0.9em;
+    border: none;
+    color: inherit;
+}
+
+#expand-button {
+    margin-right: .1em;
+}
+
+.top-bar-state-name {
+    font-size: .4em;
+    line-height: .5em;
+    float: right;
+}
+
+
+/* ==========================================================================
+   Graph
+   ========================================================================== */
+
+#graph-container {
+    width: 100%;
+    height: 100%;
+}
+
+#graph-box {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+
+/* ==========================================================================
+    Bet Bar (bottom) and Bet Buttons (fixed)
+    ========================================================================== */
+
+#controls-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-bottom: -0.3em;
+    padding-top: 0.3em;
+}
+
+#controls-container-box {
+    height: 100%;
+    width: 100%;
+}
+
+.ctl-button {
+    font-size: inherit;
+    position: fixed;
+    border-radius: 10px;
+    opacity: 0.5;
+    background-color: rgba(189, 195, 199, 0.5);
+    border: none;
+    color: inherit;
+}
+
+#bet-hi-button {
+    right: 10%;
+    bottom: 20%;
+}
+
+#bet-lo-button {
+    left: 10%;
+    bottom: 20%;
+}
+
+#bet-chase-bet-button {
+    right: 10%;
+    top: 20%;
+}
+
+#bet-divide-bet-button {
+    left: 10%;
+    top: 20%;
+}
+
+#bet-hi-button i, #bet-chase-bet-button i {
+    margin-left: 0.5em;
+}
+
+#bet-lo-button i, #bet-divide-bet-button i {
+    margin-right: 0.5em;
+}
+
+#bet-hi-button i, #bet-lo-button i, #bet-divide-bet-button i, #bet-chase-bet-button i {
+    font-size: 1.5em;
+    vertical-align: middle;
+}
+
+#bet-hi-button span, #bet-lo-button span, #bet-divide-bet-button span, #bet-chase-bet-button span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#bet-hi-button.cant-bet, #bet-lo-button.cant-bet {
+    background-color: red;
+    color: #ffffff;
+}
+
+#bet-hi-button[disabled], #bet-lo-button[disabled] {
+    opacity: 0.3;
+}
+
+.btn[disabled] {
+    color: rgba(255, 255, 255, .2);
+    cursor: not-allowed;
+    filter: alpha(opacity=50);
+    opacity: .2;
+}
+
+.ctl-state-name {
+    font-size: .4em;
+    line-height: .5em;
+}
+
+#ctl-bet-box, #ctl-payout-box, #ctl-win-prob-box, #ctl-jackpot-box {
+    float: left;
+    width: 25%;
+    cursor: pointer;
+}
+
+.ctl-state-amount {
+    float: left;
+}
+
+
+/* ==========================================================================
+    Game Settings (modal)
+    ========================================================================== */
+
+.modal {
+    overflow: scroll;
+}
+
+.modal label {
+    line-height: 1;
+}
+
+.modal-header {
+    padding: 0.5em;
+}
+
+.modal-header span {
+    font-size: 1.4em;
+}
+
+.modal-title {
+    color: black;
+    font-size: 1.3em;
+}
+
+.modal-content {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.modal-body {
+    padding: 0.5em;
+    color: black;
+    font-size: 1em;
+}
+
+#set-game-hash, #set-game-hash[readonly] {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: inherit;
+}
+
+.modal-body p {
+    color: #000000;
+}
+
+/* Win prob range */
+input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    margin: 5.5px 0;
+}
+input[type=range]:focus {
+    outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 17px;
+    cursor: pointer;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 1.3px;
+    border: 2px solid #bdc3c7;
+}
+input[type=range]::-webkit-slider-thumb {
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    border: 1px solid #949ba0;
+    height: 28px;
+    width: 28px;
+    border-radius: 3px;
+    background: #ffffff;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -7.5px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+    background: rgba(255, 255, 255, 0.9);
+}
+input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 17px;
+    cursor: pointer;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 1.3px;
+    border: 2px solid #bdc3c7;
+}
+input[type=range]::-moz-range-thumb {
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    border: 1px solid #949ba0;
+    height: 28px;
+    width: 28px;
+    border-radius: 3px;
+    background: #ffffff;
+    cursor: pointer;
+}
+input[type=range]::-ms-track {
+    width: 100%;
+    height: 17px;
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+    background: rgba(242, 242, 242, 0.9);
+    border: 2px solid #bdc3c7;
+    border-radius: 2.6px;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+}
+input[type=range]::-ms-fill-upper {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #bdc3c7;
+    border-radius: 2.6px;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+}
+input[type=range]::-ms-thumb {
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    border: 1px solid #949ba0;
+    height: 28px;
+    width: 28px;
+    border-radius: 3px;
+    background: #ffffff;
+    cursor: pointer;
+    height: 17px;
+}
+input[type=range]:focus::-ms-fill-lower {
+    background: rgba(255, 255, 255, 0.9);
+}
+input[type=range]:focus::-ms-fill-upper {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+
+/* ==========================================================================
+    Controls (The big buttons)
+    ========================================================================== */
+/*
+.btn-controls{
+
+}
+@media only screen and (max-width : 992px) {
+    .btn-controls {
+        padding: 1em 2em;
+    }
+}
+
+.bet-info .lbl {
+    margin-top: 5px;
+    color: #908f8f;
+    font-size: 12px;
+}
+
+.bet-info .txt {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.bet-info .lbl {
+    margin-top: 5px;
+    color: #908f8f;
+    font-size: 12px;
+}
+
+.bet-info .txt {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.btn .val {
+    font-size: 1em;
+}
+@media only screen and (max-width : 992px) {
+    .btn .val {
+        font-size: 4em;
+    }
+}
+
+.btn-default .mark {
+    background-color: #e4202b;
+}
+
+.btn .mark {
+    font-size: 1em;
+    padding: 0px 5px;
+    border: 1px solid #fff;
+    color: white;
+}
+@media only screen and (max-width : 992px) {
+    .btn .mark {
+        font-size: 4em;
+    }
+}
+
+.btn .dif {
+    font-size: 10px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+}
+
+.btn-primary {
+    color: #fff;
+    border: none;
+    background-color: #131313;
+    border: 1px solid #131313;
+}
+
+.btn-primary .mark {
+    background-color: #131313;
+}
+
+.btn .mark {
+    font-size: 15px;
+    padding: 0px 5px;
+    border: 1px solid #fff;
+    color: white;
+}
+*/
+
+/* ==========================================================================
+    Game settings
+    ========================================================================== */
+/*
+.set-h-divider {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    border-bottom: 1px solid grey;
+}
+*/
+
+/* ==========================================================================
+    Media queries
+    ========================================================================== */
+
+/* Custom, iPhone Retina */
+@media only screen and (min-width : 320px) {
+
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (min-width : 480px) {
+
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
+
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+
+}

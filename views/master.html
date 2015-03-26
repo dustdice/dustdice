@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>DustDice Casino</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/img/favicon-black.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/font-awesome.css">
+    <link rel="stylesheet" href="/css/landing.css">
+</head>
+<body>
+
+<div id="landing-background">
+    <div id="landing-container" class="container">
+        <div class="header">
+            <nav>
+                <ul class="nav nav-pills pull-right">
+                    <li role="presentation" {% if landing %} class="active" {% endif %}><a href="/">Home</a></li>
+                    <li role="presentation" {% if faq %} class="active" {% endif %}><a href="/faq">FAQ</a></li>
+                    <li role="presentation"><a href="http://vault.moneypot.com/">MoneyPot</a></li>
+                </ul>
+            </nav>
+            <h3 class="text-muted">DustDice</h3>
+        </div>
+
+        {% block content %}
+
+        <footer class="footer">
+            <p>&copy; DustDice 2015</p>
+        </footer>
+    </div>
+</div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/scripts/lib/jquery.js"></script>
+
+</body>
+</html>
