@@ -88,8 +88,8 @@ define([
                 if(err)
                     return self.setErrorState(err.message);
                 self.nextGameHash = hash;
-                self.trigger('get-user-data');
-                console.log('get-user-data');
+
+                self.gameState = 'STANDING_BY';
             });
         });
 
