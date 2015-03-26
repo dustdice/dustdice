@@ -5,6 +5,24 @@ define(function() {
 
     var WebApi = function() {};
 
+    WebApi.prototype.requestAccountData = function(accessToken, callback) {
+
+        new Requester({
+            method: 'GET',
+            url: URL+'/v1/tokens/'+accessToken+'?access_token='+accessToken,
+            callback: callback
+        });
+    };
+
+    WebApi.prototype.requestNextGameHash = function(accessToken, callback) {
+
+        new Requester({
+            method: 'GET',
+            url: URL+'/v1/bet/generate-hash'+'?access_token='+accessToken,
+            callback: callback
+        });
+    };
+
     WebApi.prototype.bet = function(wager, winProb, hash, seed, hiLo, accessToken, callback) {
 
         var cond = hiLo ? '>' : '<';
@@ -28,24 +46,6 @@ define(function() {
             callback: callback
         });
 
-    };
-
-    WebApi.prototype.requestNextGameHash = function(accessToken, callback) {
-
-        new Requester({
-            method: 'GET',
-            url: URL+'/v1/bet/generate-hash'+'?access_token='+accessToken,
-            callback: callback
-        });
-    };
-
-    WebApi.prototype.requestAccountData = function(accessToken, callback) {
-
-        new Requester({
-            method: 'GET',
-            url: URL+'/v1/tokens/'+accessToken+'?access_token='+accessToken,
-            callback: callback
-        });
     };
 
 
