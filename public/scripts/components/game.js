@@ -52,7 +52,6 @@ function(
         },
 
         _getUserData: function() {
-            console.log('get-user-data event received');
             this.setState({ engine: Engine }); //Just to re render
         },
 
@@ -69,7 +68,6 @@ function(
         },
 
         _fatalError: function() {
-            console.log('Receive fatal error');
             this.setState({ engine: Engine });
         },
 

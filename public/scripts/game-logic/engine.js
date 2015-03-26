@@ -87,8 +87,10 @@ define([
             WebApi.requestNextGameHash(self.accessToken, function(err, hash) {
                 if(err)
                     return self.setErrorState(err.message);
-                self.nextGameHash = hash;
 
+                self.trigger('get-user-data');
+
+                self.nextGameHash = hash;
                 self.gameState = 'STANDING_BY';
             });
         });
