@@ -85,7 +85,7 @@ function(
 
             if(!Engine.balance)
                 return D.div({ id: 'loading-container'},
-                    D.img({ src: '/img/loading-7.gif' })
+                    D.img({ src: '/img/loading.gif' })
                 );
 
             var sets = this.state.showSettings ? Settings({
