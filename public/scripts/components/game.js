@@ -48,9 +48,11 @@ function(
             KeyMaster.key.unbind('c', this._clearHistory);
             KeyMaster.key.unbind('s', this._toggleSettings);
             Engine.off('get-user-data', this._getUserData);
+            Engine.off('fatal-error', this._fatalError);
         },
 
         _getUserData: function() {
+            console.log('get-user-data event received');
             this.setState({ engine: Engine }); //Just to re render
         },
 

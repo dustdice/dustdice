@@ -89,6 +89,7 @@ define([
                     return self.setErrorState(err.message);
                 self.nextGameHash = hash;
                 self.trigger('get-user-data');
+                console.log('get-user-data');
             });
         });
 
