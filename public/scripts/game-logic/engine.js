@@ -89,12 +89,11 @@ define([
                     return self.setErrorState(err.message);
 
                 console.log('User Data: ', data, hash);
-                self.trigger('get-user-data');
 
                 self.nextGameHash = hash;
                 self.gameState = 'STANDING_BY';
 
-                console.log('Engine: ', self);
+                self.trigger('get-user-data');
             });
         });
 
