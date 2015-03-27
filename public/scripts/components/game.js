@@ -76,7 +76,7 @@ function(
 
         render: function() {
 
-            Clib.log('Game component render', Engine, Engine.gameState);
+            console.log('Game component render', Engine.gameState);
 
             //If the engine does not have the user's data
             if(Engine.error)
