@@ -86,6 +86,7 @@ function(
                     D.a({ href: PRODUCTION? 'https://dustdice.com' : 'http://localhost:3001' }, 'Go to DustDice.com')
                 );
 
+            console.log('Is game offline: ', Engine.gameState);
             if(Engine.gameState === 'OFFLINE')
                 return D.div({ id: 'loading-container'},
                     D.img({ src: '/img/loading.gif' })
