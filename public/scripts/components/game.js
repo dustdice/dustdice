@@ -1,6 +1,7 @@
 define([
     'lib/react',
     'lib/keymaster', //TODO: This is window,
+    'lib/clib',
     'game-logic/engine',
     'components/top-bar',
     'components/graph',
@@ -11,6 +12,7 @@ define([
 function(
     React,
     KeyMaster,
+    Clib,
     Engine,
     TopBarClass,
     GraphClass,
@@ -74,7 +76,7 @@ function(
 
         render: function() {
 
-            console.log('Game component render', Engine, Engine.gameState);
+            Clib.log('Game component render', Engine, Engine.gameState);
 
             //If the engine does not have the user's data
             if(Engine.error)
@@ -86,7 +88,6 @@ function(
                     D.a({ href: PRODUCTION? 'https://dustdice.com' : 'http://localhost:3001' }, 'Go to DustDice.com')
                 );
 
-            console.log('Is game offline: ', Engine.gameState);
             if(Engine.gameState === 'OFFLINE')
                 return D.div({ id: 'loading-container'},
                     D.img({ src: '/img/loading.gif' })

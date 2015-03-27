@@ -67,8 +67,13 @@ define([
 
             return true;
 
+        },
+
+        log: function() {
+            for(var i=0, length = arguments.length; i<length; i++) {
+                arguments[i] = JSON.parse(JSON.stringify(arguments[i]));
+            }
+            console.log.apply(console, arguments);
         }
-
-
     }
 });
