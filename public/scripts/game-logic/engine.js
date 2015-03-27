@@ -88,6 +88,7 @@ define([
                 if(err)
                     return self.setErrorState(err.message);
 
+                console.log('User Data: ', data, hash);
                 self.trigger('get-user-data');
 
                 self.nextGameHash = hash;

@@ -52,6 +52,7 @@ function(
         },
 
         _getUserData: function() {
+            console.log('Got get-user-data event');
             this.setState({ engine: Engine }); //Just to re render
         },
 
