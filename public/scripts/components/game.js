@@ -74,7 +74,7 @@ function(
 
         render: function() {
 
-            console.log('Game component render', Engine.gameState);
+            console.log('Game component render', Engine);
 
             //If the engine does not have the user's data
             if(Engine.error)

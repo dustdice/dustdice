@@ -93,10 +93,12 @@ define([
 
                 self.nextGameHash = hash;
                 self.gameState = 'STANDING_BY';
+
+                console.log('Engine: ', self);
             });
         });
 
-    };
+    }
 
     /** The first error on the engine is set and trigger the error, next errors are obviated **/
     GameEngine.prototype.setErrorState = function(errorMsg) {
