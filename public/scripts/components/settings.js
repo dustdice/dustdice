@@ -185,7 +185,7 @@ define([
                                 D.div({ className: 'input-group clear' },
                                     D.input({ type: 'text', className: 'form-control', ref: 'clientSeed', id: 'set-client-seed', value: this.state.clientSeedText, onChange: this._setClientSeed }),
                                     D.span({ className: 'input-group-btn'},
-                                        D.button({ className: 'btn btn-default', type: 'button', onClick: this._genClientSeed }, 'Gen')
+                                        D.button({ className: 'btn btn-default', type: 'button', onClick: this._genClientSeed }, 'Random')
                                     )
                                 )
                             ),

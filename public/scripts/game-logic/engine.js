@@ -205,11 +205,24 @@ define([
         this.trigger('history-clear');
     };
 
-    GameEngine.prototype.genClientSeed = function() {
-        this.clientSeed = Math.floor(Math.random() * Math.pow(2,32));  //TODO: Use window.crypto or something like that
-        this.trigger('new-client-seed');
-    };
 
+    GameEngine.prototype.genClientSeed = function() {
+      function r32() {
+        if (window && window.crypto && window.crypto.getRandomValues && Uint32Array) {
+          var o = new Uint32Array(1);
+          window.crypto.getRandomValues(o);
+          return o[0];
+        } else {
+          console.warn('Falling back to pseudo-random client seed');
+          return Math.floor(Math.random() * Math.pow(2,32));
+        }
+      }
+
+      this.clientSeed = r32();
+      this.trigger('new-client-seed');
+    };
 
     return new GameEngine();
 });
+
+
