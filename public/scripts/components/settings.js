@@ -123,7 +123,7 @@ define([
         },
 
         _genClientSeed: function() {
-            Engine.genClientSeed();
+            Engine.setClientSeed(Clib.randomUint32());
         },
 
         _toggleShowButtons: function() {
