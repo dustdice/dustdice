@@ -53,10 +53,6 @@ define([
             return Math.round(number/100)*100;
         },
 
-        roundSatToTwo: function(satoshis) {
-            return this.roundTo100(satoshis);
-        },
-
         browserSupport: function() {
 
             if(typeof Storage === 'undefined')

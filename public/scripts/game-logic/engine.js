@@ -127,7 +127,7 @@ define([
         /** Save the current state of the engine, do not send it by reference to other modules
             This object will be modified and saved in the graph history */
         var currentBet = {
-            wager: Clib.roundSatToTwo(self.wager), //Round the wager by two decimal places since we only bet bits
+            wager: Clib.roundTo100(self.wager), // Round the wager to the nearest bits
             winProb: self.winProb,
             hiLo: hiLo,
             balance: self.balance,
@@ -136,7 +136,13 @@ define([
             accessToken: self.accessToken
         };
 
-        WebApi.bet(currentBet.wager, currentBet.winProb, currentBet.hash, currentBet.seed, currentBet.hiLo, currentBet.accessToken, function(err, game){
+        WebApi.bet(Clib.roundTo100(currentBet.wager),
+            currentBet.winProb,
+            currentBet.hash,
+            currentBet.seed,
+            currentBet.hiLo,
+            currentBet.accessToken,
+          function(err, game){
             if(err)
                 return self.setErrorState(err.message);
 
@@ -169,8 +175,6 @@ define([
             self.trigger('bet-end', game);
         });
 
-        self.nextGameHash = null; //The hash was used so we kill it
-
         //Send a copy of the current values of the bet, do not edit this object in components!
         var betSent = {
             wager: self.wager,
@@ -194,7 +198,7 @@ define([
     };
 
     GameEngine.prototype.setWinProb = function(newWinProb) {
-        console.assert(Clib.isInteger(newWinProb) && newWinProb>=1 && newWinProb <=98); //TODO: Is this up to date?
+        console.assert(Clib.isInteger(newWinProb) && newWinProb>=1 && newWinProb <= 97);
         this.winProb = newWinProb;
         this.trigger('new-wager-data');
     };
