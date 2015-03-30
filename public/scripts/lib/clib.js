@@ -59,11 +59,7 @@ define([
             if(typeof Storage === 'undefined')
                 return false;
 
-            if(typeof XMLHttpRequest === 'undefined')
-                return false;
-
-            return true;
-
+            return !!XMLHttpRequest;
         },
 
         log: function() {

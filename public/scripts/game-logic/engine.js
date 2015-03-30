@@ -76,7 +76,7 @@ define([
         self.jackpot = 1e6; //1BTC = 10,000 bits TODO: Add the jackpot to the settings?
         self.nextGameHash = null; //TODO: Show that there is no gameHash on settings
 
-        self.clientSeed = 4294967295; //Max 2^32b (2^32-1) TODO: Generate this
+        self.clientSeed = Clib.randomUint32();
 
         WebApi.requestAccountData(self.accessToken, function(err, data) {
             if(err)
