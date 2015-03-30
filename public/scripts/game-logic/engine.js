@@ -72,8 +72,8 @@ define([
 
         /* Temporal Constants */
         self.balance = null;
-        self.maxBet  = 10000e8; //TODO: Remove Max Bet, it will be added later
-        self.jackpot = 1e8; //1BTC = 1,000,000bits = 100,000,000 Satoshis //TODO: Add the jackpot to the settings?
+        self.maxBet  = 10000e8; //TODO: Remove max bet, it should be max profit
+        self.jackpot = 1e6; //1BTC = 10,000 bits TODO: Add the jackpot to the settings?
         self.nextGameHash = null; //TODO: Show that there is no gameHash on settings
 
         self.clientSeed = 4294967295; //Max 2^32b (2^32-1) TODO: Generate this
