@@ -33,8 +33,8 @@ define(function() {
             wager: wager,
             client_seed: seed,
             cond: cond,
-            number: number
-            //Jackpot is 1btc more than your bet by default on Vault API
+            number: number,
+            jackpot: 10000 //TODO: Add settings for jackpot
         };
 
         body = JSON.stringify(body);
@@ -79,6 +79,18 @@ define(function() {
                     return self.options.callback(new Error('No response from the server'));
                 }
 
+                /** List of known response failure codes **/
+                if(status === 403) {
+                    switch(response) {
+                        case "BANKROLL_TOO_SMALL":
+                            self.options.callback(response);
+                            break;
+                        default:
+                            //TODO: ...
+                            break;
+                    }
+                    return;
+                }
 
                 if (status === 0 || (status >= 400 && status < 600)) {
                     console.error('[XHR ERROR]: ', self.xhr);

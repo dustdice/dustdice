@@ -88,8 +88,6 @@ define([
                 if(err)
                     return self.setErrorState(err.message);
 
-                console.log('User Data: ', data, hash);
-
                 self.nextGameHash = hash;
                 self.gameState = 'STANDING_BY';
 
@@ -112,6 +110,7 @@ define([
         }
         self.trigger('fatal-error');
     };
+
 
     /** Engine API **/
 
@@ -136,15 +135,23 @@ define([
             accessToken: self.accessToken
         };
 
-        WebApi.bet(Clib.roundTo100(currentBet.wager),
+        WebApi.bet(
+            Clib.roundTo100(currentBet.wager),
             currentBet.winProb,
             currentBet.hash,
             currentBet.seed,
             currentBet.hiLo,
             currentBet.accessToken,
           function(err, game){
-            if(err)
-                return self.setErrorState(err.message);
+              if(err) {
+                  if (typeof err === 'string') {
+                      if (err === "BANKROLL_TOO_SMALL") {
+                          self.gameState = 'STANDING_BY';
+                          self.trigger('user-alert', 'The bet was too high');
+                          return;
+                      }
+                  }
+              }
 
             // TODO: verify game here...
 

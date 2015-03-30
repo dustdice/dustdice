@@ -44,6 +44,7 @@ function(
             KeyMaster.key('s', this._toggleSettings);
             Engine.on('get-user-data', this._getUserData);
             Engine.on('fatal-error', this._fatalError);
+            Engine.on('user-alert', this._userAlert);
         },
 
         componentWillUnmount: function() {
@@ -51,6 +52,11 @@ function(
             KeyMaster.key.unbind('s', this._toggleSettings);
             Engine.off('get-user-data', this._getUserData);
             Engine.off('fatal-error', this._fatalError);
+            Engine.off('user-alert', this._userAlert);
+        },
+
+        _userAlert: function(error) {
+            alert(error);
         },
 
         _getUserData: function() {
