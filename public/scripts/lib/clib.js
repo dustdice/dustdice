@@ -28,7 +28,8 @@ define([
          * with no house edge:
          **/
         jackWinProbSatoshisRatio: function(wager, jackpot) {
-            return (wager/100)/jackpot;
+          wager = this.roundTo100(wager); // Must bet an a whole amount of satoshis
+          return wager/100/(wager + jackpot);
         },
 
         formatSatoshis: function (n, decimals) {

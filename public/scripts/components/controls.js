@@ -36,20 +36,23 @@ define([
 
     function jackPotProbText() {
 
-        //Fix the bet calculation to the rounded version of the bet
-        var ratio = Clib.jackWinProbSatoshisRatio(Clib.roundTo100(Engine.wager), Engine.jackpot);
+        var ratio = Clib.jackWinProbSatoshisRatio(Engine.wager, Engine.jackpot);
 
         if(ratio <= 1) {
-            var multi = '';
-            var inHowMany = 1/ratio;
-            if(inHowMany > 1000000) {
-                inHowMany = inHowMany/1000000;
-                multi = 'M';
-            } else if(inHowMany > 1000) {
-                inHowMany = inHowMany/1000;
-                multi = 'K';
-            }
-            return '1 in ' + Math.round(inHowMany) + multi;
+          var multi = '';
+          var inHowMany = 1/ratio;
+
+          if (inHowMany > 1e9) {
+            inHowMany = inHowMany/1e9;
+            multi = 'B';
+          } else if (inHowMany > 1e6) {
+            inHowMany = inHowMany/1e6;
+            multi = 'M';
+          } else if (inHowMany > 1e3) {
+            inHowMany = inHowMany/1e3;
+            multi = 'K';
+          }
+          return '1 in ' + Math.round(inHowMany) + multi;
         } else {
             return '1 in 1';
         }
