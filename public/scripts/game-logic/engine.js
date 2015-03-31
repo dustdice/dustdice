@@ -228,6 +228,18 @@ define([
         this.trigger('history-clear');
     };
 
+    GameEngine.prototype.refreshBalance = function() {
+        var self = this;
+
+        WebApi.requestAccountData(this.accessToken, function(err, data) {
+            if (err)
+                return self.setErrorState(err.message);
+
+            self.balance = data.balance;
+            self.trigger('refresh-balance');
+        });
+    };
+
 
     return new GameEngine();
 });

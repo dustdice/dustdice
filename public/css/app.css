@@ -95,12 +95,15 @@ html, body {
 }
 
 #top-bar-balance {
-    position: absolute;
-    top: 0;
-    left: 0;
+    float: left;
+    cursor: pointer;
     background-color: rgba(255, 255, 255, 0.1);
     padding: 0 0.3em 0.3em 0.3em;
     border-radius: 4px;
+}
+
+#top-bar-refresh-balance {
+    float: left;
 }
 
 #top-bar-logo {
@@ -254,6 +257,10 @@ h1 {
 
 .ctl-state-amount {
     float: left;
+}
+
+.ctl-state-button {
+    margin-left: .5em;
 }
 
 

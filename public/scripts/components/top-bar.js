@@ -59,22 +59,30 @@ define([
             ScreenFull.toggle();
         },
 
+        _refreshBalance: function() {
+            Engine.refreshBalance();
+        },
+
         render: function() {
 
             return D.div({ id: 'top-bar-box' },
-                D.div({ id: 'top-bar-balance'},
+                D.div({ id: 'top-bar-balance', onClick: this._refreshBalance },
                     D.div({ className: 'top-bar-state'},
                         D.div({ className: 'ctl-state-amount' },
                             D.span(null, Clib.formatSatoshis(this.state.engine.balance))
                         ),
-                        D.span({ className: 'ctrl-state-lbl' },
+                        D.span({ className: 'ctl-state-lbl' },
                             D.i({ className: 'fa fa-btc' }), (this.state.engine.balance === 100)? 'it': 'its'
+                        ),
+                        D.span({ className: 'ctl-state-button' },
+                            D.i({ className: 'fa fa-refresh'})
                         )
                     ),
                     D.div({ className: 'top-bar-state-name' },
                         D.span(null, 'BALANCE')
                     )
                 ),
+
                 D.div({ id: 'top-bar-logo' },
                     D.img({ src: 'img/powder2.png' }),
                     D.h1(null, 'Dust Dice')
