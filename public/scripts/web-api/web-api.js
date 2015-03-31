@@ -2,15 +2,15 @@ define(function() {
 
     var URL = PRODUCTION? 'https://vault.moneypot.com':'http://localhost:3000';
 
-
     var WebApi = function() {};
+
 
     WebApi.prototype.requestAccountData = function(accessToken, callback) {
 
         new Requester({
             method: 'GET',
             url: URL+'/v1/tokens/'+accessToken+'?access_token='+accessToken,
-            callback: callback
+            callback: responseErrorHandler(callback)
         });
     };
 
@@ -19,7 +19,7 @@ define(function() {
         new Requester({
             method: 'GET',
             url: URL+'/v1/bet/generate-hash'+'?access_token='+accessToken,
-            callback: callback
+            callback: responseErrorHandler(callback)
         });
     };
 
@@ -43,10 +43,29 @@ define(function() {
             method: 'POST',
             url: URL+'/v1/bet/jackpot-dice'+'?access_token='+accessToken,
             body: body,
-            callback: callback
+            callback: responseErrorHandler(callback)
         });
 
     };
+
+    //Create errors and append the response body to them to catch them later
+    function responseErrorHandler(callback) {
+
+        return function(err, response) {
+
+            //Fatal Error in the request
+            if(err)
+                callback(err);
+
+            //Known Error with a response from the server
+            if (response.statusCode >= 400 && response.statusCode < 600)
+                return callback(new Error(response.body));
+
+            //Success
+            callback(null, response.body);
+        }
+
+    }
 
 
     /** Requester middleware **/
@@ -65,11 +84,12 @@ define(function() {
             if (self.xhr.readyState === 4) { //If the operation is complete
 
                 var status = self.xhr.status; //200 OK, 400, ...
-                var response = null;
+                var response = {};
+                response.statusCode = self.xhr.status;
 
                 if(self.xhr.response){
                     try {
-                        response = JSON.parse(self.xhr.response)
+                        response.body = JSON.parse(self.xhr.response)
                     }catch(e) {
                         console.error('[XHR ERROR]: ', self.xhr);
                         return self.options.callback(new Error('Wrong response from the server'));
@@ -79,22 +99,9 @@ define(function() {
                     return self.options.callback(new Error('No response from the server'));
                 }
 
-                /** List of known response failure codes **/
-                if(status === 403) {
-                    switch(response) {
-                        case "BANKROLL_TOO_SMALL":
-                            self.options.callback(response);
-                            break;
-                        default:
-                            //TODO: ...
-                            break;
-                    }
-                    return;
-                }
-
-                if (status === 0 || (status >= 400 && status < 600)) {
+                if(status === 0) {
                     console.error('[XHR ERROR]: ', self.xhr);
-                    return self.options.callback(new Error('Server side error'));
+                    return self.options.callback(new Error('Problem reaching the server'));
                 }
 
                 self.options.callback(null, response);

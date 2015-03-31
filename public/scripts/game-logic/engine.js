@@ -142,18 +142,26 @@ define([
             currentBet.seed,
             currentBet.hiLo,
             currentBet.accessToken,
-          function(err, game){
-              if(err) {
-                  if (typeof err === 'string') {
-                      if (err === "BANKROLL_TOO_SMALL") {
-                          self.gameState = 'STANDING_BY';
-                          self.trigger('user-alert', 'The bet was too high');
-                          return;
-                      }
-                  }
-              }
+            function(err, game){
+                if (err) {
+                    console.assert(err.message);
 
-            // TODO: verify game here...
+                    switch (err.message) {
+                        case 'BANKROLL_TOO_SMALL':
+                            self.gameState = 'STANDING_BY';
+                            self.trigger('user-alert', 'The bet was too high');
+                            return;
+                        case 'NOT_ENOUGH_BALANCE': //TODO: Reload the balance of the user
+                            self.gameState = 'STANDING_BY';
+                            self.trigger('user-alert', 'Not enough balance to bet, please refresh the page');
+                            return;
+                        //Unknown Error :(
+                        default:
+                            self.setErrorState(err.message);
+                            return;
+                    }
+
+                }
 
             self.clientSeed = Clib.randomUint32();
 
