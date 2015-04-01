@@ -56,7 +56,6 @@ define([
         if(!Clib.browserSupport())
             self.setErrorState('Your browser is old, please open dustDice in a decent browser ;)');
 
-
         //Store the hash and remove it from the url, it is dangerous to let it there, it could be stolen from a picture or something
         var hash = window.location.hash;
         window.location.hash = '';
@@ -85,23 +84,25 @@ define([
             localStorage.state = self.state;
         }
 
-
-        WebApi.requestAccountData(self.accessToken, function(err, data) {
-            if(err)
-                return self.setErrorState(err.message);
+        WebApi.requestInitialData(self.accessToken, function(err, data) {
+            if(err) {
+                switch (err.message) {
+                    case 'INVALID_ACCESS_TOKEN':
+                        self.setErrorState('INVALID ACCOUNT');
+                        return;
+                    default:
+                        self.setErrorState(err.message);
+                        return;
+                }
+            }
 
             self.balance = data.balance;
+            self.nextGameHash = data.hash;
+            self.gameState = 'STANDING_BY';
 
-            WebApi.requestNextGameHash(self.accessToken, function(err, hash) {
-                if(err)
-                    return self.setErrorState(err.message);
-
-                self.nextGameHash = hash;
-                self.gameState = 'STANDING_BY';
-
-                self.trigger('get-user-data');
-            });
+            self.trigger('get-user-data');
         });
+
 
     }
 

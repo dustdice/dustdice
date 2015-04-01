@@ -1,9 +1,36 @@
-define(function() {
+define([
+        'lib/clib'
+    ], function(
+        Clib
+    ) {
 
     var URL = PRODUCTION? 'https://vault.moneypot.com':'http://localhost:3000';
 
     var WebApi = function() {};
 
+    WebApi.prototype.requestInitialData = function(accessToken, callback) {
+        var self = this;
+
+        Clib.parallel([
+            function(callback) {
+                self.requestAccountData(accessToken, callback);
+            },
+            function(callback) {
+                self.requestNextGameHash(accessToken, callback);
+            }
+
+        ], function(err, result) {
+            if(err)
+                callback(err);
+
+            var data = {
+                balance: result[0].balance,
+                hash: result[1]
+            };
+
+            callback(null, data);
+        });
+    };
 
     WebApi.prototype.requestAccountData = function(accessToken, callback) {
 

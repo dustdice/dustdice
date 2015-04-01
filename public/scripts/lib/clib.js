@@ -1,6 +1,4 @@
-define([
-], function(
-) {
+define([], function () {
     return {
         isInteger: function (nVal) {
             return typeof nVal === "number" && isFinite(nVal) && nVal > -9007199254740992 && nVal < 9007199254740992 && Math.floor(nVal) === nVal;
@@ -10,16 +8,16 @@ define([
             return typeof nVal === "number" && isFinite(nVal) && nVal > -9007199254740992 && nVal < 9007199254740992;
         },
 
-        satToBit: function(satoshis) {
-            return satoshis/100;
+        satToBit: function (satoshis) {
+            return satoshis / 100;
         },
 
-        satToBitRounded: function(satoshis) {
+        satToBitRounded: function (satoshis) {
             return Math.round(this.satToBit(satoshis));
         },
 
-        bitToSat: function(bits) {
-            return bits*100;
+        bitToSat: function (bits) {
+            return bits * 100;
         },
 
         /**
@@ -27,13 +25,13 @@ define([
          * using 1% of your bet for the jackpot
          * with no house edge:
          **/
-        jackWinProbSatoshisRatio: function(wager, jackpot) {
-          wager = this.roundTo100(wager); // Must bet an a whole amount of satoshis
-          return wager/100/(wager + jackpot);
+        jackWinProbSatoshisRatio: function (wager, jackpot) {
+            wager = this.roundTo100(wager); // Must bet an a whole amount of satoshis
+            return wager / 100 / (wager + jackpot);
         },
 
         formatSatoshis: function (n, decimals) {
-            return this.formatDecimals(n/100, decimals);
+            return this.formatDecimals(n / 100, decimals);
         },
 
         formatDecimals: function (n, decimals) {
@@ -46,39 +44,57 @@ define([
             return n.toFixed(decimals).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
         },
 
-        bitsTextTerm: function(bits) {
-            return (bits >= 2)? 'its' : 'it';
+        bitsTextTerm: function (bits) {
+            return (bits >= 2) ? 'its' : 'it';
         },
 
-        roundTo100: function(number) {
-            return Math.round(number/100)*100;
+        roundTo100: function (number) {
+            return Math.round(number / 100) * 100;
         },
 
-        browserSupport: function() {
+        browserSupport: function () {
 
-            if(typeof Storage === 'undefined')
+            if (typeof Storage === 'undefined')
                 return false;
 
             return !!XMLHttpRequest;
         },
 
-        log: function() {
-            for(var i=0, length = arguments.length; i<length; i++) {
+        log: function () {
+            for (var i = 0, length = arguments.length; i < length; i++) {
                 arguments[i] = JSON.parse(JSON.stringify(arguments[i]));
             }
             console.log.apply(console, arguments);
         },
 
-        randomUint32: function() {
-          if (window && window.crypto && window.crypto.getRandomValues && Uint32Array) {
-            var o = new Uint32Array(1);
-            window.crypto.getRandomValues(o);
-            return o[0];
-          } else {
-            console.warn('Falling back to pseudo-random client seed');
-            return Math.floor(Math.random() * Math.pow(2, 32));
-          }
+        randomUint32: function () {
+            if (window && window.crypto && window.crypto.getRandomValues && Uint32Array) {
+                var o = new Uint32Array(1);
+                window.crypto.getRandomValues(o);
+                return o[0];
+            } else {
+                console.warn('Falling back to pseudo-random client seed');
+                return Math.floor(Math.random() * Math.pow(2, 32));
+            }
+        },
+
+        //Execute an array of functions and return an array with they results in the same order
+        parallel: function(funcs, complete) {
+            var completed = 0, length = funcs.length, results = [];
+
+            for (var i = 0; i < length; i++) {
+                funcs[i].call(this, (function(pos) {
+                    return function(err, result) {
+                        if(err)
+                            complete(err);
+                        results[pos] = result;
+                        if(++completed>=length)
+                            complete(null, results);
+                    }
+                })(i));
+            }
         }
 
-      }
+    }
+
 });
