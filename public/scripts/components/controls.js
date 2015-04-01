@@ -140,7 +140,7 @@ define([
         },
 
         _goToVaultDeposit: function() {
-            window.location.href = 'http://vault.moneypot.com'; //Will take you to Google.
+            Engine.goToVaultDeposit();
         },
 
         render: function() {
@@ -170,7 +170,7 @@ define([
                     },
                     (this.state.canBet)?
                         D.div(null, D.i({ className: 'fa fa-caret-square-o-left' }), D.span(null, ('1 to ' + Engine.winProb))) :
-                        ('Not enogh bits'));
+                        ('Not enough bits'));
 
                 chaseBetBtn = D.button({ id: 'bet-chase-bet-button', className: 'btn btn-default ctl-button', onClick: this._chaseBet },
                     D.span(null, 'x' + getBetMultiplier().toFixed(2)),

@@ -21,19 +21,41 @@ define([
 
         /** Constants **/
         self.winProb = 49;
+        self.HOUSE_EDGE = 2;
+
+        /** Initial State **/
+
+        self.gameState = 'OFFLINE'; //STANDING_BY || BETTING || OFFLINE
+
+        self.balance = null;
+
+        //Wager is a float but is rounded when betting and when showing it to the user, this allows to chase bet on small qty's to actually work, Use Math.round(), is as close as you can get.
+        self.wager = 1e2;
+
+        //Low jackpot because we are poor :p
+        self.jackpot = 10000e2;
+
+        //TODO: Remove max bet, it should be max profit
+        self.maxBet  = 10000e8;
 
         //The game had a fatal error and reload page is needed
         self.error = false;
 
-        if(!Clib.browserSupport())
-            self.setErrorState('Your browser is old, please open dustDice in a decent browser ;)');
+        //TODO: Show that there is no gameHash on settings?
+        self.nextGameHash = null;
+
+        self.clientSeed = Clib.randomUint32();
 
         self.accessToken = null;
         self.expiresIn = null;
         self.state = null; //TODO: Check that the stored state and the returned by the server are equals, generate uuid maybe
 
         self.gameHistory = []; // { wager: satoshis, payout: 2.03, win: boolean }
-        self.gameState = 'OFFLINE'; //STANDING_BY || BETTING || OFFLINE
+
+
+        if(!Clib.browserSupport())
+            self.setErrorState('Your browser is old, please open dustDice in a decent browser ;)');
+
 
         //Store the hash and remove it from the url, it is dangerous to let it there, it could be stolen from a picture or something
         var hash = window.location.hash;
@@ -56,27 +78,13 @@ define([
             self.expiresIn = hash[1].split('=')[1];
             self.state = hash[2].split('=')[1];
 
-            //TODO: validate the values
+            //TODO: validate the values?
 
             localStorage.accessToken = self.accessToken;
             localStorage.expiresIn = self.expiresIn;
             localStorage.state = self.state;
         }
 
-        //Wager is a float but is rounded when betting and when showing it to the user, this allows to chase bet on small qty's to actually work
-        //Use Math.round(), is as close as you can get.
-        self.wager = 1e2;
-
-        /* Constants */
-        self.HOUSE_EDGE = 2;
-
-        /* Temporal Constants */
-        self.balance = null;
-        self.maxBet  = 10000e8; //TODO: Remove max bet, it should be max profit
-        self.jackpot = 1e6; //1BTC = 10,000 bits TODO: Add the jackpot to the settings?
-        self.nextGameHash = null; //TODO: Show that there is no gameHash on settings
-
-        self.clientSeed = Clib.randomUint32();
 
         WebApi.requestAccountData(self.accessToken, function(err, data) {
             if(err)
@@ -132,9 +140,15 @@ define([
             balance: self.balance,
             hash: self.nextGameHash,
             seed: self.clientSeed,
-            accessToken: self.accessToken
+            accessToken: self.accessToken,
+            jackpot: self.jackpot
         };
 
+        /**
+         * DustDice bet API
+         *
+         * You can't win the jackpot and win the bet and the same time
+         */
         WebApi.bet(
             Clib.roundTo100(currentBet.wager),
             currentBet.winProb,
@@ -142,6 +156,7 @@ define([
             currentBet.seed,
             currentBet.hiLo,
             currentBet.accessToken,
+            currentBet.jackpot,
             function(err, game){
                 if (err) {
                     console.assert(err.message);
@@ -155,7 +170,7 @@ define([
                             self.gameState = 'STANDING_BY';
                             self.trigger('user-alert', 'Not enough balance to bet, please refresh the page');
                             return;
-                        //Unknown Error :(
+                        //TODO: Catch errors of the WEBAPI for better message display
                         default:
                             self.setErrorState(err.message);
                             return;
@@ -164,6 +179,13 @@ define([
                 }
 
             self.clientSeed = Clib.randomUint32();
+
+            //Do we won the jackpot? Could give us false positive if the bet is the same than the jackpot and we win that works for testing
+            if(game.profit == self.jackpot)//TODO: NEW API wonJackpot coming in vault
+                game.wonJackpot = true;
+            //Do we won the bet
+            else if(game.profit > 0)
+                    game.wonBet = true;
 
             //Set the new balance in the engine
             self.balance += game.profit;
@@ -205,11 +227,17 @@ define([
     /** Engine API **/
 
     GameEngine.prototype.setWager = function(newWager) {
-        //console.assert(Clib.isInteger(newWager/100));
-        //console.assert(newWager <= this.balance && newWager <= this.maxBet);
+        console.assert(Clib.isInteger(newWager) && newWager > 0);
+
         this.wager = newWager;
         this.trigger('new-wager-data')
+    };
 
+    GameEngine.prototype.setJackpot = function(jackpot) {
+        console.assert(Clib.isInteger(jackpot) && jackpot > 0);
+
+        this.jackpot = jackpot;
+        this.trigger('new-jackpot');
     };
 
     GameEngine.prototype.setWinProb = function(newWinProb) {
@@ -238,6 +266,10 @@ define([
             self.balance = data.balance;
             self.trigger('refresh-balance');
         });
+    };
+
+    GameEngine.prototype.goToVaultDeposit = function() {
+        window.location.href = 'https://vault.moneypot.com/me/receive';
     };
 
 

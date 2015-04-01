@@ -23,7 +23,7 @@ define(function() {
         });
     };
 
-    WebApi.prototype.bet = function(wager, winProb, hash, seed, hiLo, accessToken, callback) {
+    WebApi.prototype.bet = function(wager, winProb, hash, seed, hiLo, accessToken, jackpot, callback) {
 
         var cond = hiLo ? '>' : '<';
         var number = hiLo? (100-winProb) : winProb+1;
@@ -34,7 +34,7 @@ define(function() {
             client_seed: seed,
             cond: cond,
             number: number,
-            jackpot: 10000 //TODO: Add settings for jackpot
+            jackpot: jackpot
         };
 
         body = JSON.stringify(body);

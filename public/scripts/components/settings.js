@@ -21,13 +21,24 @@ define([
             message = 'Should be an integer';
         } else if(bet < 1) {
             validity = 'wrong';
-            message = 'Should be bigger than one';
+            message = 'Should be bigger than zero';
         } else if(bet > Clib.satToBit(Engine.balance)) {
             validity = 'warning';
             message = 'Not enough balance :o';
         }
 
         return [validity, message];
+    }
+
+    /** Validate the input text or number of the jackpot in bits **/
+    function validateJackpotBits(jackpot) {
+        jackpot = Number(jackpot);
+        if(!Clib.isInteger(jackpot))
+            return 'Should be an integer';
+        else if(jackpot < 1)
+            return 'Should be bigger than zero';
+
+        return null;
     }
 
     function validateClientSeed(seed) {
@@ -59,6 +70,8 @@ define([
                 wagerInputText: String(wagerBitsRounded),
                 wagerValidity: wagerValidation[0],
                 wagerValidityMessage: wagerValidation[1],
+                jackpotInputText: Clib.satToBit(String(Engine.jackpot)),
+                jackpotInvalid: false,
                 clientSeedText: String(Engine.clientSeed),
                 invalidClientSeed: false
             }
@@ -112,6 +125,14 @@ define([
             Engine.setWager(Engine.balance);
         },
 
+        _setJackpot: function(ev) {
+            var jackpotInvalid = validateJackpotBits(ev.target.value);
+            this.setState({ jackpotInputText: ev.target.value, jackpotInvalid: jackpotInvalid });
+
+            if(!jackpotInvalid)
+                Engine.setJackpot(Clib.bitToSat(parseInt(ev.target.value)));
+        },
+
         _setClientSeed: function(ev) {
             var seed = validateClientSeed(ev.target.value);
 
@@ -136,6 +157,11 @@ define([
                 'form-group': true,
                 'has-error': (this.state.wagerValidity === 'wrong'),
                 'has-warning': (this.state.wagerValidity === 'warning')
+            });
+
+            var jackPotDivClasses = cx({
+               'form-group': true,
+                'has-error': !!this.state.jackpotInvalid
             });
 
             return D.div({ className: 'modal fade in', style: { display: 'block' } },
@@ -166,6 +192,12 @@ define([
                                         D.button({ className: 'btn btn-default', type: 'button', onClick: this._setMaxWager }, 'Max')
                                     )
                                 )
+                            ),
+
+                            D.div({ className: jackPotDivClasses },
+                                D.label({ className: 'control-label pull-left', htmlFor: 'set-jackpot-amount' }, 'Jackpot'),
+                                D.label({ className: 'control-label pull-right', htmlFor: 'set-jackpot-amount' }, this.state.jackpotInvalid),
+                                D.input({ type: 'text', className: 'form-control', id: 'set-jackpot-amount', value: this.state.jackpotInputText, onChange: this._setJackpot })
                             ),
 
                             D.div({ className: 'form-group' },
