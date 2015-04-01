@@ -104,7 +104,7 @@ define([
         self.xhr = new XMLHttpRequest();
         self.xhr.onreadystatechange = handleStateChange;
         self.xhr.open(options.method, options.url);
-        self.xhr.setRequestHeader("Content-Type", "application/json");
+        self.xhr.setRequestHeader("Content-Type", "text/plain");
         self.xhr.send(options.body);
 
          function handleStateChange() {
