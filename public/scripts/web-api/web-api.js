@@ -20,6 +20,9 @@ define([
             },
             function(callback) {
                 self.requestNextGameHash(accessToken, callback);
+            },
+            function(callback) {
+                self.getVaultBankroll(accessToken, callback);
             }
 
         ], function(err, result) {
@@ -28,7 +31,8 @@ define([
 
             var data = {
                 balance: result[0].balance,
-                hash: result[1]
+                hash: result[1],
+                bankroll: result[2]
             };
 
             callback(null, data);
@@ -48,7 +52,16 @@ define([
 
         new Requester({
             method: 'GET',
-            url: URL+'/v1/bet/generate-hash'+'?access_token='+accessToken,
+            url: URL+'/v1/bet/generate-hash?access_token='+accessToken,
+            callback: responseErrorHandler(callback)
+        });
+    };
+
+    WebApi.prototype.getVaultBankroll = function(accessToken, callback) {
+
+        new Requester({
+            method: 'GET',
+            url: URL+'/v1/bankroll?access_token='+accessToken,
             callback: responseErrorHandler(callback)
         });
     };

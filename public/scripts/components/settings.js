@@ -12,6 +12,7 @@ define([
     var D = React.DOM;
     var cx = React.addons.classSet;
 
+
     /** Validate the input text or number of the wager in bits */
     function validateBetBits(bet) {
         var validity = 'valid', message = '';
@@ -22,6 +23,9 @@ define([
         } else if(bet < 1) {
             validity = 'wrong';
             message = 'Should be bigger than zero';
+        //} else if((Clib.bitToSat(bet) * (98/Engine.winProb) - Clib.bitToSat(bet)) > Engine.maxWin) {
+        //    validity = 'warning';
+        //    message = "The Achievable profit is bigger than the vault's max";
         } else if(bet > Clib.satToBit(Engine.balance)) {
             validity = 'warning';
             message = 'Not enough balance :o';
@@ -32,13 +36,20 @@ define([
 
     /** Validate the input text or number of the jackpot in bits **/
     function validateJackpotBits(jackpot) {
+        var validity = 'valid', message = '';
         jackpot = Number(jackpot);
-        if(!Clib.isInteger(jackpot))
-            return 'Should be an integer';
-        else if(jackpot < 1)
-            return 'Should be bigger than zero';
+        if(!Clib.isInteger(jackpot)) {
+            validity = 'wrong';
+            message = 'Should be an integer';
+        } else if(jackpot < 1) {
+            validity = 'wrong';
+            message = 'Should be bigger than zero';
+        } else if(Clib.bitToSat(jackpot) > Engine.maxWin) {
+            validity = 'warning';
+            message = "The jackpot is bigger than the vault's max";
+        }
 
-        return null;
+        return [validity, message];
     }
 
     function validateClientSeed(seed) {
@@ -66,14 +77,18 @@ define([
         getInitialState: function() {
             var wagerBitsRounded = Clib.satToBitRounded(Engine.wager);
             var wagerValidation = validateBetBits(wagerBitsRounded);
+            var jackpotBits = Clib.satToBit(Engine.jackpot);
+            var jackpotValidation = validateJackpotBits(jackpotBits);
             return {
                 wagerInputText: String(wagerBitsRounded),
                 wagerValidity: wagerValidation[0],
                 wagerValidityMessage: wagerValidation[1],
-                jackpotInputText: Clib.satToBit(String(Engine.jackpot)),
-                jackpotInvalid: false,
+                jackpotInputText: String(jackpotBits),
+                jackpotValidity: jackpotValidation[0],
+                jackpotValidityMessage: jackpotValidation[1],
                 clientSeedText: String(Engine.clientSeed),
-                invalidClientSeed: false
+                invalidClientSeed: false,
+                tab: 'BET' // BET || FAIR
             }
         },
 
@@ -126,11 +141,14 @@ define([
         },
 
         _setJackpot: function(ev) {
-            var jackpotInvalid = validateJackpotBits(ev.target.value);
-            this.setState({ jackpotInputText: ev.target.value, jackpotInvalid: jackpotInvalid });
+            var jackpotValidation = validateJackpotBits(ev.target.value);
 
-            if(!jackpotInvalid)
-                Engine.setJackpot(Clib.bitToSat(parseInt(ev.target.value)));
+            this.setState({ jackpotInputText: ev.target.value, jackpotValidity: jackpotValidation[0], jackpotValidityMessage: jackpotValidation[1] });
+
+            if(jackpotValidation[0] === 'wrong')
+                return;
+
+            Engine.setJackpot(Clib.bitToSat(parseInt(ev.target.value)));
         },
 
         _setClientSeed: function(ev) {
@@ -151,20 +169,122 @@ define([
             GameSettings.toggleShowButtons();
         },
 
+        _selectTab: function(tab) {
+            var self = this;
+          return function() {
+              self.setState({ tab: tab });
+          }
+        },
+
         render: function() {
 
-            var wagerDivClasses = cx({
-                'form-group': true,
-                'has-error': (this.state.wagerValidity === 'wrong'),
-                'has-warning': (this.state.wagerValidity === 'warning')
-            });
+            var body;
 
-            var jackPotDivClasses = cx({
-               'form-group': true,
-                'has-error': !!this.state.jackpotInvalid
-            });
+            switch (this.state.tab) {
 
-            return D.div({ className: 'modal fade in', style: { display: 'block' } },
+                case 'BET':
+
+                    var wager = (this.state.wagerValidity !== 'wrong')? Clib.bitToSat(Number(this.state.wagerInputText)) : Engine.wager;
+                    var achievableBetProfit = wager * (98/Engine.winProb) - wager;
+                    var betTooHigh = (achievableBetProfit > Engine.maxWin);
+
+                    var wagerDivClasses = cx({
+                        'form-group': true,
+                        'has-error': (this.state.wagerValidity === 'wrong'),
+                        'has-warning': (this.state.wagerValidity === 'warning') || betTooHigh
+                    });
+
+                    var jackPotDivClasses = cx({
+                        'form-group': true,
+                        'has-error': (this.state.jackpotValidity === 'wrong'),
+                        'has-warning': (this.state.jackpotValidity === 'warning')
+                    });
+
+
+                    body = D.div({ className: 'modal-body' },
+                        D.div({ className: wagerDivClasses },
+                            D.label({ className: 'control-label pull-left', htmlFor: 'set-input-wager' }, 'Bet'),
+                            D.label({ className: 'control-label pull-right', htmlFor: 'set-input-wager' }, this.state.wagerValidityMessage? this.state.wagerValidityMessage : ''),
+                            D.div({ className: 'input-group clear' },
+                                D.input({ type: 'text', className: 'form-control', id: 'set-input-wager', value: this.state.wagerInputText, onChange: this._setWager }),
+                                D.span({ className: 'input-group-btn'},
+                                    D.button({ className: 'btn btn-default', type: 'button', onClick: this._setMaxWager }, 'Max')
+                                )
+                            )
+                        ),
+
+                        D.div({ className: jackPotDivClasses },
+                            D.label({ className: 'control-label pull-left', htmlFor: 'set-jackpot-amount' }, 'Jackpot'),
+                            D.label({ className: 'control-label pull-right', htmlFor: 'set-jackpot-amount' }, this.state.jackpotValidityMessage? this.state.jackpotValidityMessage: ''),
+                            D.input({ type: 'text', className: 'form-control', id: 'set-jackpot-amount', value: this.state.jackpotInputText, onChange: this._setJackpot })
+                        ),
+
+                        D.div({ className: 'form-group' + (betTooHigh? ' has-warning' : '') },
+                            D.label({ className: 'control-label pull-left', htmlFor: 'set-win-chance-slider' }, 'Wining probability: ' + Engine.winProb + '%'),
+                            D.label({ className: 'control-label pull-right', htmlFor: 'set-win-chance-slider' }, 'Payout: ' + (98/Engine.winProb).toFixed(2) + 'x'),
+                            D.input({ className: 'set-win-prob-range', type: 'range', max: '97', min: '1', id: 'set-win-chance-slider', value: Engine.winProb, onChange: this._setWinProb })
+                        ),
+
+                        D.div({ className: 'form-group' + (betTooHigh? ' has-warning' : '') },
+                            D.label({ className: 'control-label pull-left', htmlFor: 'set-input-wager' }, betTooHigh? "The profit is bigger than vault's allowed profits" : ''),
+                            D.div({ className: 'input-group clear' },
+                                D.div({ className: 'input-group-addon input-title'}, 'Win Profit'),
+                                D.input({ type: 'text', className: 'form-control', id: 'set-input-wager', value: Clib.formatSatoshis(achievableBetProfit, 2), readOnly: true })
+                            )
+                        ),
+
+                        D.div({ className: 'form-group' },
+                            D.div({ className: 'input-group clear' },
+                                D.div({ className: 'input-group-addon input-title'}, "Vault's Max Profit"),
+                                D.input({ type: 'text', className: 'form-control', id: 'set-input-wager', value: Clib.formatSatoshis(Engine.maxWin, 2), readOnly: true })
+                            )
+                        )
+                    );
+
+                break;
+
+                case 'FAIR':
+                    body = D.div({ className: 'modal-body' },
+
+                        D.div({ className: 'form-group' },
+                            D.label({ className: 'control-label', htmlFor: 'set-game-hash' }, 'Next Game Hash'),
+                            D.input({ type: 'text', className: 'form-control', id: 'set-game-hash', defaultValue: Engine.nextGameHash, readOnly: true })
+                        ),
+
+                        D.div({ className: 'form-group' + ((this.state.invalidClientSeed)? ' has-error' : '') },
+                            D.label({ className: 'control-label pull-left', htmlFor: 'set-client-seed' }, 'Client Seed'),
+                            D.label({ className: 'control-label pull-right', htmlFor: 'set-client-seed' }, (this.state.invalidClientSeed)? this.state.invalidClientSeed : ''),
+                            D.div({ className: 'input-group clear' },
+                                D.input({ type: 'text', className: 'form-control', ref: 'clientSeed', id: 'set-client-seed', value: this.state.clientSeedText, onChange: this._setClientSeed }),
+                                D.span({ className: 'input-group-btn'},
+                                    D.button({ className: 'btn btn-default', type: 'button', onClick: this._genClientSeed }, 'Random')
+                                )
+                            )
+                        )
+
+                    );
+                break;
+
+                case 'VIEW':
+                    body = D.div({ className: 'modal-body' },
+                        D.div({ className: 'row' },
+                            D.div({ className: 'col-xs-6' },
+                                D.div({ className: 'checkbox' },
+                                    D.label(null,
+                                        D.input({ type: 'checkbox', checked: !GameSettings.showButtons, onChange: this._toggleShowButtons }, 'Remove Game Buttons')
+                                    )
+                                )
+                            ),
+                            D.div({ className: 'col-xs-6' },
+                                D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this.props._clearHistory }, 'Clear History')
+                            )
+                        )
+                    );
+                break;
+
+            }//\switch
+
+            return D.div({ id: 'settings-modal', className: 'modal fade in', style: { display: 'block' } },
 
                 D.div({ className: 'modal-dialog' },
 
@@ -176,69 +296,20 @@ define([
                                     String.fromCharCode(215)
                                 )
                             ),
-                            D.h4({ className: 'modal-title' },
-                                'Game Settings'
+                            D.ul({ className: 'nav nav-tabs nav-justified' },
+                                D.li({ role: 'presentation', className: (this.state.tab === 'BET')? 'active' : '', onClick: this._selectTab('BET') }, D.a({ href: '#' }, 'Bet')),
+                                D.li({ role: 'presentation', className: (this.state.tab === 'FAIR')? 'active' : '', onClick: this._selectTab('FAIR')  }, D.a({ href: '#' }, 'Fair')),
+                                D.li({ role: 'presentation', className: (this.state.tab === 'VIEW')? 'active' : '', onClick: this._selectTab('VIEW')  }, D.a({ href: '#' }, 'View'))
                             )
                         ),
 
-                        D.div({ className: 'modal-body' },
-
-                            D.div({ className: wagerDivClasses },
-                                D.label({ className: 'control-label pull-left', htmlFor: 'set-input-wager' }, 'Bet'),
-                                D.label({ className: 'control-label pull-right', htmlFor: 'set-input-wager' }, (this.state.wagerValidityMessage)? this.state.wagerValidityMessage : ''),
-                                D.div({ className: 'input-group clear' },
-                                    D.input({ type: 'text', className: 'form-control', id: 'set-input-wager', value: this.state.wagerInputText, onChange: this._setWager }),
-                                    D.span({ className: 'input-group-btn'},
-                                        D.button({ className: 'btn btn-default', type: 'button', onClick: this._setMaxWager }, 'Max')
-                                    )
-                                )
-                            ),
-
-                            D.div({ className: jackPotDivClasses },
-                                D.label({ className: 'control-label pull-left', htmlFor: 'set-jackpot-amount' }, 'Jackpot'),
-                                D.label({ className: 'control-label pull-right', htmlFor: 'set-jackpot-amount' }, this.state.jackpotInvalid),
-                                D.input({ type: 'text', className: 'form-control', id: 'set-jackpot-amount', value: this.state.jackpotInputText, onChange: this._setJackpot })
-                            ),
-
-                            D.div({ className: 'form-group' },
-                                D.label({ className: 'control-label pull-left', htmlFor: 'set-win-chance-slider' }, 'Wining probability: ' + Engine.winProb + '%'),
-                                D.label({ className: 'control-label pull-right', htmlFor: 'set-win-chance-slider' }, 'Payout: ' + (98/Engine.winProb).toFixed(2) + 'x'),
-                                D.input({ className: 'set-win-prob-range', type: 'range', max: '97', min: '1', id: 'set-win-chance-slider', value: Engine.winProb, onChange: this._setWinProb })
-                            ),
-
-                            D.div({ className: 'form-group' },
-                                D.label({ className: 'control-label', htmlFor: 'set-game-hash' }, 'Next Game Hash'),
-                                D.input({ type: 'text', className: 'form-control', id: 'set-game-hash', defaultValue: Engine.nextGameHash, readOnly: true })
-                            ),
-
-                            D.div({ className: 'form-group' + ((this.state.invalidClientSeed)? ' has-error' : '') },
-                                D.label({ className: 'control-label pull-left', htmlFor: 'set-client-seed' }, 'Client Seed'),
-                                D.label({ className: 'control-label pull-right', htmlFor: 'set-client-seed' }, (this.state.invalidClientSeed)? this.state.invalidClientSeed : ''),
-                                D.div({ className: 'input-group clear' },
-                                    D.input({ type: 'text', className: 'form-control', ref: 'clientSeed', id: 'set-client-seed', value: this.state.clientSeedText, onChange: this._setClientSeed }),
-                                    D.span({ className: 'input-group-btn'},
-                                        D.button({ className: 'btn btn-default', type: 'button', onClick: this._genClientSeed }, 'Random')
-                                    )
-                                )
-                            ),
-
-                            D.div({ className: 'row' },
-                                D.div({ className: 'col-xs-6' },
-                                    D.div({ className: 'checkbox' },
-                                        D.label(null,
-                                            D.input({ type: 'checkbox', checked: !GameSettings.showButtons, onChange: this._toggleShowButtons }, 'Remove Game Buttons')
-                                        )
-                                    )
-                                ),
-                                D.div({ className: 'col-xs-6' },
-                                    D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this.props._clearHistory }, 'Clear History')
-                                )
-                            )
-
-                        )
+                        body
                     )
                 )
             )
+
+
+
         }
     });
 });

@@ -33,7 +33,7 @@ define([
         self.wager = 1e2;
 
         //Low jackpot because we are poor :p
-        self.jackpot = 10000e2;
+        self.jackpot = 100000e2;
 
         //TODO: Remove max bet, it should be max profit
         self.maxBet  = 10000e8;
@@ -49,6 +49,8 @@ define([
         self.accessToken = null;
         self.expiresIn = null;
         self.state = null; //TODO: Check that the stored state and the returned by the server are equals, generate uuid maybe
+        self.vaultBankroll = null;
+        self.maxWin = null;
 
         self.gameHistory = []; // { wager: satoshis, payout: 2.03, win: boolean }
 
@@ -98,6 +100,8 @@ define([
 
             self.balance = data.balance;
             self.nextGameHash = data.hash;
+            self.vaultBankroll = data.bankroll;
+            self.maxWin = self.vaultBankroll * 0.01;
             self.gameState = 'STANDING_BY';
 
             self.trigger('get-user-data');
@@ -231,7 +235,7 @@ define([
         console.assert(Clib.isInteger(newWager) && newWager > 0);
 
         this.wager = newWager;
-        this.trigger('new-wager-data')
+        this.trigger('new-wager')
     };
 
     GameEngine.prototype.setJackpot = function(jackpot) {
@@ -244,7 +248,7 @@ define([
     GameEngine.prototype.setWinProb = function(newWinProb) {
         console.assert(Clib.isInteger(newWinProb) && newWinProb>=1 && newWinProb <= 97);
         this.winProb = newWinProb;
-        this.trigger('new-wager-data');
+        this.trigger('new-win-prob');
     };
 
     GameEngine.prototype.setClientSeed = function(newSeed) {
@@ -275,11 +279,23 @@ define([
                     winProb: self.winProb //TODO: And if instead of sending the current state i just get it from the graph?
                 });
             }
+
+            self.trigger('same-balance');
         });
     };
 
     GameEngine.prototype.goToVaultDeposit = function() {
         window.location.href = 'https://vault.moneypot.com/me/receive';
+    };
+
+    /** Helper functions **/
+
+    GameEngine.prototype.isBetTooHigh = function() {
+        return ((this.wager * (98/this.winProb) - this.wager) > this.maxWin)  || (this.jackpot > this.maxWin);
+    };
+
+    GameEngine.prototype.isBetValid = function() {
+        return (this.wager > this.balance);
     };
 
 

@@ -82,8 +82,6 @@ function(
 
         render: function() {
 
-            console.log('Game component render', Engine.gameState);
-
             //If the engine does not have the user's data
             if(Engine.error)
                 return D.div({ id: 'fatal-error-container'},

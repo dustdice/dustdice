@@ -93,6 +93,10 @@ define([], function () {
                     }
                 })(i));
             }
+        },
+
+        max: function(qt1, qt2) {
+            return (qt1>qt2)? qt1 : qt2;
         }
 
     }

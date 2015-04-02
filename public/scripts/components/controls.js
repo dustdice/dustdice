@@ -30,7 +30,8 @@ define([
         //Calculate control states that are based on engine states
         //state.canDivideBet = (Engine.wager >= 200);
         //state.canDoubleBet = ( Engine.wager*2 <= Engine.balance && Engine.wager*2 <= Engine.maxBet  );
-        state.canBet = (Engine.balance >= Engine.wager && Engine.wager > 0 );
+        state.notEnoughBalance = Engine.isBetValid();
+        state.betTooHigh = Engine.isBetTooHigh();
         return state;
     }
 
@@ -108,12 +109,12 @@ define([
         //},
 
         _betHi: function() {
-            if(Engine.gameState != 'BETTING' && this.state.canBet)
+            if(Engine.gameState != 'BETTING' && !this.state.notEnoughBalance && !this.state.betTooHigh)
                 Engine.bet(true);
         },
 
         _betLo: function() {
-            if(Engine.gameState != 'BETTING' && this.state.canBet)
+            if(Engine.gameState != 'BETTING' && !this.state.notEnoughBalance && !this.state.betTooHigh)
                 Engine.bet(false)
         },
 
@@ -153,24 +154,30 @@ define([
                 betHiBtn = D.button(
                     {
                         id: 'bet-hi-button',
-                        className: 'btn btn-default ctl-button' + ((this.state.canBet)? '' : ' cant-bet'),
-                        onClick: (this.state.canBet)? this._betHi : this._goToVaultDeposit,
+                        className: 'btn btn-default ctl-button' + ((this.state.notEnoughBalance || this.state.betTooHigh)? ' cant-bet' : ''),
+                        onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this._goToVaultDeposit : this._betHi,
                         disabled: isBetting
                     },
-                    (this.state.canBet)?
-                        D.div(null, D.span(null, (101-Engine.winProb) + ' to 100 '), D.i({ className: 'fa fa-caret-square-o-right' })) :
-                        ('Deposit in Vault'));
+                    this.state.betTooHigh?
+                        'Supported':
+                    this.state.notEnoughBalance?
+                        'Deposit in Vault' :
+                        D.div(null, D.span(null, (101-Engine.winProb) + ' to 100 '), D.i({ className: 'fa fa-caret-square-o-right' }))
+                );
 
                 betLoBtn = D.button(
                     {
                         id: 'bet-lo-button',
-                        className: 'btn btn-default ctl-button' + ((this.state.canBet)? '' : ' cant-bet'),
-                        onClick: (this.state.canBet)? this._betLo : this._goToVaultDeposit,
+                        className: 'btn btn-default ctl-button' + ((this.state.notEnoughBalance || this.state.betTooHigh)? ' cant-bet' : ''),
+                        onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this._goToVaultDeposit : this._betLo,
                         disabled: isBetting
                     },
-                    (this.state.canBet)?
-                        D.div(null, D.i({ className: 'fa fa-caret-square-o-left' }), D.span(null, ('1 to ' + Engine.winProb))) :
-                        ('Not enough bits'));
+                    this.state.betTooHigh?
+                        'Bet not':
+                    this.state.notEnoughBalance?
+                        'Not enough bits' :
+                        D.div(null, D.i({ className: 'fa fa-caret-square-o-left' }), D.span(null, ('1 to ' + Engine.winProb)))
+                );
 
                 chaseBetBtn = D.button({ id: 'bet-chase-bet-button', className: 'btn btn-default ctl-button', onClick: this._chaseBet },
                     D.span(null, 'x' + getBetMultiplier().toFixed(2)),
