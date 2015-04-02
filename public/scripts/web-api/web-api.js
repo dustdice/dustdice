@@ -4,6 +4,9 @@ define([
         Clib
     ) {
 
+    //For development, always set to null
+    var DELAY = null;
+
     var URL = PRODUCTION? 'https://vault.moneypot.com':'http://localhost:3000';
 
     var WebApi = function() {};
@@ -131,7 +134,12 @@ define([
                     return self.options.callback(new Error('Problem reaching the server'));
                 }
 
-                self.options.callback(null, response);
+                if(DELAY)
+                    setTimeout(function() {
+                        self.options.callback(null, response);
+                    }, DELAY);
+                else
+                    self.options.callback(null, response);
             }
         }
     };

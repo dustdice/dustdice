@@ -25,7 +25,7 @@ define([
 
         /** Initial State **/
 
-        self.gameState = 'OFFLINE'; //STANDING_BY || BETTING || OFFLINE
+        self.gameState = 'OFFLINE'; //STANDING_BY || BETTING || OFFLINE || REFRESHING
 
         self.balance = null;
 
@@ -259,13 +259,22 @@ define([
 
     GameEngine.prototype.refreshBalance = function() {
         var self = this;
-
+        self.gameState = 'REFRESHING';
+        self.trigger('refreshing-balance');
         WebApi.requestAccountData(this.accessToken, function(err, data) {
             if (err)
-                return self.setErrorState(err.message);
+                return self.setErrorState(err.message); //TODO: Handle Errors
 
-            self.balance = data.balance;
-            self.trigger('refresh-balance');
+            self.gameState = 'STANDING_BY';
+
+            if(self.balance !== data.balance) {
+                self.balance = data.balance;
+                self.trigger('refresh-balance', {
+                    balance: self.balance,
+                    wager: self.wager,
+                    winProb: self.winProb //TODO: And if instead of sending the current state i just get it from the graph?
+                });
+            }
         });
     };
 

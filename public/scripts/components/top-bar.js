@@ -69,13 +69,13 @@ define([
                 D.div({ id: 'top-bar-balance', onClick: this._refreshBalance },
                     D.div({ className: 'top-bar-state'},
                         D.div({ className: 'ctl-state-amount' },
-                            D.span(null, Clib.formatSatoshis(this.state.engine.balance))
+                            D.span(null, Clib.formatSatoshis(Engine.balance))
                         ),
                         D.span({ className: 'ctl-state-lbl' },
-                            D.i({ className: 'fa fa-btc' }), (this.state.engine.balance === 100)? 'it': 'its'
+                            D.i({ className: 'fa fa-btc' }), (Engine.balance === 100)? 'it': 'its'
                         ),
                         D.span({ className: 'ctl-state-button' },
-                            D.i({ className: 'fa fa-refresh'})
+                            D.i({ className: 'fa fa-refresh' + (Engine.gameState === 'REFRESHING'? ' spin': '') })
                         )
                     ),
                     D.div({ className: 'top-bar-state-name' },
