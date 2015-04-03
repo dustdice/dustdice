@@ -15,6 +15,8 @@ define([
     WebApi,
     SHA256
 ){
+  console.log('sha256 is', SHA256);
+
     //var historyMaxLength = 100;
 
     function GameEngine() {

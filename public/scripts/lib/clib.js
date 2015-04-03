@@ -80,19 +80,29 @@ define([], function () {
 
         //Execute an array of functions and return an array with they results in the same order
         parallel: function(funcs, complete) {
-            var completed = 0, length = funcs.length, results = [];
+            var completed = 0;
+            var length = funcs.length;
+            var results = new Array(length);
+            var bail = false;
 
-            for (var i = 0; i < length; i++) {
-                funcs[i].call(this, (function(pos) {
-                    return function(err, result) {
-                        if(err)
-                            complete(err);
-                        results[pos] = result;
-                        if(++completed>=length)
-                            complete(null, results);
-                    }
-                })(i));
-            }
+            funcs.forEach(function(func, i) {
+              func(function (err, result) {
+                if (bail) return;
+
+                if (err) {
+                  bail = true;
+                  return complete(err);
+                }
+
+                results[i] = result;
+                ++completed;
+
+                console.assert(completed <= length, 'One of the parallel functions called the callback multiple times');
+
+                if (completed === length)
+                  return complete(null, results);
+              })
+            });
         },
 
         max: function(qt1, qt2) {
