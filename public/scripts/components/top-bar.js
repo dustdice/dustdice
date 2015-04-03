@@ -52,7 +52,8 @@ define([
         },
 
         _onChange: function() {
-            this.setState(getState());
+            if(this.isMounted())
+                this.setState(getState());
         },
 
         _toggleFullScreen: function() {

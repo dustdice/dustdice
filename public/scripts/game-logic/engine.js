@@ -6,12 +6,14 @@ define([
     'lib/events',
     'lib/lodash',
     'lib/clib',
-    'web-api/web-api'
+    'web-api/web-api',
+    'lib/sha256'
 ], function(
     Events,
     _,
     Clib,
-    WebApi
+    WebApi,
+    SHA256
 ){
     //var historyMaxLength = 100;
 
@@ -33,7 +35,7 @@ define([
         self.wager = 1e2;
 
         //Low jackpot because we are poor :p
-        self.jackpot = 100000e2;
+        self.jackpot = 100e2;
 
         //TODO: Remove max bet, it should be max profit
         self.maxBet  = 10000e8;
@@ -182,6 +184,15 @@ define([
                     }
 
                 }
+
+            //Test the hash of the game & the outcome of the game
+            var hash = SHA256.hash(game.secret + '|' + game.salt);
+            var vaultOutcome = (game.secret + currentBet.seed) % Math.pow(2,32);
+            var outcome = Math.floor(vaultOutcome / (Math.pow(2,32) / 100) ) + 1;
+            if(self.nextGameHash !== hash || game.outcome !== outcome) {
+                self.setErrorState('Could not prove that the game was fair :/');
+                return;
+            }
 
             self.clientSeed = Clib.randomUint32();
 
