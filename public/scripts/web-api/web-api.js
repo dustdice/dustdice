@@ -7,7 +7,7 @@ define([
     //For development, always set to null
     var DELAY = null;
 
-    var URL = PRODUCTION? 'https://vault.moneypot.com':'http://localhost:3000';
+    var URL = PRODUCTION ? 'https://vault.moneypot.com' : 'http://localhost:3000';
 
     var WebApi = function() {};
 
@@ -98,7 +98,7 @@ define([
 
             //Fatal Error in the request
             if(err)
-                callback(err);
+                return callback(err);
 
             //Known Error with a response from the server
             if (response.statusCode >= 400 && response.statusCode < 600)
