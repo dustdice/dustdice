@@ -26,8 +26,8 @@ define([
             }
 
         ], function(err, result) {
-            if(err)
-                callback(err);
+            if (err)
+                return callback(err);
 
             var data = {
                 balance: result[0].balance,
