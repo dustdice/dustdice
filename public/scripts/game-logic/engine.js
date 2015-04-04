@@ -246,7 +246,7 @@ define([
     /** Engine API **/
 
     GameEngine.prototype.setWager = function(newWager) {
-        console.assert(Clib.isInteger(newWager) && newWager > 0);
+        console.assert(newWager > 0);
 
         this.wager = newWager;
         this.trigger('new-wager')
