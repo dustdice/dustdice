@@ -23,9 +23,6 @@ define([
         } else if(bet < 1) {
             validity = 'wrong';
             message = 'Should be bigger than zero';
-        //} else if((Clib.bitToSat(bet) * (98/Engine.winProb) - Clib.bitToSat(bet)) > Engine.maxWin) {
-        //    validity = 'warning';
-        //    message = "The Achievable profit is bigger than the vault's max";
         } else if(bet > Clib.satToBit(Engine.balance)) {
             validity = 'warning';
             message = 'Not enough balance :o';
@@ -88,6 +85,8 @@ define([
                 jackpotValidityMessage: jackpotValidation[1],
                 clientSeedText: String(Engine.clientSeed),
                 invalidClientSeed: false,
+                customBetMultiplierText: GameSettings.customBetMultiplier,
+                customBetMultiplierInvalid: false,
                 tab: 'BET' // BET || FAIR
             }
         },
@@ -117,6 +116,9 @@ define([
                 var wagerValidation = validateBetBits(wagerBitsString);
                 this.setState({ wagerInputText: wagerBitsString, wagerValidity: wagerValidation[0], wagerValidityMessage: wagerValidation[1] });
             }
+
+            if(Number(this.state.customBetMultiplierText) !== GameSettings.customBetMultiplier)
+                this.setState({ customBetMultiplierText: String(GameSettings.customBetMultiplier) });
 
             return { engine: Engine, gameSettings: GameSettings }; //Just to render on changes
         },
@@ -176,6 +178,25 @@ define([
           }
         },
 
+        _toggleCustomBetMultiplier: function() {
+            GameSettings.toggleCustomBetMultiplier();
+        },
+
+        _setCustomBetMultiplier: function(ev) {
+            this.setState({ customBetMultiplierText: ev.target.value });
+
+            var multiplier = Number(ev.target.value);
+            if(!Clib.isNumber(multiplier))
+                this.setState({ customBetMultiplierInvalid: 'Should be a number' });
+            else if(multiplier <= 0)
+                this.setState({ customBetMultiplierInvalid: 'Should be greater than zero' });
+            else {
+                this.setState({ customBetMultiplierInvalid: false });
+                GameSettings.setCustomBetMultiplier(multiplier);
+            }
+
+        },
+
         render: function() {
 
             var body;
@@ -199,7 +220,6 @@ define([
                         'has-error': (this.state.jackpotValidity === 'wrong'),
                         'has-warning': (this.state.jackpotValidity === 'warning')
                     });
-
 
                     body = D.div({ className: 'modal-body' },
                         D.div({ className: wagerDivClasses },
@@ -265,8 +285,23 @@ define([
                     );
                 break;
 
-                case 'VIEW':
+                case 'CONTROLS':
                     body = D.div({ className: 'modal-body' },
+
+                        D.div({ className: 'form-group' + (this.state.customBetMultiplierInvalid? ' has-error' : '') },
+                            D.label({ className: 'control-label pull-left', htmlFor: 'set-client-seed' }, 'Custom bet multiplier'),
+                            D.label({ className: 'control-label pull-right', htmlFor: 'set-input-wager' }, this.state.customBetMultiplierInvalid? this.state.customBetMultiplierInvalid : ''),
+                            D.div({ className: 'input-group clear' },
+                                D.span({ className: 'input-group-addon'},
+                                    D.input({ type: 'checkbox', checked: GameSettings.useCustomBetMultiplier, onChange: this._toggleCustomBetMultiplier })
+                                ),
+                                D.input({ type: 'text', className: 'form-control', value: this.state.customBetMultiplierText, onChange: this._setCustomBetMultiplier }),
+                                D.span({ className: 'input-group-addon'},
+                                    'x'
+                                )
+                            )
+                        ),
+
                         D.div({ className: 'row' },
                             D.div({ className: 'col-xs-6' },
                                 D.div({ className: 'checkbox' },
@@ -276,7 +311,7 @@ define([
                                 )
                             ),
                             D.div({ className: 'col-xs-6' },
-                                D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this.props._clearHistory }, 'Clear History')
+                                D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this.props._clearHistory }, 'Clear History (C)')
                             )
                         )
                     );
@@ -299,7 +334,7 @@ define([
                             D.ul({ className: 'nav nav-tabs nav-justified' },
                                 D.li({ role: 'presentation', className: (this.state.tab === 'BET')? 'active' : '', onClick: this._selectTab('BET') }, D.a({ href: '#' }, 'Bet')),
                                 D.li({ role: 'presentation', className: (this.state.tab === 'FAIR')? 'active' : '', onClick: this._selectTab('FAIR')  }, D.a({ href: '#' }, 'Fair')),
-                                D.li({ role: 'presentation', className: (this.state.tab === 'VIEW')? 'active' : '', onClick: this._selectTab('VIEW')  }, D.a({ href: '#' }, 'View'))
+                                D.li({ role: 'presentation', className: (this.state.tab === 'CONTROLS')? 'active' : '', onClick: this._selectTab('CONTROLS')  }, D.a({ href: '#' }, 'Controls'))
                             )
                         ),
 

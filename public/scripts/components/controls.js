@@ -19,8 +19,13 @@ define([
     var D = React.DOM;
 
     function getBetMultiplier() {
-        var payout = (98/Engine.winProb);
-        return (payout/(payout-1));
+        if(GameSettings.useCustomBetMultiplier) {
+            return GameSettings.customBetMultiplier;
+        } else {
+            //Chase mode
+            var payout = (98/Engine.winProb);
+            return (payout/(payout-1));
+        }
     }
 
     function getState() {

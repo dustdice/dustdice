@@ -60,7 +60,6 @@ function(
         },
 
         _getUserData: function() {
-            console.log('Got get-user-data event');
             this.setState({ engine: Engine }); //Just to re render
         },
 
@@ -110,7 +109,8 @@ function(
 
                 D.div({ id: 'top-bar-container' },
                     TopBar({
-                        _toggleTutorial: this._toggleTutorial
+                        _toggleTutorial: this._toggleTutorial,
+                        _toggleSettings: this._toggleSettings
                     })
                 ),
 
