@@ -88,17 +88,7 @@ define([
             localStorage.state = self.state;
         }
 
-        WebApi.requestInitialData(self.accessToken, function(err, data) {
-            if(err) {
-                switch (err.message) {
-                    case 'INVALID_ACCESS_TOKEN':
-                        self.setErrorState('INVALID ACCOUNT');
-                        return;
-                    default:
-                        self.setErrorState(err.message);
-                        return;
-                }
-            }
+        WebApi.requestInitialData(self.accessToken, self.errorHandler(function(data) {
 
             self.balance = data.balance;
             self.nextGameHash = data.hash;
@@ -107,7 +97,7 @@ define([
             self.gameState = 'STANDING_BY';
 
             self.trigger('get-user-data');
-        });
+        }));
 
 
     }
@@ -124,6 +114,37 @@ define([
                 self.error = errorMsg;
         }
         self.trigger('fatal-error');
+    };
+
+
+    GameEngine.prototype.errorHandler = function(callback) {
+        var self= this;
+
+        return function(err, data) {
+            if (err) {
+                console.assert(err.message);
+
+                switch (err.message) {
+                    case 'INVALID_ACCESS_TOKEN':
+                        self.setErrorState('INVALID ACCOUNT');
+                        return;
+                    case 'BANKROLL_TOO_SMALL':
+                        self.gameState = 'STANDING_BY';
+                        self.trigger('user-alert', "Vault rejected this bet because it exceeds they limits");
+                        return;
+                    case 'NOT_ENOUGH_BALANCE':
+                        self.gameState = 'STANDING_BY';
+                        self.refreshBalance();
+                        self.trigger('user-alert', 'Not enough balance to bet');
+                        return;
+                    default:
+                        self.setErrorState(err.message);
+                        return;
+                }
+
+            }
+            callback(data);
+        }
     };
 
 
@@ -164,69 +185,51 @@ define([
             currentBet.hiLo,
             currentBet.accessToken,
             currentBet.jackpot,
-            function(err, game){
-                if (err) {
-                    console.assert(err.message);
+            self.errorHandler(function(game){
 
-                    switch (err.message) {
-                        case 'BANKROLL_TOO_SMALL':
-                            self.gameState = 'STANDING_BY';
-                            self.trigger('user-alert', 'The bet was too high');
-                            return;
-                        case 'NOT_ENOUGH_BALANCE': //TODO: Reload the balance of the user
-                            self.gameState = 'STANDING_BY';
-                            self.trigger('user-alert', 'Not enough balance to bet, please refresh the page');
-                            return;
-                        //TODO: Catch errors of the WEBAPI for better message display
-                        default:
-                            self.setErrorState(err.message);
-                            return;
-                    }
-
+                //Test the hash of the game & the outcome of the game
+                var hash = SHA256.hash(game.secret + '|' + game.salt);
+                var vaultOutcome = (game.secret + currentBet.seed) % Math.pow(2,32);
+                var outcome = Math.floor(vaultOutcome / (Math.pow(2,32) / 100) ) + 1;
+                if(self.nextGameHash !== hash || game.outcome !== outcome) {
+                    self.setErrorState('Could not prove that the game was fair :/');
+                    return;
                 }
 
-            //Test the hash of the game & the outcome of the game
-            var hash = SHA256.hash(game.secret + '|' + game.salt);
-            var vaultOutcome = (game.secret + currentBet.seed) % Math.pow(2,32);
-            var outcome = Math.floor(vaultOutcome / (Math.pow(2,32) / 100) ) + 1;
-            if(self.nextGameHash !== hash || game.outcome !== outcome) {
-                self.setErrorState('Could not prove that the game was fair :/');
-                return;
-            }
+                self.clientSeed = Clib.randomUint32();
 
-            self.clientSeed = Clib.randomUint32();
+                //Do we won the jackpot? Could give us false positive if the bet is the same than the jackpot and we win that works for testing
+                if(game.profit == self.jackpot)//TODO: NEW API wonJackpot coming in vault
+                    game.wonJackpot = true;
+                //Do we won the bet
+                else if(game.profit > 0)
+                        game.wonBet = true;
 
-            //Do we won the jackpot? Could give us false positive if the bet is the same than the jackpot and we win that works for testing
-            if(game.profit == self.jackpot)//TODO: NEW API wonJackpot coming in vault
-                game.wonJackpot = true;
-            //Do we won the bet
-            else if(game.profit > 0)
-                    game.wonBet = true;
+                //Set the new balance in the engine
+                self.balance += game.profit;
+                //Set the new hash in the engine
+                self.nextGameHash = game.next_hash;
 
-            //Set the new balance in the engine
-            self.balance += game.profit;
-            //Set the new hash in the engine
-            self.nextGameHash = game.next_hash;
-
-            //Append the new balance in the game
-            game.balance = self.balance;
-            //Append game info to the result
-            game.wager = currentBet.wager;
-            game.winProb = currentBet.winProb;
-            game.hiLo = currentBet.hiLo;
+                //Append the new balance in the game
+                game.balance = self.balance;
+                //Append game info to the result
+                game.wager = currentBet.wager;
+                game.winProb = currentBet.winProb;
+                game.hiLo = currentBet.hiLo;
 
 
-            self.gameHistory.push(game);
+                self.gameHistory.push(game);
 
-            //if(self.gameHistory.length > historyMaxLength)
-            //    self.gameHistory.shift();
+                //if(self.gameHistory.length > historyMaxLength)
+                //    self.gameHistory.shift();
 
-            self.gameState = 'STANDING_BY';
+                self.gameState = 'STANDING_BY';
 
-            //Send a copy of the game result values, do not edit this object in components!
-            Object.seal(game);//Avoid some component do weird things on the object
-            self.trigger('bet-end', game);
-        });
+                //Send a copy of the game result values, do not edit this object in components!
+                Object.seal(game);//Avoid some component do weird things on the object
+                self.trigger('bet-end', game);
+
+            })); //\WebApi.bet
 
         //Send a copy of the current values of the bet, do not edit this object in components!
         var betSent = {
@@ -272,27 +275,40 @@ define([
         this.trigger('history-clear');
     };
 
+    /**
+     * Refresh the balance and the bankroll
+     * Triggers:
+     * 'refreshing-data': On start
+     * 'new-balance': if it gets a new balance || 'refresh-data': If not a new balance
+     */
     GameEngine.prototype.refreshBalance = function() {
         var self = this;
+
+        if(self.gameState === 'REFRESHING')
+            return;
+
         self.gameState = 'REFRESHING';
-        self.trigger('refreshing-balance');
-        WebApi.requestAccountData(this.accessToken, function(err, data) {
-            if (err)
-                return self.setErrorState(err.message); //TODO: Handle Errors
+        self.trigger('refreshing-data');
+
+        WebApi.refreshData(this.accessToken, self.errorHandler(function(data) {
+            console.assert(typeof data.balance === 'number');
+            console.assert(typeof data.bankroll === 'number');
 
             self.gameState = 'STANDING_BY';
+            self.vaultBankroll = data.bankroll;
 
             if(self.balance !== data.balance) {
                 self.balance = data.balance;
-                self.trigger('refresh-balance', {
+
+                self.trigger('new-balance', {
                     balance: self.balance,
                     wager: self.wager,
                     winProb: self.winProb //TODO: And if instead of sending the current state i just get it from the graph?
                 });
             }
 
-            self.trigger('same-balance');
-        });
+            self.trigger('refresh-data');
+        }));
     };
 
     GameEngine.prototype.goToVaultDeposit = function() {
@@ -308,6 +324,7 @@ define([
     GameEngine.prototype.isBetValid = function() {
         return (this.wager > this.balance);
     };
+
 
 
     return new GameEngine();

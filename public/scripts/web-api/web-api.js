@@ -39,6 +39,30 @@ define([
         });
     };
 
+    WebApi.prototype.refreshData = function(accessToken, callback) {
+        var self = this;
+
+        Clib.parallel([
+            function(callback) {
+                self.requestAccountData(accessToken, callback);
+            },
+            function(callback) {
+                self.getVaultBankroll(accessToken, callback);
+            }
+
+        ], function(err, result) {
+            if (err)
+                return callback(err);
+
+            var data = {
+                balance: result[0].balance,
+                bankroll: result[1]
+            };
+
+            callback(null, data);
+        });
+    };
+
     WebApi.prototype.requestAccountData = function(accessToken, callback) {
 
         new Requester({
