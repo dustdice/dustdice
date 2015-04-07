@@ -23,6 +23,9 @@ define([
             },
             function(callback) {
                 self.getVaultBankroll(accessToken, callback);
+            },
+            function(callback) {
+                self.getDepositAddress(accessToken, callback);
             }
 
         ], function(err, result) {
@@ -32,7 +35,8 @@ define([
             var data = {
                 balance: result[0].balance,
                 hash: result[1],
-                bankroll: result[2]
+                bankroll: result[2],
+                depositAddress: result[3]
             };
 
             callback(null, data);
@@ -113,6 +117,14 @@ define([
             callback: responseErrorHandler(callback)
         });
 
+    };
+
+    WebApi.prototype.getDepositAddress = function(accessToken, callback) {
+        new Requester({
+           method: 'GET',
+            url: URL+'/v1/deposit-address?access_token='+accessToken,
+            callback: responseErrorHandler(callback)
+        });
     };
 
     //Create errors and append the response body to them to catch them later

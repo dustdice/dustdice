@@ -54,6 +54,7 @@ define([
         self.state = null; //TODO: Check that the stored state and the returned by the server are equals, generate uuid maybe
         self.vaultBankroll = null;
         self.maxWin = null;
+        self.depositAddress = null;
 
         self.gameHistory = []; // { wager: satoshis, payout: 2.03, win: boolean }
 
@@ -105,6 +106,7 @@ define([
             self.balance = data.balance;
             self.nextGameHash = data.hash;
             self.vaultBankroll = data.bankroll;
+            self.depositAddress = data.depositAddress;
             self.maxWin = self.vaultBankroll * 0.01;
             self.gameState = 'STANDING_BY';
 
@@ -287,6 +289,7 @@ define([
         this.gameHistory = [];
         this.trigger('history-clear');
     };
+
 
     /** Engine API Helpers **/
 

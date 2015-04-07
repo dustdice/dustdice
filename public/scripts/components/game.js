@@ -8,6 +8,7 @@ define([
     'components/controls',
     'components/settings',
     'components/tutorial',
+    'components/deposit',
     'stores/game-settings'
 ],
 function(
@@ -20,6 +21,7 @@ function(
     ControlsClass,
     SettingsClass,
     TutorialClass,
+    DepositAddressClass,
     GameSettings
 ){
     var D = React.DOM;
@@ -29,6 +31,7 @@ function(
 
     var Settings = React.createFactory(SettingsClass);
     var Tutorial = React.createFactory(TutorialClass);
+    var DepositAddress = React.createFactory(DepositAddressClass);
 
     return React.createClass({
 
@@ -37,6 +40,7 @@ function(
             return {
                 showSettings: false,
                 showTutorial: !GameSettings.hideTutorial,
+                modal: (GameSettings.hideTutorial)? false : 'TUTORIAL',
                 engine: Engine
             }
         },
@@ -64,12 +68,15 @@ function(
         },
 
         _toggleSettings: function() {
-            if(!this.state.showTutorial)
-                this.setState({ showSettings: !this.state.showSettings, showTutorial: false });
+            this.setState({ modal: (this.state.modal === 'SETTINGS')? false : 'SETTINGS' });
         },
 
         _toggleTutorial: function() {
-            this.setState({ showTutorial: !this.state.showTutorial, showSettings: false });
+            this.setState({ modal: (this.state.modal === 'TUTORIAL')? false : 'TUTORIAL' });
+        },
+
+        _toggleDepositAddress: function() {
+            this.setState({ modal: (this.state.modal === 'DEPOSIT')? false : 'DEPOSIT' })
         },
 
         _fatalError: function() {
@@ -93,20 +100,35 @@ function(
                     D.img({ src: '/img/loading.gif' })
                 );
 
-            var sets = this.state.showSettings ? Settings({
-                _toggleSettings: this._toggleSettings
-            }) : null;
+            var modal;
+            switch (this.state.modal) {
+                case 'TUTORIAL':
+                    modal = Tutorial({
+                        _toggleTutorial: this._toggleTutorial
+                    });
+                    break;
+                case 'SETTINGS':
+                    modal = Settings({
+                        _toggleSettings: this._toggleSettings
+                    });
+                    break;
+                case 'DEPOSIT':
+                    modal = DepositAddress({
+                       _toggleDepositAddress: this._toggleDepositAddress
+                    });
+                    break;
 
-            var tut = this.state.showTutorial ? Tutorial({
-                _toggleTutorial: this._toggleTutorial
-            }) : null;
+            }
+
+
 
             return D.div(null,
 
                 D.div({ id: 'top-bar-container' },
                     TopBar({
                         _toggleTutorial: this._toggleTutorial,
-                        _toggleSettings: this._toggleSettings
+                        _toggleSettings: this._toggleSettings,
+                        _toggleDepositAddress: this._toggleDepositAddress
                     })
                 ),
 
@@ -122,8 +144,7 @@ function(
                     })
                 ),
 
-                sets,
-                tut
+                modal
             )
         }
     });

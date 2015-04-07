@@ -23,7 +23,9 @@ define([
         displayName: 'TopBar',
 
         propTypes: {
-            _toggleTutorial: React.PropTypes.func.isRequired
+            _toggleTutorial: React.PropTypes.func.isRequired,
+            _toggleSettings: React.PropTypes.func.isRequired,
+            _toggleDepositAddress: React.PropTypes.func.isRequired
         },
 
         getInitialState: function() {
@@ -93,9 +95,10 @@ define([
                 ),
                 DropdownButton({ className: 'top-bar-menu-btn', bsStyle: 'default', pullRight: true, title: D.i({ className: 'fa fa-bars' }) },
                     MenuItem({ href: '/faq' }, "FAQ's"),
-                    MenuItem({ href: 'http://vault.moneypot.com/' }, "Account"),
-                    MenuItem({ onSelect: this.props._toggleTutorial }, "Tutorial"),
-                    MenuItem({ onSelect: this.props._toggleSettings }, "Settings")
+                    MenuItem({ href: 'http://vault.moneypot.com/' }, 'Account'),
+                    MenuItem({ onSelect: this.props._toggleDepositAddress }, 'Deposit'),
+                    MenuItem({ onSelect: this.props._toggleTutorial }, 'Tutorial'),
+                    MenuItem({ onSelect: this.props._toggleSettings }, 'Settings')
 
                 )
             );
