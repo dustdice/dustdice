@@ -22,7 +22,6 @@ define([
         var self = this;
 
         /** Constants **/
-        self.winProb = 49;
         self.HOUSE_EDGE = 2;
 
         /** Initial State **/
@@ -30,6 +29,8 @@ define([
         self.gameState = 'OFFLINE'; //STANDING_BY || BETTING || OFFLINE || REFRESHING
 
         self.balance = null;
+
+        self.winProb = 49;
 
         //Wager is a float but is rounded when betting and when showing it to the user, this allows to chase bet on small qty's to actually work, Use Math.round(), is as close as you can get.
         self.wager = 1e2;
@@ -87,6 +88,17 @@ define([
             localStorage.expiresIn = self.expiresIn;
             localStorage.state = self.state;
         }
+
+        //Get settings from localStorage if they exist
+        var wager = JSON.parse(localStorage.wager?localStorage.wager:null);
+        this.wager = (typeof wager === 'number' && wager > 0)? wager : this.wager;
+
+        var jackpot = JSON.parse(localStorage.jackpot?localStorage.jackpot:null);
+        this.jackpot = (typeof jackpot === 'number' && jackpot > 0)? jackpot : this.jackpot;
+
+        var winProb = JSON.parse(localStorage.winProb?localStorage.winProb:null);
+        this.winProb = (typeof localStorage.winProb === 'number' && winProb > 0 && winProb < 98)? winProb : this.winProb;
+
 
         WebApi.requestInitialData(self.accessToken, self.errorHandler(function(data) {
 
@@ -247,21 +259,22 @@ define([
 
     GameEngine.prototype.setWager = function(newWager) {
         console.assert(newWager > 0);
-
         this.wager = newWager;
+        localStorage.wager = this.wager;
         this.trigger('new-wager')
     };
 
     GameEngine.prototype.setJackpot = function(jackpot) {
         console.assert(Clib.isInteger(jackpot) && jackpot > 0);
-
         this.jackpot = jackpot;
+        localStorage.jackpot = this.jackpot;
         this.trigger('new-jackpot');
     };
 
     GameEngine.prototype.setWinProb = function(newWinProb) {
         console.assert(Clib.isInteger(newWinProb) && newWinProb>=1 && newWinProb <= 97);
         this.winProb = newWinProb;
+        localStorage.winProb = this.winProb;
         this.trigger('new-win-prob');
     };
 

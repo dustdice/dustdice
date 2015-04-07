@@ -94,7 +94,7 @@ function(
                 );
 
             var sets = this.state.showSettings ? Settings({
-                _toggleSettings: this._toggleSettings,
+                _toggleSettings: this._toggleSettings
             }) : null;
 
             var tut = this.state.showTutorial ? Tutorial({

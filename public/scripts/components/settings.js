@@ -67,7 +67,7 @@ define([
         displayName: 'Game Settings',
 
         propTypes: {
-            _toggleSettings: React.PropTypes.func.isRequired,
+            _toggleSettings: React.PropTypes.func.isRequired
         },
 
         getInitialState: function() {
