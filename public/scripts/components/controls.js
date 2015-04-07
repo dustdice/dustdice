@@ -155,7 +155,7 @@ define([
 
             var betHiBtn, betLoBtn, chaseBetBtn, divideBetBtn;
 
-            if(GameSettings.showButtons) {
+            if(GameSettings.showButtons || this.state.notEnoughBalance || this.state.betTooHigh) {
                 betHiBtn = D.button(
                     {
                         id: 'bet-hi-button',
@@ -184,15 +184,21 @@ define([
                         D.div(null, D.i({ className: 'fa fa-caret-square-o-left' }), D.span(null, ('1 to ' + Engine.winProb)))
                 );
 
-                chaseBetBtn = D.button({ id: 'bet-chase-bet-button', className: 'btn btn-default ctl-button', onClick: this._chaseBet },
-                    D.span(null, 'x' + getBetMultiplier().toFixed(2)),
-                    D.i({ className: 'fa fa-caret-square-o-up' })
-                );
+                if(GameSettings.showButtons) {
+                    chaseBetBtn = D.button({ id: 'bet-chase-bet-button', className: 'btn btn-default ctl-button', onClick: this._chaseBet },
+                        D.span(null, 'x' + getBetMultiplier().toFixed(2)),
+                        D.i({ className: 'fa fa-caret-square-o-up' })
+                    );
 
-                divideBetBtn = D.button({ id: 'bet-divide-bet-button', className: 'btn btn-default ctl-button', onClick: this._divideBet },
-                    D.i({ className: 'fa fa-caret-square-o-down' }),
-                    D.span(null, '/' + getBetMultiplier().toFixed(2))
-                );
+                    divideBetBtn = D.button({ id: 'bet-divide-bet-button', className: 'btn btn-default ctl-button', onClick: this._divideBet },
+                        D.i({ className: 'fa fa-caret-square-o-down' }),
+                        D.span(null, '/' + getBetMultiplier().toFixed(2))
+                    );
+                } else {
+                    chaseBetBtn = divideBetBtn = null;
+                }
+
+
             } else {
                 betHiBtn = betLoBtn = chaseBetBtn = divideBetBtn = null;
             }
