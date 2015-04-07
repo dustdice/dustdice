@@ -92,7 +92,7 @@ define([
                     (this.state.screenFull)? D.i({ className: 'fa fa-compress' }) : D.i({ className: 'fa fa-expand' })
                 ),
                 DropdownButton({ className: 'top-bar-menu-btn', bsStyle: 'default', pullRight: true, title: D.i({ className: 'fa fa-bars' }) },
-                    MenuItem({ href: '/faq.html' }, "FAQ's"),
+                    MenuItem({ href: '/faq' }, "FAQ's"),
                     MenuItem({ href: 'http://vault.moneypot.com/' }, "Account"),
                     MenuItem({ onSelect: this.props._toggleTutorial }, "Tutorial"),
                     MenuItem({ onSelect: this.props._toggleSettings }, "Settings")
