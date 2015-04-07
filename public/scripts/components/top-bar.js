@@ -94,8 +94,8 @@ define([
                     (this.state.screenFull)? D.i({ className: 'fa fa-compress' }) : D.i({ className: 'fa fa-expand' })
                 ),
                 DropdownButton({ className: 'top-bar-menu-btn', bsStyle: 'default', pullRight: true, title: D.i({ className: 'fa fa-bars' }) },
-                    MenuItem({ href: '/faq' }, "FAQ's"),
-                    MenuItem({ href: 'http://vault.moneypot.com/' }, 'Account'),
+                    MenuItem({ href: '/faq' }, "FAQ's ", D.span({ className: 'glyphicon glyphicon-new-window' })),
+                    MenuItem({ href: 'http://vault.moneypot.com/' }, 'Account ', D.span({ className: 'glyphicon glyphicon-new-window' })),
                     MenuItem({ onSelect: this.props._toggleDepositAddress }, 'Deposit'),
                     MenuItem({ onSelect: this.props._toggleTutorial }, 'Tutorial'),
                     MenuItem({ onSelect: this.props._toggleSettings }, 'Settings')

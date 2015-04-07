@@ -141,6 +141,10 @@ h1 {
     color: inherit;
 }
 
+#top-bar-box li a span.glyphicon {
+    font-size: 0.7em;
+}
+
 #expand-button {
     margin-right: .1em;
 }
@@ -260,6 +264,7 @@ h1 {
     float: left;
     width: 25%;
     cursor: pointer;
+    padding-bottom: 1px;
 }
 
 .ctl-state-amount {
