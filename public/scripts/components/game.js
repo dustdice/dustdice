@@ -7,7 +7,8 @@ define([
     'components/graph',
     'components/controls',
     'components/settings',
-    'components/tutorial'
+    'components/tutorial',
+    'stores/game-settings'
 ],
 function(
     React,
@@ -17,16 +18,17 @@ function(
     TopBarClass,
     GraphClass,
     ControlsClass,
-    GameSettings,
-    GameTutorial
+    SettingsClass,
+    TutorialClass,
+    GameSettings
 ){
     var D = React.DOM;
     var TopBar = React.createFactory(TopBarClass);
     var Graph = React.createFactory(GraphClass);
     var Controls = React.createFactory(ControlsClass);
 
-    var Settings = React.createFactory(GameSettings);
-    var Tutorial = React.createFactory(GameTutorial);
+    var Settings = React.createFactory(SettingsClass);
+    var Tutorial = React.createFactory(TutorialClass);
 
     return React.createClass({
 
@@ -34,20 +36,24 @@ function(
         getInitialState: function() {
             return {
                 showSettings: false,
-                showTutorial: false,
+                showTutorial: !GameSettings.hideTutorial,
                 engine: Engine
             }
         },
 
         componentDidMount: function() {
+            KeyMaster.key('q', this._decreaseWinProb);
+            KeyMaster.key('r', this._increaseWinProb);
             KeyMaster.key('c', this._clearHistory);
             KeyMaster.key('s', this._toggleSettings);
-            Engine.on('get-user-data', this._getUserData);
+            Engine.on('get-user-data', this._getUserData); //Connected
             Engine.on('fatal-error', this._fatalError);
             Engine.on('user-alert', this._userAlert);
         },
 
         componentWillUnmount: function() {
+            KeyMaster.key.unbind('q', this._decreaseWinProb);
+            KeyMaster.key.unbind('r', this._increaseWinProb);
             KeyMaster.key.unbind('c', this._clearHistory);
             KeyMaster.key.unbind('s', this._toggleSettings);
             Engine.off('get-user-data', this._getUserData);
@@ -55,12 +61,22 @@ function(
             Engine.off('user-alert', this._userAlert);
         },
 
+        _increaseWinProb: function() {
+            if(Engine.winProb<=96)
+                Engine.setWinProb(Engine.winProb + 1);
+        },
+
+        _decreaseWinProb: function() {
+            if(Engine.winProb>=2)
+                Engine.setWinProb(Engine.winProb - 1);
+        },
+
         _userAlert: function(error) {
             alert(error);
         },
 
         _getUserData: function() {
-            this.setState({ engine: Engine }); //Just to re render
+            this.setState({ engine: Engine, showTutorial: !GameSettings.hideTutorial }); //Just to re render
         },
 
         _toggleSettings: function() {
@@ -98,7 +114,9 @@ function(
 
             var sets = this.state.showSettings ? Settings({
                 _toggleSettings: this._toggleSettings,
-                _clearHistory: this._clearHistory
+                _clearHistory: this._clearHistory,
+                _increaseWinProb: this._increaseWinProb,
+                _decreaseWinProb: this._decreaseWinProb
             }) : null;
 
             var tut = this.state.showTutorial ? Tutorial({

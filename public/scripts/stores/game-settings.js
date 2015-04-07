@@ -6,28 +6,35 @@ define([
     _
 ) {
 
-    var gameSettings =  function() {
+    var GameSettings =  function() {
         _.extend(this, Events);
 
         this.showButtons = true;
         this.useCustomBetMultiplier = false;
         this.customBetMultiplier = 2;
+        this.hideTutorial = localStorage.hideTutorial? JSON.parse(localStorage.hideTutorial) : false;
     };
 
-    gameSettings.prototype.setCustomBetMultiplier = function(multiplier) {
+    GameSettings.prototype.setCustomBetMultiplier = function(multiplier) {
         this.customBetMultiplier = multiplier;
         this.trigger('set-custom-bet-multiplier');
     };
 
-    gameSettings.prototype.toggleCustomBetMultiplier = function() {
+    GameSettings.prototype.toggleCustomBetMultiplier = function() {
         this.useCustomBetMultiplier = !this.useCustomBetMultiplier;
         this.trigger('toggle-custom-bet-multiplier');
     };
 
-    gameSettings.prototype.toggleShowButtons = function() {
+    GameSettings.prototype.toggleShowButtons = function() {
         this.showButtons = !this.showButtons;
         this.trigger('show-buttons-change');
     };
 
-    return new gameSettings();
+    GameSettings.prototype.toggleHideTutorial = function() {
+        this.hideTutorial = !this.hideTutorial;
+        localStorage.hideTutorial = this.hideTutorial;
+        this.trigger('toggle-change-tutorial');
+    };
+
+    return new GameSettings();
 });

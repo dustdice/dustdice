@@ -84,9 +84,6 @@ define([
             KeyMaster.key('down', this._divideBet);
             KeyMaster.key('right', this._betHi);
             KeyMaster.key('left', this._betLo);
-            KeyMaster.key('q', this._decreaseWinProb);
-            KeyMaster.key('r', this._increaseWinProb);
-
         },
 
         componentWillUnmount: function() {
@@ -98,8 +95,6 @@ define([
             KeyMaster.key.unbind('down', this._divideBet);
             KeyMaster.key.unbind('right', this._betHi);
             KeyMaster.key.unbind('left', this._betLo);
-            KeyMaster.key.unbind('q', this._decreaseWinProb);
-            KeyMaster.key.unbind('r', this._increaseWinProb);
         },
 
         _onChange: function() {
@@ -133,16 +128,6 @@ define([
                 newWager = 100;
 
             Engine.setWager(newWager);
-        },
-
-        _increaseWinProb: function() {
-            if(Engine.winProb<=96)
-                Engine.setWinProb(Engine.winProb + 1);
-        },
-
-        _decreaseWinProb: function() {
-            if(Engine.winProb>=2)
-                Engine.setWinProb(Engine.winProb - 1);
         },
 
         _goToVaultDeposit: function() {
