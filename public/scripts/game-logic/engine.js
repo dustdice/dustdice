@@ -275,6 +275,18 @@ define([
         this.trigger('history-clear');
     };
 
+    /** Engine API Helpers **/
+
+    GameEngine.prototype.increaseWinProb = function() {
+        if(this.winProb<= 96)
+            this.setWinProb(this.winProb + 1);
+    };
+
+    GameEngine.prototype.decreaseWinProb = function() {
+        if(this.winProb>=2)
+            this.setWinProb(this.winProb - 1);
+    };
+
     /**
      * Refresh the balance and the bankroll
      * Triggers:

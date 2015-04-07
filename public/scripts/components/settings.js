@@ -68,9 +68,6 @@ define([
 
         propTypes: {
             _toggleSettings: React.PropTypes.func.isRequired,
-            _clearHistory: React.PropTypes.func.isRequired,
-            _increaseWinProb: React.PropTypes.func.isRequired,
-            _decreaseWinProb: React.PropTypes.func.isRequired
         },
 
         getInitialState: function() {
@@ -199,6 +196,18 @@ define([
 
         },
 
+        _clearHistory: function() {
+                Engine.clearHistory();
+        },
+
+        _increaseWinProb: function() {
+            Engine.increaseWinProb();
+        },
+
+        _decreaseWinProb: function() {
+            Engine.decreaseWinProb();
+        },
+
         render: function() {
 
             var body;
@@ -308,9 +317,9 @@ define([
                         D.label({ htmlFor: 'remove-game-buttons' }, 'Remove Game Buttons'),
                         D.br(),
                         D.br(),
-                        D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this.props._decreaseWinProb }, 'Decrease win probability (Q)'),
-                        D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this.props._increaseWinProb }, 'Increase win probability (R)'),
-                        D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this.props._clearHistory }, 'Clear History (C)')
+                        D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this._decreaseWinProb }, 'Decrease win probability (Q)'),
+                        D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this._increaseWinProb }, 'Increase win probability (R)'),
+                        D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this._clearHistory }, 'Clear History (C)')
                     );
                 break;
 
@@ -328,6 +337,12 @@ define([
                                     String.fromCharCode(215)
                                 )
                             ),
+                            D.h4({ className: 'modal-title' },
+                                'Settings'
+                            )
+                        ),
+
+                        D.div({ className: 'modal-nav' },
                             D.ul({ className: 'nav nav-tabs nav-justified' },
                                 D.li({ role: 'presentation', className: (this.state.tab === 'BET')? 'active' : '', onClick: this._selectTab('BET') }, D.a({ href: '#' }, 'Bet')),
                                 D.li({ role: 'presentation', className: (this.state.tab === 'FAIR')? 'active' : '', onClick: this._selectTab('FAIR')  }, D.a({ href: '#' }, 'Fair')),

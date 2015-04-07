@@ -30,10 +30,8 @@ define([
         this.trigger('show-buttons-change');
     };
 
-    GameSettings.prototype.toggleHideTutorial = function() {
-        this.hideTutorial = !this.hideTutorial;
-        localStorage.hideTutorial = this.hideTutorial;
-        this.trigger('toggle-change-tutorial');
+    GameSettings.prototype.setHideTutorial = function() {
+        localStorage.hideTutorial = this.hideTutorial = true;
     };
 
     return new GameSettings();

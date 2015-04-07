@@ -26,16 +26,7 @@ define([
         },
 
         componentDidMount: function() {
-            GameSettings.on('all', this._onChange);
-        },
-
-        componentWillUnmount: function() {
-            GameSettings.off('all', this._onChange);
-        },
-
-        _onChange: function() {
-            if(this.isMounted())
-                this.setState({ gameSettings: GameSettings }); //Just to render
+          GameSettings.setHideTutorial();
         },
 
         _handleSelect: function(selectedIndex, selectedDirection) {
@@ -43,10 +34,6 @@ define([
                 index: selectedIndex,
                 direction: selectedDirection
             });
-        },
-
-        _toggleHideTutorial: function() {
-            GameSettings.toggleHideTutorial();
         },
 
         render: function() {
@@ -140,8 +127,6 @@ define([
                                 )
                               )
                             ),
-                            D.input({ type: 'checkbox', checked: GameSettings.hideTutorial, onChange: this._toggleHideTutorial }, "Don't show this again"),
-                            //D.span(null, 'Use your keyboard arrows to bet and increase or decrease the bet.'),
                             D.br(),
                             D.br(),
                             D.b(null, 'Keyboard Controls'),

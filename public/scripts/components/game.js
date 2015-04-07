@@ -42,9 +42,6 @@ function(
         },
 
         componentDidMount: function() {
-            KeyMaster.key('q', this._decreaseWinProb);
-            KeyMaster.key('r', this._increaseWinProb);
-            KeyMaster.key('c', this._clearHistory);
             KeyMaster.key('s', this._toggleSettings);
             Engine.on('get-user-data', this._getUserData); //Connected
             Engine.on('fatal-error', this._fatalError);
@@ -52,23 +49,10 @@ function(
         },
 
         componentWillUnmount: function() {
-            KeyMaster.key.unbind('q', this._decreaseWinProb);
-            KeyMaster.key.unbind('r', this._increaseWinProb);
-            KeyMaster.key.unbind('c', this._clearHistory);
             KeyMaster.key.unbind('s', this._toggleSettings);
             Engine.off('get-user-data', this._getUserData);
             Engine.off('fatal-error', this._fatalError);
             Engine.off('user-alert', this._userAlert);
-        },
-
-        _increaseWinProb: function() {
-            if(Engine.winProb<=96)
-                Engine.setWinProb(Engine.winProb + 1);
-        },
-
-        _decreaseWinProb: function() {
-            if(Engine.winProb>=2)
-                Engine.setWinProb(Engine.winProb - 1);
         },
 
         _userAlert: function(error) {
@@ -80,15 +64,12 @@ function(
         },
 
         _toggleSettings: function() {
-            this.setState({ showSettings: !this.state.showSettings, showTutorial: false });
+            if(!this.state.showTutorial)
+                this.setState({ showSettings: !this.state.showSettings, showTutorial: false });
         },
 
         _toggleTutorial: function() {
             this.setState({ showTutorial: !this.state.showTutorial, showSettings: false });
-        },
-
-        _clearHistory: function() {
-            Engine.clearHistory();
         },
 
         _fatalError: function() {
@@ -114,9 +95,6 @@ function(
 
             var sets = this.state.showSettings ? Settings({
                 _toggleSettings: this._toggleSettings,
-                _clearHistory: this._clearHistory,
-                _increaseWinProb: this._increaseWinProb,
-                _decreaseWinProb: this._decreaseWinProb
             }) : null;
 
             var tut = this.state.showTutorial ? Tutorial({
@@ -139,7 +117,8 @@ function(
                 D.div({ id: 'controls-container' },
                     Controls({
                         _toggleSettings: this._toggleSettings,
-                        _toggleTutorial: this._toggleTutorial
+                        _toggleTutorial: this._toggleTutorial,
+                        disableControls: this.state.showTutorial
                     })
                 ),
 

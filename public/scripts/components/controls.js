@@ -68,7 +68,8 @@ define([
         displayName: 'ControlsContainer',
 
         propTypes: {
-            _toggleSettings: React.PropTypes.func.isRequired
+            _toggleSettings: React.PropTypes.func.isRequired,
+            disableControls: React.PropTypes.bool.isRequired
         },
 
         getInitialState: function() {
@@ -76,10 +77,11 @@ define([
         },
 
         componentDidMount: function() {
-            //window.addEventListener('resize', this._handleResize);
             Engine.on('all', this._onChange);
             GameSettings.on('all', this._onChange);
-
+            KeyMaster.key('c', this._clearHistory);
+            KeyMaster.key('q', this._decreaseWinProb);
+            KeyMaster.key('r', this._increaseWinProb);
             KeyMaster.key('up', this._chaseBet);
             KeyMaster.key('down', this._divideBet);
             KeyMaster.key('right', this._betHi);
@@ -87,10 +89,11 @@ define([
         },
 
         componentWillUnmount: function() {
-            //window.removeEventListener('resize', this._handleResize);
             Engine.off('all', this._onChange);
             GameSettings.off('all', this._onChange);
-
+            KeyMaster.key.unbind('c', this._clearHistory);
+            KeyMaster.key.unbind('q', this._decreaseWinProb);
+            KeyMaster.key.unbind('r', this._increaseWinProb);
             KeyMaster.key.unbind('up', this._chaseBet);
             KeyMaster.key.unbind('down', this._divideBet);
             KeyMaster.key.unbind('right', this._betHi);
@@ -102,32 +105,44 @@ define([
                 this.setState(getState());
         },
 
-        //_handleResize: function() {
-        //    var smallViewPort = (window.innerWidth < _widthTrigger);
-        //    if(this.state.smallViewPort !== smallViewPort)
-        //        this.setState({ smallViewPort: smallViewPort });
-        //},
+        _clearHistory: function() {
+            if(!this.props.disableControls)
+                Engine.clearHistory();
+        },
+
+        _increaseWinProb: function() {
+            if(!this.props.disableControls)
+                Engine.increaseWinProb();
+        },
+
+        _decreaseWinProb: function() {
+            if(!this.props.disableControls)
+                Engine.decreaseWinProb();
+        },
 
         _betHi: function() {
-            if(Engine.gameState != 'BETTING' && !this.state.notEnoughBalance && !this.state.betTooHigh)
+            if(Engine.gameState != 'BETTING' && !this.state.notEnoughBalance && !this.state.betTooHigh && !this.props.disableControls)
                 Engine.bet(true);
         },
 
         _betLo: function() {
-            if(Engine.gameState != 'BETTING' && !this.state.notEnoughBalance && !this.state.betTooHigh)
+            if(Engine.gameState != 'BETTING' && !this.state.notEnoughBalance && !this.state.betTooHigh && !this.props.disableControls)
                 Engine.bet(false)
         },
 
         _chaseBet: function() {
-            Engine.setWager( Engine.wager * getBetMultiplier() );
+            if(!this.props.disableControls)
+                Engine.setWager(Engine.wager * getBetMultiplier());
         },
 
         _divideBet: function() {
-            var newWager = Engine.wager/getBetMultiplier();
-            if(newWager < 100)
-                newWager = 100;
+            if(!this.props.disableControls) {
+                var newWager = Engine.wager/getBetMultiplier();
+                if(newWager < 100)
+                    newWager = 100;
 
-            Engine.setWager(newWager);
+                Engine.setWager(newWager);
+            }
         },
 
         _goToVaultDeposit: function() {
