@@ -45,7 +45,7 @@ define([], function () {
         },
 
         bitsTextTerm: function (bits) {
-            return (bits >= 2) ? 'its' : 'it';
+            return (bits >= 2) ? 'bits' : 'bit';
         },
 
         roundTo100: function (number) {

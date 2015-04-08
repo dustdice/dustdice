@@ -75,7 +75,7 @@ define([
                             D.span(null, Clib.formatSatoshis(Engine.balance))
                         ),
                         D.span({ className: 'ctl-state-lbl' },
-                            D.i({ className: 'fa fa-btc' }), (Engine.balance === 100)? 'it': 'its'
+                            (Engine.balance === 100)? '\u00a0bit': '\u00a0bits'
                         ),
                         D.span({ className: 'ctl-state-button' },
                             D.i({ className: 'fa fa-refresh' + (Engine.gameState === 'REFRESHING'? ' spin': '') })

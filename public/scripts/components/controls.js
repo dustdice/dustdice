@@ -69,7 +69,7 @@ define([
 
         propTypes: {
             _toggleSettings: React.PropTypes.func.isRequired,
-            disableControls: React.PropTypes.bool.isRequired
+            disableControls: React.PropTypes.string.isRequired
         },
 
         getInitialState: function() {
@@ -220,7 +220,7 @@ define([
                             D.span(null, Clib.formatSatoshis(Engine.wager, 0))
                         ),
                         D.span({ className: 'ctrl-state-lbl' },
-                            D.i({ className: 'fa fa-btc' }), Clib.bitsTextTerm(Clib.satToBitRounded(Engine.wager))
+                            '\u00a0', Clib.bitsTextTerm(Clib.satToBitRounded(Engine.wager))
                         )
                     )
                 ),

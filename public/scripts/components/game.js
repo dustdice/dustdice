@@ -38,9 +38,7 @@ function(
         //Global UI States
         getInitialState: function() {
             return {
-                showSettings: false,
-                showTutorial: !GameSettings.hideTutorial,
-                modal: (GameSettings.hideTutorial)? false : 'TUTORIAL',
+                modal: (GameSettings.hideTutorial)? '' : 'TUTORIAL',
                 engine: Engine
             }
         },
@@ -64,19 +62,19 @@ function(
         },
 
         _getUserData: function() {
-            this.setState({ engine: Engine, showTutorial: !GameSettings.hideTutorial }); //Just to re render
+            this.setState({ engine: Engine }); //Just to re render
         },
 
         _toggleSettings: function() {
-            this.setState({ modal: (this.state.modal === 'SETTINGS')? false : 'SETTINGS' });
+            this.setState({ modal: (this.state.modal === 'SETTINGS')? '' : 'SETTINGS' });
         },
 
         _toggleTutorial: function() {
-            this.setState({ modal: (this.state.modal === 'TUTORIAL')? false : 'TUTORIAL' });
+            this.setState({ modal: (this.state.modal === 'TUTORIAL')? '' : 'TUTORIAL' });
         },
 
         _toggleDepositAddress: function() {
-            this.setState({ modal: (this.state.modal === 'DEPOSIT')? false : 'DEPOSIT' })
+            this.setState({ modal: (this.state.modal === 'DEPOSIT')? '' : 'DEPOSIT' })
         },
 
         _fatalError: function() {
@@ -140,7 +138,7 @@ function(
                     Controls({
                         _toggleSettings: this._toggleSettings,
                         _toggleTutorial: this._toggleTutorial,
-                        disableControls: this.state.showTutorial
+                        disableControls: this.state.modal
                     })
                 ),
 

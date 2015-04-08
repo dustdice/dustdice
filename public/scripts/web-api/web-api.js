@@ -7,7 +7,7 @@ define([
     //For development, always set to null
     var DELAY = null;
 
-    var URL = PRODUCTION ? 'https://vault.moneypot.com' : 'http://localhost:3000';
+    var URL = PRODUCTION ? 'https://api.moneypot.com' : 'http://localhost:3000';
 
     var WebApi = function() {};
 
