@@ -31,7 +31,7 @@ define([], function () {
         },
 
         formatSatoshis: function (n, decimals) {
-            return this.formatDecimals(n / 100, decimals);
+            return this.formatDecimals(Math.floor(n) / 100, decimals);
         },
 
         formatDecimals: function (n, decimals) {
