@@ -208,6 +208,11 @@ define([
             Engine.decreaseWinProb();
         },
 
+        _handleBackDropClick: function(e) {
+            if(e.target === e.currentTarget)
+                this.props._toggleSettings();
+        },
+
         render: function() {
 
             var body;
@@ -299,6 +304,11 @@ define([
                 case 'CONTROLS':
                     body = D.div({ className: 'modal-body' },
 
+                        D.input({ id: 'remove-game-buttons', type: 'checkbox', checked: !GameSettings.showButtons, onChange: this._toggleShowButtons }),
+                        D.label({ htmlFor: 'remove-game-buttons' }, '\u00a0Remove Game Buttons'),
+                        D.br(),
+                        D.br(),
+
                         D.div({ className: 'form-group' + (this.state.customBetMultiplierInvalid? ' has-error' : '') },
                             D.label({ className: 'control-label pull-left', htmlFor: 'set-client-seed' }, 'Custom bet multiplier'),
                             D.label({ className: 'control-label pull-right', htmlFor: 'set-input-wager' }, this.state.customBetMultiplierInvalid? this.state.customBetMultiplierInvalid : ''),
@@ -313,19 +323,17 @@ define([
                             )
                         ),
 
-                        D.input({ id: 'remove-game-buttons', type: 'checkbox', checked: !GameSettings.showButtons, onChange: this._toggleShowButtons }),
-                        D.label({ htmlFor: 'remove-game-buttons' }, 'Remove Game Buttons'),
-                        D.br(),
-                        D.br(),
+                        D.b(null, 'More controls:'),
                         D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this._decreaseWinProb }, 'Decrease win probability (Q)'),
                         D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this._increaseWinProb }, 'Increase win probability (R)'),
-                        D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this._clearHistory }, 'Clear History (C)')
+                        D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this._clearHistory }, 'Clear History (C)'),
+                        D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this.props._toggleSettings }, 'Close/Open settings (S)')
                     );
                 break;
 
             }//\switch
 
-            return D.div({ id: 'settings-modal', className: 'modal fade in', style: { display: 'block' } },
+            return D.div({ id: 'settings-modal', className: 'modal fade in', style: { display: 'block' }, onClick: this._handleBackDropClick },
 
                 D.div({ className: 'modal-dialog' },
 

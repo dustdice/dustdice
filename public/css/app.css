@@ -183,7 +183,7 @@ h1 {
     left: 0;
     background-color: rgba(255, 255, 255, 0.1);
     margin-bottom: -0.3em;
-    padding-top: 0.3em;
+    padding: 0.4em 0.3em 0.3em 0.5em;
 }
 
 #controls-container-box {
@@ -264,7 +264,6 @@ h1 {
     float: left;
     width: 25%;
     cursor: pointer;
-    padding-bottom: 1px;
 }
 
 .ctl-state-amount {
@@ -444,6 +443,9 @@ input[type=range]:focus::-ms-fill-upper {
 /* ==========================================================================
     Deposit Address (modal)
     ========================================================================== */
+#deposit-address-container .modal-body {
+    text-align: center;
+}
 
 
 /* ==========================================================================

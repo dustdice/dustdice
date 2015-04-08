@@ -36,9 +36,14 @@ define([
             });
         },
 
+        _handleBackDropClick: function(e) {
+            if(e.target === e.currentTarget)
+                this.props._toggleTutorial();
+        },
+
         render: function() {
 
-            return D.div({ id: 'tutorial-container', className: 'modal fade in', style: { display: 'block' } },
+            return D.div({ id: 'tutorial-container', className: 'modal fade in', style: { display: 'block' }, onClick: this._handleBackDropClick },
 
                 D.div({ className: 'modal-dialog' },
 
@@ -128,16 +133,17 @@ define([
                               )
                             ),
                             D.br(),
-                            D.br(),
-                            D.b(null, 'Keyboard Controls'),
-                            D.br(),
-                            D.b(null, 'Left Arrow: '), 'Bet on the lower range',
-                            D.br(),
-                            D.b(null, 'Right Arrow: '), 'Bet on the higher range.',
-                            D.br(),
-                            D.b(null, 'Up Arrow: '), 'Increase bet size',
-                            D.br(),
-                            D.b(null, 'Down Arrow: '), 'Decrease bet size'
+                            D.p({ className: 'text-center' }, D.b(null, 'Keyboard Controls')),
+                            D.dl({ className: 'dl-horizontal' },
+                                D.dt(null, 'Left Arrow'),
+                                D.dd(null, 'Bet on the lower range'),
+                                D.dt(null, 'Right Arrow'),
+                                D.dd(null, 'Bet on the higher range.'),
+                                D.dt(null, 'Up Arrow'),
+                                D.dd(null, 'Increase bet size'),
+                                D.dt(null, 'Down Arrow'),
+                                D.dd(null, 'Decrease bet size')
+                            )
                         )
                     )
                 )

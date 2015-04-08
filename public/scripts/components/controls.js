@@ -69,7 +69,8 @@ define([
 
         propTypes: {
             _toggleSettings: React.PropTypes.func.isRequired,
-            disableControls: React.PropTypes.string.isRequired
+            disableControls: React.PropTypes.string.isRequired,
+            _toggleDepositAddress: React.PropTypes.func.isRequired
         },
 
         getInitialState: function() {
@@ -145,10 +146,6 @@ define([
             }
         },
 
-        _goToVaultDeposit: function() {
-            Engine.goToVaultDeposit();
-        },
-
         render: function() {
 
             var isBetting = Engine.gameState === 'BETTING';
@@ -160,7 +157,7 @@ define([
                     {
                         id: 'bet-hi-button',
                         className: 'btn btn-default ctl-button' + ((this.state.notEnoughBalance || this.state.betTooHigh)? ' cant-bet' : ''),
-                        onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this._goToVaultDeposit : this._betHi,
+                        onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this.props._toggleDepositAddress : this._betHi,
                         disabled: isBetting
                     },
                     this.state.betTooHigh?
@@ -174,7 +171,7 @@ define([
                     {
                         id: 'bet-lo-button',
                         className: 'btn btn-default ctl-button' + ((this.state.notEnoughBalance || this.state.betTooHigh)? ' cant-bet' : ''),
-                        onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this._goToVaultDeposit : this._betLo,
+                        onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this.props._toggleDepositAddress : this._betLo,
                         disabled: isBetting
                     },
                     this.state.betTooHigh?

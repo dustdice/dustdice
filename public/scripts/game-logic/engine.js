@@ -64,7 +64,7 @@ define([
 
         //Store the hash and remove it from the url, it is dangerous to let it there, it could be stolen from a picture or something
         var hash = window.location.hash;
-        window.location.hash = '';
+        window.history.replaceState({}, '', '#');
 
         if(!hash) {
             if(localStorage.accessToken) {
