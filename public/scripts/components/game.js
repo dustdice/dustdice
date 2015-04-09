@@ -118,8 +118,6 @@ function(
 
             }
 
-
-
             return D.div(null,
 
                 D.div({ id: 'top-bar-container' },

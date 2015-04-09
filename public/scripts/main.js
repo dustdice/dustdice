@@ -7,6 +7,8 @@ define([
     GameClass,
     FastClick
 ){
+    console.log('Main.js');
+
     var Game = React.createFactory(GameClass);
 
     FastClick.attach(document.body);

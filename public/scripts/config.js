@@ -9,29 +9,21 @@ requirejs.config({
         'jquery-text-width': 'lib/jquery-plugins/text-width',
         screenfull: 'lib/screenfull',
         'react-bootstrap': 'lib/react-bootstrap'
-
-
     },
     shim: {
-
         'react-bootstrap': {
             deps: ['lib/react']
         },
-
         jqueryui: ['jquery'],
-
         highcharts: {
             deps: ['jquery'],
             exports: 'Highcharts'
         },
-
         'highcharts-theme': {
             deps: ['highcharts', 'jqueryui'],
             exports: 'Highcharts'
         }
     }
-
 });
 
-define(['main']);
-
+require(['main']);

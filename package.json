@@ -4,7 +4,8 @@
   "description": "DustDice Site",
   "scripts": {
     "start": "node --harmony src/server.js",
-    "start-dev": "nodemon --harmony src/server.js"
+    "start-dev": "nodemon --harmony src/server.js",
+    "prepublish": "node src/prepublish.js"
   },
   "engines": {
     "node": "0.12.x"
@@ -14,7 +15,8 @@
     "koa-router": "^4.2.0",
     "koa-static": "^1.4.9",
     "koa-swig": "^1.4.0"
+    "requirejs": "^2.1.17"
   },
   "private": true,
-  "main": "server.js"
+  "main": "src/server.js"
 }

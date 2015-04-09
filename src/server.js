@@ -4,18 +4,21 @@ var router = require('koa-router');
 var render = require('koa-swig');
 var path = require('path');
 
+var serve = require('koa-static');
 
+var port = process.env.PORT || 3001;
+var production = process.env.NODE_ENV === 'production';
+
+app.poweredBy = false;
 
 app.on('error', function(err) {
     console.error('Error: ', err, err.stack);
 });
 
-
-app.poweredBy = false;
-app.use(require('koa-static')('public'));
-
-var port = process.env.PORT || 3001;
-
+if(production)
+    app.use(serve('build'));
+else
+    app.use(serve('public'));
 
 /** Configure template engine **/
 app.context.render = render({
@@ -34,7 +37,7 @@ app.use(router(app));
 /** Landing page **/
 app.get('/', function *(next) {
     yield this.render('landing', {
-        production: process.env.NODE_ENV === 'production',
+        production: production,
         landing: true
     });
 });
@@ -47,7 +50,7 @@ app.get('/faq', function *(next) {
 
 app.get('/game', function *(next) {
    yield this.render('game', {
-       production: process.env.NODE_ENV === 'production'
+       production: production
    })
 });
 
