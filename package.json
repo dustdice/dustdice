@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node --harmony src/server.js",
     "start-dev": "nodemon --harmony src/server.js",
-    "prepublish": "node src/prepublish.js"
+    "preinstall": "node src/prepublish.js"
   },
   "engines": {
     "node": "0.12.x"
