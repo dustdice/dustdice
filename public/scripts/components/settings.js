@@ -252,13 +252,13 @@ define([
                         D.div({ className: jackPotDivClasses },
                             D.label({ className: 'control-label pull-left', htmlFor: 'set-jackpot-amount' }, 'Jackpot'),
                             D.label({ className: 'control-label pull-right', htmlFor: 'set-jackpot-amount' }, this.state.jackpotValidityMessage? this.state.jackpotValidityMessage: ''),
-                            D.input({ type: 'text', className: 'form-control', id: 'set-jackpot-amount', value: this.state.jackpotInputText, onChange: this._setJackpot })
+                            D.input({ type: 'text', className: 'form-control clear', id: 'set-jackpot-amount', value: this.state.jackpotInputText, onChange: this._setJackpot })
                         ),
 
                         D.div({ className: 'form-group' + (betTooHigh? ' has-warning' : '') },
                             D.label({ className: 'control-label pull-left', htmlFor: 'set-win-chance-slider' }, 'Wining probability: ' + Engine.winProb + '%'),
                             D.label({ className: 'control-label pull-right', htmlFor: 'set-win-chance-slider' }, 'Payout: ' + (98/Engine.winProb).toFixed(2) + 'x'),
-                            D.input({ className: 'set-win-prob-range', type: 'range', max: '97', min: '1', id: 'set-win-chance-slider', value: Engine.winProb, onChange: this._setWinProb })
+                            D.input({ className: 'set-win-prob-range clear', type: 'range', max: '97', min: '1', id: 'set-win-chance-slider', value: Engine.winProb, onChange: this._setWinProb })
                         ),
 
                         D.div({ className: 'form-group' + (betTooHigh? ' has-warning' : '') },
