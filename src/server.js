@@ -1,10 +1,9 @@
 var koa = require('koa');
 var app = koa();
 var router = require('koa-router');
-var swig = require('koa-swig');
+var render = require('koa-swig');
 var path = require('path');
 
-var fs = require('fs');
 
 
 app.on('error', function(err) {
@@ -19,7 +18,7 @@ var port = process.env.PORT || 3001;
 
 
 /** Configure template engine **/
-swig(app, {
+app.context.render = render({
     root: './views',
     autoescape: true,
     cache: false, //'memory', // disable, set to false
