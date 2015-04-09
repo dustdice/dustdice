@@ -14,7 +14,7 @@
     "koa": "^0.18.1",
     "koa-router": "^4.2.0",
     "koa-static": "^1.4.9",
-    "koa-swig": "^1.4.0"
+    "koa-swig": "^1.4.0",
     "requirejs": "^2.1.17"
   },
   "private": true,
