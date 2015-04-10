@@ -1,13 +1,23 @@
+var path = require('path');
+var fs = require('fs');
+
 var koa = require('koa');
 var app = koa();
 var router = require('koa-router');
 var render = require('koa-swig');
-var path = require('path');
-
 var serve = require('koa-static');
 
 var port = process.env.PORT || 3001;
 var production = process.env.NODE_ENV === 'production';
+
+console.log('Running server, prod=', process.env.NODE_ENV === 'production');
+
+var config = null;
+if(production){
+    config = fs.readFileSync(__dirname + '/config.js');
+    config = JSON.parse(config);
+    console.log(config);
+}
 
 app.poweredBy = false;
 
@@ -50,7 +60,8 @@ app.get('/faq', function *(next) {
 
 app.get('/game', function *(next) {
    yield this.render('game', {
-       production: production
+       production: production,
+       config: config
    })
 });
 

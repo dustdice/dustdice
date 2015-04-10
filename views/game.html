@@ -8,7 +8,7 @@
 
         <!--<link href="css/bootstrap.min.css" rel="stylesheet">-->
         <!--<link rel="stylesheet" href="css/font-awesome.css">-->
-        <link href="css/app.css" rel="stylesheet">
+        <link href="css/{% if production %}{{config.cssBuildFilename}}{% else %}app{% endif %}.css" rel="stylesheet">
         <link rel="shortcut icon" href="img/favicon-black.ico" type="image/x-icon"/>
 
     </head>
@@ -21,7 +21,7 @@
         var PRODUCTION = {% if production %}true{% else %}false{% endif %};
     </script>
 
-        <script data-main="scripts/config" src="scripts/lib/require.js"></script>
+        <script data-main="scripts/{% if production %}{{config.jsBuildFilename}}{% else %}config{% endif %}" src="scripts/lib/require.js"></script>
 
 
     </body>

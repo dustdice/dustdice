@@ -202,12 +202,12 @@ define([
 
                 self.clientSeed = Clib.randomUint32();
 
+                //FOR TESTING THE JACKPOT
                 //Do we won the jackpot? Could give us false positive if the bet is the same than the jackpot and we win that works for testing
-                if(game.profit == self.jackpot)//TODO: NEW API wonJackpot coming in vault
-                    game.wonJackpot = true;
-                //Do we won the bet
-                else if(game.profit > 0)
-                        game.wonBet = true;
+                //if(game.profit == self.jackpot)
+
+                if(game.profit > 0 && !game.wonJackpot)
+                    game.wonBet = true;
 
                 //Set the new balance in the engine
                 self.balance += game.profit;
