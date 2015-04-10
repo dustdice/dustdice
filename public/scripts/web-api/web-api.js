@@ -4,8 +4,8 @@ define([
         Clib
     ) {
 
-    //For development, always set to null
-    var DELAY = null;
+    //For development, always set to false
+    var DELAY = false;
 
     var URL = PRODUCTION ? 'https://api.moneypot.com' : 'http://localhost:3000';
 

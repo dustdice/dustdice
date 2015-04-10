@@ -199,8 +199,21 @@ h1 {
     position: fixed;
     border-radius: 10px;
     opacity: 0.5;
-    background-color: rgba(189, 195, 199, 0.5);
+    background-color: rgba(37, 152, 91, 0.5);
     border: none;
+    color: inherit;
+}
+
+.btn[disabled] {
+    color: #333;
+    cursor: not-allowed;
+    filter: alpha(opacity=50);
+    opacity: .2;
+}
+
+#bet-hi-button[disabled], #bet-lo-button[disabled] {
+    opacity: 0.3;
+    background-color: rgba(37, 152, 91, 0.5);
     color: inherit;
 }
 
@@ -212,6 +225,12 @@ h1 {
 #bet-lo-button {
     left: 10%;
     bottom: 20%;
+}
+
+#bet-hi-button.betting, #bet-lo-button.betting {
+    background-color: rgba(152, 187, 23, 0.5);
+    opacity: 0.5;
+
 }
 
 #bet-chase-bet-button {
@@ -245,17 +264,6 @@ h1 {
 #bet-hi-button.cant-bet, #bet-lo-button.cant-bet {
     background-color: red;
     color: #ffffff;
-}
-
-#bet-hi-button[disabled], #bet-lo-button[disabled] {
-    opacity: 0.3;
-}
-
-.btn[disabled] {
-    color: #333;
-    cursor: not-allowed;
-    filter: alpha(opacity=50);
-    opacity: .2;
 }
 
 .ctl-state-name {

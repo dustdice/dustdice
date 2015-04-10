@@ -17,6 +17,7 @@ define([
     //var _widthTrigger = 992;
 
     var D = React.DOM;
+    var cx = React.addons.classSet;
 
     function getBetMultiplier() {
         if(GameSettings.useCustomBetMultiplier) {
@@ -153,10 +154,18 @@ define([
             var betHiBtn, betLoBtn, chaseBetBtn, divideBetBtn;
 
             if(GameSettings.showButtons || this.state.notEnoughBalance || this.state.betTooHigh) {
+
+                var betHiBtnClasses = cx({
+                    'btn': true,
+                    'btn-default': true,
+                    'ctl-button': true,
+                    'cant-bet': (this.state.notEnoughBalance || this.state.betTooHigh),
+                    'betting': (isBetting && Engine.currentBet.hiLo === true)
+                });
                 betHiBtn = D.button(
                     {
                         id: 'bet-hi-button',
-                        className: 'btn btn-default ctl-button' + ((this.state.notEnoughBalance || this.state.betTooHigh)? ' cant-bet' : ''),
+                        className: betHiBtnClasses,
                         onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this.props._toggleDepositAddress : this._betHi,
                         disabled: isBetting
                     },
@@ -167,10 +176,17 @@ define([
                         D.div(null, D.span(null, (101-Engine.winProb) + ' to 100 '), D.i({ className: 'fa fa-caret-square-o-right' }))
                 );
 
+                var betLoBtnClasses = cx({
+                    'btn': true,
+                    'btn-default': true,
+                    'ctl-button': true,
+                    'cant-bet': (this.state.notEnoughBalance || this.state.betTooHigh),
+                    'betting': (isBetting && Engine.currentBet.hiLo === false)
+                });
                 betLoBtn = D.button(
                     {
                         id: 'bet-lo-button',
-                        className: 'btn btn-default ctl-button' + ((this.state.notEnoughBalance || this.state.betTooHigh)? ' cant-bet' : ''),
+                        className: betLoBtnClasses,
                         onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this.props._toggleDepositAddress : this._betLo,
                         disabled: isBetting
                     },

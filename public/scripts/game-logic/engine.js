@@ -56,6 +56,8 @@ define([
         self.maxWin = null;
         self.depositAddress = null;
 
+        self.currentBet = null; //The betting info while the gameState is 'BETTING'
+
         self.gameHistory = []; // { wager: satoshis, payout: 2.03, win: boolean }
 
 
@@ -175,7 +177,7 @@ define([
 
         /** Save the current state of the engine, do not send it by reference to other modules
             This object will be modified and saved in the graph history */
-        var currentBet = {
+        self.currentBet = {
             wager: Clib.roundTo100(self.wager), // Round the wager to the nearest bits
             winProb: self.winProb,
             hiLo: hiLo,
@@ -192,18 +194,18 @@ define([
          * You can't win the jackpot and win the bet and the same time
          */
         WebApi.bet(
-            Clib.roundTo100(currentBet.wager),
-            currentBet.winProb,
-            currentBet.hash,
-            currentBet.seed,
-            currentBet.hiLo,
-            currentBet.accessToken,
-            currentBet.jackpot,
+            Clib.roundTo100(self.currentBet.wager),
+            self.currentBet.winProb,
+            self.currentBet.hash,
+            self.currentBet.seed,
+            self.currentBet.hiLo,
+            self.currentBet.accessToken,
+            self.currentBet.jackpot,
             self.errorHandler(function(game){
 
                 //Test the hash of the game & the outcome of the game
                 var hash = SHA256.hash(game.secret + '|' + game.salt);
-                var vaultOutcome = (game.secret + currentBet.seed) % Math.pow(2,32);
+                var vaultOutcome = (game.secret + self.currentBet.seed) % Math.pow(2,32);
                 var outcome = Math.floor(vaultOutcome / (Math.pow(2,32) / 100) ) + 1;
                 if(self.nextGameHash !== hash || game.outcome !== outcome) {
                     self.setErrorState('Could not prove that the game was fair :/');
@@ -227,9 +229,9 @@ define([
                 //Append the new balance in the game
                 game.balance = self.balance;
                 //Append game info to the result
-                game.wager = currentBet.wager;
-                game.winProb = currentBet.winProb;
-                game.hiLo = currentBet.hiLo;
+                game.wager = self.currentBet.wager;
+                game.winProb = self.currentBet.winProb;
+                game.hiLo = self.currentBet.hiLo;
 
 
                 self.gameHistory.push(game);
@@ -239,10 +241,11 @@ define([
 
                 self.gameState = 'STANDING_BY';
 
+                self.currentBet = null; //Clear the current Bet
+
                 //Send a copy of the game result values, do not edit this object in components!
                 Object.seal(game);//Avoid some component do weird things on the object
                 self.trigger('bet-end', game);
-
             })); //\WebApi.bet
 
         //Send a copy of the current values of the bet, do not edit this object in components!
