@@ -16,7 +16,6 @@ var config = null;
 if(production){
     config = fs.readFileSync(__dirname + '/config.js');
     config = JSON.parse(config);
-    console.log(config);
 }
 
 app.poweredBy = false;

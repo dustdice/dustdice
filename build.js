@@ -1,18 +1,25 @@
 var fs = require('fs');
 var exec = require('child_process').exec;
+var crypto = require('crypto');
 
 var requirejs = require('requirejs');
 var assert = require('assert');
 
+console.log('Running install script');
+
 if(process.env.NODE_ENV !== 'production')
     return;
 
-console.log('Running install script');
+function hash(filename) {
+    var shasum = crypto.createHash('sha1');
+    shasum.update(fs.readFileSync(filename));
+    return shasum.digest('hex');
+}
 
 //Set file names for the optimized files
 var config = {
-    jsBuildFilename: Math.round(Math.random()*295682831396).toString(16), //Random name
-    cssBuildFilename: Math.round(Math.random()*208613985927).toString(16) //Random name
+    jsBuildFilename: hash('./public/scripts/config.js').substring(0, 8),
+    cssBuildFilename: hash('./public/css/app.css').substring(0, 8)
 };
 
 fs.writeFile('src/config.js', JSON.stringify(config), function (err) {
