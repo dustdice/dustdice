@@ -62,44 +62,32 @@ define([
 
 
         if(!Clib.browserSupport())
-            self.setErrorState('Your browser is old, please open dustDice in a decent browser ;)');
+            self.setErrorState('We unfortunately don\'t support your browser');
 
-        //Store the hash and remove it from the url, it is dangerous to let it there, it could be stolen from a picture or something
-        var hash = window.location.hash;
+        var params = Clib.getHashParams();
+
         window.history.replaceState({}, '', '#');
 
-        if(!hash) {
-            if(localStorage.accessToken) {
-                self.accessToken = localStorage.accessToken;
-                self.expiresIn = localStorage.expiresIn;
-                self.state = localStorage.state;
-            } else {
-                self.setErrorState('Login session is missing');
-            }
+        if (params['access_token']) {
+          self.accessToken = params['access_token'];
+          localStorage['access_token'] = self.accessToken;
+        } else if (localStorage['access_token']) {
+          self.accessToken = localStorage['access_token'];
         } else {
-            if(hash.indexOf('#')>-1)
-                hash = hash.split('#')[1];
-            hash = hash.split('&');
-
-            self.accessToken = hash[0].split('=')[1];
-            self.expiresIn = hash[1].split('=')[1];
-            self.state = hash[2].split('=')[1];
-
-            //TODO: validate the values?
-
-            localStorage.accessToken = self.accessToken;
-            localStorage.expiresIn = self.expiresIn;
-            localStorage.state = self.state;
+          self.setErrorState('Could not find a valid access token');
         }
 
+
+        // TODO: handle state, and expires_in
+
         //Get settings from localStorage if they exist
-        var wager = JSON.parse(localStorage.wager?localStorage.wager:null);
+        var wager = JSON.parse(localStorage.wager ? localStorage.wager : null);
         this.wager = (typeof wager === 'number' && wager > 0)? wager : this.wager;
 
-        var jackpot = JSON.parse(localStorage.jackpot?localStorage.jackpot:null);
+        var jackpot = JSON.parse(localStorage.jackpot ? localStorage.jackpot : null);
         this.jackpot = (typeof jackpot === 'number' && jackpot > 0)? jackpot : this.jackpot;
 
-        var winProb = JSON.parse(localStorage.winProb?localStorage.winProb:null);
+        var winProb = JSON.parse(localStorage.winProb ? localStorage.winProb : null);
         this.winProb = (typeof localStorage.winProb === 'number' && winProb > 0 && winProb < 98)? winProb : this.winProb;
 
 
