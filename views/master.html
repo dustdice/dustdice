@@ -11,6 +11,10 @@
 </head>
 <body>
 
+<!--<script>-->
+    <!--jqueryReadyQueue = [];-->
+<!--</script>-->
+
 <div id="landing-background">
     <div id="landing-container" class="container">
         <div class="header">
@@ -20,19 +24,30 @@
                     <li role="presentation" {% if faq %} class="active" {% endif %}><a href="/faq">FAQ</a></li>
                 </ul>
             </nav>
-            <h3 class="text-muted">DustDice</h3>
+            <div class="logo-container">
+                <img src="img/powder-blue.png">
+                <h3 class="text-muted">DustDice</h3>
+            </div>
+
         </div>
 
-        {% block content %}
+        {% block content %}  {% endblock %}
 
         <footer class="footer">
-            <p>&copy; DustDice 2015</p>
+            <p>&copy; DustDice 2015 by <a href="https://moneypot.com">Team MoneyPot</p>
         </footer>
     </div>
 </div>
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="/scripts/lib/jquery.js"></script>
+<script src="/scripts/lib/bootstrap.min.js"></script>
+<!--<script>-->
+    <!--$(function() {-->
+        <!--while(jqueryReadyQueue.length){-->
+            <!--jqueryReadyQueue.shift()($);-->
+        <!--}-->
+    <!--});-->
+<!--</script>-->
 
 </body>
 </html>
