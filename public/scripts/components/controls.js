@@ -153,68 +153,65 @@ define([
 
             var betHiBtn, betLoBtn, chaseBetBtn, divideBetBtn;
 
-            if(GameSettings.showButtons || this.state.notEnoughBalance || this.state.betTooHigh) {
+            var betHiBtnClasses = cx({
+                'btn': true,
+                'btn-default': true,
+                'ctl-button': true,
+                'cant-bet': (this.state.notEnoughBalance || this.state.betTooHigh),
+                'betting': (isBetting && Engine.currentBet.hiLo === true),
+                'transparent': !GameSettings.showButtons
+            });
+            betHiBtn = D.button(
+                {
+                    id: 'bet-hi-button',
+                    className: betHiBtnClasses,
+                    onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this.props._toggleDepositAddress : this._betHi,
+                    disabled: isBetting
+                },
+                this.state.betTooHigh?
+                    'Supported':
+                this.state.notEnoughBalance?
+                    'Deposit in Vault' :
+                    D.div(null, D.span(null, (101-Engine.winProb) + ' to 100 '), D.i({ className: 'fa fa-caret-square-o-right' }))
+            );
 
-                var betHiBtnClasses = cx({
-                    'btn': true,
-                    'btn-default': true,
-                    'ctl-button': true,
-                    'cant-bet': (this.state.notEnoughBalance || this.state.betTooHigh),
-                    'betting': (isBetting && Engine.currentBet.hiLo === true)
-                });
-                betHiBtn = D.button(
-                    {
-                        id: 'bet-hi-button',
-                        className: betHiBtnClasses,
-                        onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this.props._toggleDepositAddress : this._betHi,
-                        disabled: isBetting
-                    },
-                    this.state.betTooHigh?
-                        'Supported':
-                    this.state.notEnoughBalance?
-                        'Deposit in Vault' :
-                        D.div(null, D.span(null, (101-Engine.winProb) + ' to 100 '), D.i({ className: 'fa fa-caret-square-o-right' }))
-                );
+            var betLoBtnClasses = cx({
+                'btn': true,
+                'btn-default': true,
+                'ctl-button': true,
+                'cant-bet': (this.state.notEnoughBalance || this.state.betTooHigh),
+                'betting': (isBetting && Engine.currentBet.hiLo === false),
+                'transparent': !GameSettings.showButtons
+            });
+            betLoBtn = D.button(
+                {
+                    id: 'bet-lo-button',
+                    className: betLoBtnClasses,
+                    onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this.props._toggleDepositAddress : this._betLo,
+                    disabled: isBetting
+                },
+                this.state.betTooHigh?
+                    'Bet not':
+                this.state.notEnoughBalance?
+                    'Not enough bits' :
+                    D.div(null, D.i({ className: 'fa fa-caret-square-o-left' }), D.span(null, ('1 to ' + Engine.winProb)))
+            );
 
-                var betLoBtnClasses = cx({
-                    'btn': true,
-                    'btn-default': true,
-                    'ctl-button': true,
-                    'cant-bet': (this.state.notEnoughBalance || this.state.betTooHigh),
-                    'betting': (isBetting && Engine.currentBet.hiLo === false)
-                });
-                betLoBtn = D.button(
-                    {
-                        id: 'bet-lo-button',
-                        className: betLoBtnClasses,
-                        onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this.props._toggleDepositAddress : this._betLo,
-                        disabled: isBetting
-                    },
-                    this.state.betTooHigh?
-                        'Bet not':
-                    this.state.notEnoughBalance?
-                        'Not enough bits' :
-                        D.div(null, D.i({ className: 'fa fa-caret-square-o-left' }), D.span(null, ('1 to ' + Engine.winProb)))
-                );
+            var chaseDivideBetBtnClasses = cx({
+                'btn': true,
+                'btn-default': true,
+                'ctl-button': true,
+                'transparent': !GameSettings.showButtons
+            });
+            chaseBetBtn = D.button({ id: 'bet-chase-bet-button', className: chaseDivideBetBtnClasses, onClick: this._chaseBet },
+                D.span(null, 'x' + getBetMultiplier().toFixed(2)),
+                D.i({ className: 'fa fa-caret-square-o-up' })
+            );
+            divideBetBtn = D.button({ id: 'bet-divide-bet-button', className: chaseDivideBetBtnClasses, onClick: this._divideBet },
+                D.i({ className: 'fa fa-caret-square-o-down' }),
+                D.span(null, '/' + getBetMultiplier().toFixed(2))
+            );
 
-                if(GameSettings.showButtons) {
-                    chaseBetBtn = D.button({ id: 'bet-chase-bet-button', className: 'btn btn-default ctl-button', onClick: this._chaseBet },
-                        D.span(null, 'x' + getBetMultiplier().toFixed(2)),
-                        D.i({ className: 'fa fa-caret-square-o-up' })
-                    );
-
-                    divideBetBtn = D.button({ id: 'bet-divide-bet-button', className: 'btn btn-default ctl-button', onClick: this._divideBet },
-                        D.i({ className: 'fa fa-caret-square-o-down' }),
-                        D.span(null, '/' + getBetMultiplier().toFixed(2))
-                    );
-                } else {
-                    chaseBetBtn = divideBetBtn = null;
-                }
-
-
-            } else {
-                betHiBtn = betLoBtn = chaseBetBtn = divideBetBtn = null;
-            }
 
             return D.div({ id: 'controls-container-box' },
 

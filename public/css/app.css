@@ -218,7 +218,7 @@ h1 {
 }
 
 #bet-hi-button {
-    right: 10%;
+    right: 20%;
     bottom: 20%;
 }
 
@@ -234,7 +234,7 @@ h1 {
 }
 
 #bet-chase-bet-button {
-    right: 10%;
+    right: 20%;
     top: 20%;
 }
 
@@ -283,6 +283,12 @@ h1 {
 
 .ctl-state-button {
     margin-left: .5em;
+}
+
+.ctl-button.transparent {
+    color: transparent;
+    background-color: transparent;
+    padding: 2em;
 }
 
 

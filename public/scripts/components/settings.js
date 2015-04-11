@@ -213,6 +213,10 @@ define([
                 this.props._toggleSettings();
         },
 
+        _setGraphRightMargin: function(e) {
+            GameSettings.setGraphRightMargin(e.target.value);
+        },
+
         render: function() {
 
             var body;
@@ -304,10 +308,15 @@ define([
                 case 'CONTROLS':
                     body = D.div({ className: 'modal-body' },
 
-                        D.input({ id: 'remove-game-buttons', type: 'checkbox', checked: !GameSettings.showButtons, onChange: this._toggleShowButtons }),
-                        D.label({ htmlFor: 'remove-game-buttons' }, '\u00a0Remove Game Buttons'),
-                        D.br(),
-                        D.br(),
+                        D.div({ className: 'form-group' },
+                            D.input({ id: 'remove-game-buttons', type: 'checkbox', checked: !GameSettings.showButtons, onChange: this._toggleShowButtons }),
+                            D.label({ htmlFor: 'remove-game-buttons' }, '\u00a0Hide Game Buttons')
+                        ),
+
+                        D.div({ className: 'form-group' },
+                            D.label({ className: 'control-label pull-left', htmlFor: 'set-graph-right-margin' }, 'Right graph margin: ' + GameSettings.graphRightMargin),
+                            D.input({ className: 'set-graph-right-margin clear', type: 'range', max: '10', min: '1', id: 'set-graph-right-margin', value: GameSettings.graphRightMargin, onChange: this._setGraphRightMargin })
+                        ),
 
                         D.div({ className: 'form-group' + (this.state.customBetMultiplierInvalid? ' has-error' : '') },
                             D.label({ className: 'control-label pull-left', htmlFor: 'set-client-seed' }, 'Custom bet multiplier'),
@@ -346,7 +355,7 @@ define([
                                 )
                             ),
                             D.h4({ className: 'modal-title' },
-                                'Settings'
+                                'Settings (S)'
                             )
                         ),
 

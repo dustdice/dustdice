@@ -30,13 +30,13 @@ define([
 
         self.balance = null;
 
-        self.winProb = 49;
+        self.winProb = Clib.localOrDef('winProb', 49);
 
         //Wager is a float but is rounded when betting and when showing it to the user, this allows to chase bet on small qty's to actually work, Use Math.round(), is as close as you can get.
-        self.wager = 1e2;
+        self.wager =  Clib.localOrDef('wager', 1e2);
 
         //Low jackpot because we are poor :p
-        self.jackpot = 100e2;
+        self.jackpot =  Clib.localOrDef('jackpot', 100e2);
 
         //TODO: Remove max bet, it should be max profit
         self.maxBet  = 10000e8;
@@ -76,6 +76,8 @@ define([
         } else {
           self.setErrorState('Could not find a valid access token');
         }
+
+
 
 
         // TODO: handle state, and expires_in
