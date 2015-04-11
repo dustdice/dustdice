@@ -16,15 +16,15 @@
 
 #landing-container .nav-pills>li.active>a, #landing-container .nav-pills>li.active>a:hover, #landing-container .nav-pills>li.active>a:focus {
     color: #fff;
-    background-color: #16A085;
+    background-color: #2C3E50;
 }
 
 #landing-container nav a {
-    color: #16A085;
+    color: #2C3E50;
 }
 
 #landing-container .nav>li>a:hover, #landing-container .nav>li>a:focus {
-background-color: rgba(22, 160, 133, 0.3);
+background-color: rgba(44, 62, 80, 0.3);
 }
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
@@ -41,10 +41,21 @@ background-color: rgba(22, 160, 133, 0.3);
 }
 /* Make the masthead heading the same height as the navigation */
 #landing-container .header h3 {
-    padding-bottom: 19px;
     margin-top: 0;
     margin-bottom: 0;
-    line-height: 40px;
+    color: #2C3E50;
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+.logo-container {
+    padding-bottom: 19px;
+}
+
+.logo-container img {
+    width: 24px;
+    display: inline-block;
+    vertical-align: bottom;
 }
 
 /* Custom page footer */
@@ -104,4 +115,28 @@ background-color: rgba(22, 160, 133, 0.3);
     #landing-container .jumbotron {
         border-bottom: 0;
     }
+}
+
+#landing-carousel .carousel-caption {
+    top: 20px;
+}
+
+#landing-carousel .btn-register-container {
+    position: absolute;
+    bottom: 40px;
+    right: 0;
+    left: 0;
+    text-align: center;
+}
+
+#landing-carousel .carousel-subtitle {
+    font-size: 1.3em;
+}
+
+#landing-carousel .carousel-subtitle a {
+    color: #5cb85c;
+}
+
+#landing-carousel .btn-register {
+    font-size: 1.5em;
 }
