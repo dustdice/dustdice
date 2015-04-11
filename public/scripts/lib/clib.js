@@ -36,7 +36,7 @@ define([], function () {
 
         formatDecimals: function (n, decimals) {
             if (typeof decimals === 'undefined') {
-                if (n % 100 === 0)
+                if (n % 1 === 0)
                     decimals = 0;
                 else
                     decimals = 2;

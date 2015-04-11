@@ -72,7 +72,7 @@ define([
                 D.div({ id: 'top-bar-balance', onClick: this._refreshBalance },
                     D.div({ className: 'top-bar-state'},
                         D.div({ className: 'ctl-state-amount' },
-                            D.span(null, Clib.formatSatoshis(Engine.balance))
+                            D.span(null, Clib.formatSatoshis(Engine.balance, 2))
                         ),
                         D.span({ className: 'ctl-state-lbl' },
                             (Engine.balance === 100)? '\u00a0bit': '\u00a0bits'
@@ -88,7 +88,7 @@ define([
 
                 D.div({ id: 'top-bar-logo' },
                     D.img({ src: 'img/powder2.png' }),
-                    D.h1(null, 'Dust Dice')
+                    D.h1(null, '\u00a0Dust Dice')
                 ),
                 D.button({ id: 'expand-button', type: 'button', className: 'btn btn-default top-bar-menu-btn', onClick: this._toggleFullScreen },
                     (this.state.screenFull)? D.i({ className: 'fa fa-compress' }) : D.i({ className: 'fa fa-expand' })

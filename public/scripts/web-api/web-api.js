@@ -6,7 +6,8 @@ define([
 
     //For development, always set to false
     var DELAY = 0;
-    console.assert(PRODUCTION && (DELAY == 0));
+    if(PRODUCTION)
+        console.assert(DELAY == 0);
 
     var URL = PRODUCTION ? 'https://api.moneypot.com' : 'http://localhost:3000';
 
