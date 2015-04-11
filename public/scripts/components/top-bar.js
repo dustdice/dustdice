@@ -87,7 +87,7 @@ define([
                 ),
 
                 D.div({ id: 'top-bar-logo' },
-                    D.img({ src: 'img/powder2.png' }),
+                    D.img({ src: 'img/powder-white-icon.png' }),
                     D.h1(null, '\u00a0Dust Dice')
                 ),
                 D.button({ id: 'expand-button', type: 'button', className: 'btn btn-default top-bar-menu-btn', onClick: this._toggleFullScreen },
