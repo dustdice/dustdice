@@ -36,10 +36,7 @@ define([
         self.wager =  Clib.localOrDef('wager', 1e2);
 
         //Low jackpot because we are poor :p
-        self.jackpot =  Clib.localOrDef('jackpot', 100e2);
-
-        //TODO: Remove max bet, it should be max profit
-        self.maxBet  = 10000e8;
+        self.jackpot =  Clib.localOrDef('jackpot', 100000e2);
 
         //The game had a fatal error and reload page is needed
         self.error = false;

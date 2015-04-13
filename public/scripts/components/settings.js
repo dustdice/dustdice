@@ -2,16 +2,20 @@ define([
     'lib/react',
     'lib/clib',
     'game-logic/engine',
-    'stores/game-settings'
+    'stores/game-settings',
+    'react-bootstrap'
 ],function(
     React,
     Clib,
     Engine,
-    GameSettings
+    GameSettings,
+    ReactBootstrap
 ){
     var D = React.DOM;
     var cx = React.addons.classSet;
 
+    var OverlayTrigger = React.createFactory(ReactBootstrap.OverlayTrigger);
+    var ToolTip = React.createFactory(ReactBootstrap.Tooltip);
 
     /** Validate the input text or number of the wager in bits */
     function validateBetBits(bet) {
@@ -138,7 +142,7 @@ define([
         },
 
         _setMaxWager: function() {
-            Engine.setWager(Engine.balance);
+            Engine.setWager(Clib.min(Engine.balance, Engine.maxWin));
         },
 
         _setJackpot: function(ev) {
@@ -241,28 +245,50 @@ define([
                         'has-warning': (this.state.jackpotValidity === 'warning')
                     });
 
+                    var LinkWithTooltip = React.createFactory(React.createClass({
+                        displayName: "LinkWithTooltip",
+                        render: function() {
+                            var tooltip = ToolTip(null, this.props.tooltip);
+
+                            return (
+                                OverlayTrigger({ placement: "top", overlay: tooltip, delayShow: 300, delayHide: 150 },
+                                    D.a({ href: this.props.href }, this.props.children)
+                                )
+                            );
+                        }
+                    }));
+
                     body = D.div({ className: 'modal-body' },
                         D.div({ className: wagerDivClasses },
-                            D.label({ className: 'control-label pull-left', htmlFor: 'set-input-wager' }, 'Bet'),
+                            D.label({ className: 'control-label pull-left', htmlFor: 'set-input-wager' }, 'Bet\u00a0\u00a0', D.a({ href: '#', onClick: this._setMaxWager }, 'set max')),
                             D.label({ className: 'control-label pull-right', htmlFor: 'set-input-wager' }, this.state.wagerValidityMessage? this.state.wagerValidityMessage : ''),
                             D.div({ className: 'input-group clear' },
                                 D.input({ type: 'text', className: 'form-control', id: 'set-input-wager', value: this.state.wagerInputText, onChange: this._setWager }),
-                                D.span({ className: 'input-group-btn'},
-                                    D.button({ className: 'btn btn-default', type: 'button', onClick: this._setMaxWager }, 'Max')
-                                )
+                                D.div({ className: 'input-group-addon'}, "bits")
+                                //D.span({ className: 'input-group-btn'},
+                                //    D.button({ className: 'btn btn-default', type: 'button', onClick: this._setMaxWager }, 'Max')
+                                //)
                             )
                         ),
 
-                        D.div({ className: jackPotDivClasses },
-                            D.label({ className: 'control-label pull-left', htmlFor: 'set-jackpot-amount' }, 'Jackpot'),
-                            D.label({ className: 'control-label pull-right', htmlFor: 'set-jackpot-amount' }, this.state.jackpotValidityMessage? this.state.jackpotValidityMessage: ''),
-                            D.input({ type: 'text', className: 'form-control clear', id: 'set-jackpot-amount', value: this.state.jackpotInputText, onChange: this._setJackpot })
-                        ),
-
                         D.div({ className: 'form-group' + (betTooHigh? ' has-warning' : '') },
-                            D.label({ className: 'control-label pull-left', htmlFor: 'set-win-chance-slider' }, 'Wining probability: ' + Engine.winProb + '%'),
+                            D.label({ className: 'control-label pull-left', htmlFor: 'set-win-chance-slider' }, 'Winning probability: ' + Engine.winProb + '%'),
                             D.label({ className: 'control-label pull-right', htmlFor: 'set-win-chance-slider' }, 'Payout: ' + (98/Engine.winProb).toFixed(2) + 'x'),
                             D.input({ className: 'set-win-prob-range clear', type: 'range', max: '97', min: '1', id: 'set-win-chance-slider', value: Engine.winProb, onChange: this._setWinProb })
+                        ),
+
+                        D.hr(),
+
+                        D.div({ className: jackPotDivClasses },
+                            D.label({ className: 'control-label pull-left', htmlFor: 'set-jackpot-amount' }, 'Jackpot\u00a0\u00a0',
+                                LinkWithTooltip({ tooltip: 'If you lose you have a ' + Clib.jackPotProbText(Engine.wager, Engine.jackpot) + ' chance to win your bet back plus the jackpot (' + Clib.satToBit(Engine.wager) + ' + ' +  Clib.satToBit(Engine.jackpot) + ")bits. More in FAQ's" }, '?')
+                                //OverlayTrigger({ trigger: 'click', placement: 'top' }, '?')
+                            ),
+                            D.label({ className: 'control-label pull-right', htmlFor: 'set-jackpot-amount' }, this.state.jackpotValidityMessage? this.state.jackpotValidityMessage: ''),
+                            D.div({ className: 'input-group clear' },
+                                D.input({ type: 'text', className: 'form-control clear', id: 'set-jackpot-amount', value: this.state.jackpotInputText, onChange: this._setJackpot }),
+                                D.div({ className: 'input-group-addon'}, "bits")
+                            )
                         ),
 
                         D.div({ className: 'form-group' + (betTooHigh? ' has-warning' : '') },
@@ -313,10 +339,11 @@ define([
                             D.label({ htmlFor: 'remove-game-buttons' }, '\u00a0Hide Game Buttons')
                         ),
 
-                        D.div({ className: 'form-group' },
-                            D.label({ className: 'control-label pull-left', htmlFor: 'set-graph-right-margin' }, 'Right graph margin: ' + GameSettings.graphRightMargin),
-                            D.input({ className: 'set-graph-right-margin clear', type: 'range', max: '10', min: '1', id: 'set-graph-right-margin', value: GameSettings.graphRightMargin, onChange: this._setGraphRightMargin })
-                        ),
+                        //[Feature disabled]
+                        //D.div({ className: 'form-group' },
+                        //    D.label({ className: 'control-label pull-left', htmlFor: 'set-graph-right-margin' }, 'Right graph margin: ' + GameSettings.graphRightMargin),
+                        //    D.input({ className: 'set-graph-right-margin clear', type: 'range', max: '10', min: '1', id: 'set-graph-right-margin', value: GameSettings.graphRightMargin, onChange: this._setGraphRightMargin })
+                        //),
 
                         D.div({ className: 'form-group' + (this.state.customBetMultiplierInvalid? ' has-error' : '') },
                             D.label({ className: 'control-label pull-left', htmlFor: 'set-client-seed' }, 'Custom bet multiplier'),

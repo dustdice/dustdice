@@ -41,30 +41,6 @@ define([
         return state;
     }
 
-    function jackPotProbText() {
-
-        var ratio = Clib.jackWinProbSatoshisRatio(Engine.wager, Engine.jackpot);
-
-        if(ratio <= 1) {
-          var multi = '';
-          var inHowMany = 1/ratio;
-
-          if (inHowMany > 1e9) {
-            inHowMany = inHowMany/1e9;
-            multi = 'B';
-          } else if (inHowMany > 1e6) {
-            inHowMany = inHowMany/1e6;
-            multi = 'M';
-          } else if (inHowMany > 1e3) {
-            inHowMany = inHowMany/1e3;
-            multi = 'K';
-          }
-          return '1 in ' + Math.round(inHowMany) + multi;
-        } else {
-            return '1 in 1';
-        }
-    }
-
     return React.createClass({
         displayName: 'ControlsContainer',
 
@@ -166,7 +142,7 @@ define([
                     id: 'bet-hi-button',
                     className: betHiBtnClasses,
                     onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this.props._toggleDepositAddress : this._betHi,
-                    disabled: isBetting
+                    disabled: isBetting && GameSettings.showButtons
                 },
                 this.state.betTooHigh?
                     'Supported':
@@ -188,7 +164,7 @@ define([
                     id: 'bet-lo-button',
                     className: betLoBtnClasses,
                     onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this.props._toggleDepositAddress : this._betLo,
-                    disabled: isBetting
+                    disabled: isBetting && GameSettings.showButtons
                 },
                 this.state.betTooHigh?
                     'Bet not':
@@ -268,7 +244,7 @@ define([
                         D.span(null, 'JACKPOT PROB')
                     ),
                     D.div({ className: 'ctl-state-amount' },
-                        D.span(null, jackPotProbText())
+                        D.span(null, Clib.jackPotProbText(Engine.wager, Engine.jackpot))
                     )
                 )
 

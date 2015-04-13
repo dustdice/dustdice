@@ -98,24 +98,10 @@ background-color: rgba(44, 62, 80, 0.3);
     margin-top: 28px;
 }
 
-/* Responsive: Portrait tablets and up */
-@media screen and (min-width: 768px) {
-    /* Remove the padding we set earlier */
-    #landing-container .header,
-    #landing-container .marketing,
-    #landing-container .footer {
-        padding-right: 0;
-        padding-left: 0;
-    }
-    /* Space out the masthead */
-    #landing-container .header {
-        margin-bottom: 30px;
-    }
-    /* Remove the bottom border on the jumbotron for visual effect */
-    #landing-container .jumbotron {
-        border-bottom: 0;
-    }
-}
+
+/* ==========================================================================
+    Carousel (Slider)
+    ========================================================================== */
 
 #landing-carousel .carousel-caption {
     top: 20px;
@@ -139,4 +125,62 @@ background-color: rgba(44, 62, 80, 0.3);
 
 #landing-carousel .btn-register {
     font-size: 1.5em;
+}
+
+/* Small Devices, Tablets */
+@media only screen and (max-width : 480px) {
+    #landing-carousel .carousel-caption {
+        top: 1em;
+        padding-top: 0;
+    }
+
+    #landing-carousel .carousel-caption h1{
+        font-size: 1.5em;
+        margin-top: 0;
+    }
+
+    #landing-carousel .btn-register-container {
+        bottom: 2em;
+    }
+
+    #landing-carousel .carousel-subtitle {
+        font-size: 1em;
+    }
+
+    #landing-carousel .carousel-subtitle a {
+    }
+
+    #landing-carousel .btn-register {
+        padding: .3em 1em;
+        font-size: 1em;
+    }
+}
+
+/* ==========================================================================
+    Media queries
+    ========================================================================== */
+
+/* Custom, iPhone Retina */
+@media only screen and (min-width : 320px) {
+
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (min-width : 480px) {
+
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
+
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+
 }

@@ -30,6 +30,31 @@ define([], function () {
             return wager / 100 / (wager + jackpot);
         },
 
+
+        jackPotProbText: function(wager, jackpot) {
+
+            var ratio = this.jackWinProbSatoshisRatio(wager, jackpot);
+
+            if(ratio <= 1) {
+                var multi = '';
+                var inHowMany = 1/ratio;
+
+                if (inHowMany > 1e9) {
+                    inHowMany = inHowMany/1e9;
+                    multi = 'B';
+                } else if (inHowMany > 1e6) {
+                    inHowMany = inHowMany/1e6;
+                    multi = 'M';
+                } else if (inHowMany > 1e3) {
+                    inHowMany = inHowMany/1e3;
+                    multi = 'K';
+                }
+                return '1 in ' + Math.round(inHowMany) + multi;
+            } else {
+                return '1 in 1';
+            }
+        },
+
         formatSatoshis: function (n, decimals) {
             return this.formatDecimals(Math.floor(n) / 100, decimals);
         },
@@ -107,6 +132,10 @@ define([], function () {
 
         max: function(qt1, qt2) {
             return (qt1>qt2)? qt1 : qt2;
+        },
+
+        min: function(qt1, qt2) {
+            return (qt1>qt2)? qt2: qt1;
         },
 
         getHashParams: function () {

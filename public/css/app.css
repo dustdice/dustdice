@@ -230,7 +230,7 @@ h1 {
 #bet-hi-button.betting, #bet-lo-button.betting {
     background-color: rgba(152, 187, 23, 0.5);
     opacity: 0.5;
-
+    color: inherit;
 }
 
 #bet-chase-bet-button {
@@ -289,11 +289,13 @@ h1 {
     color: transparent;
     background-color: transparent;
     padding: 2em;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 
 /* ==========================================================================
-    Modal's Settings
+    Modals General Config
     ========================================================================== */
 
 .modal {
@@ -323,9 +325,14 @@ h1 {
 }
 
 .modal-body {
-    padding: 0.5em;
+    padding: 1em 0.5em 0.5em 0.5em;
     color: black;
     font-size: 1em;
+}
+
+.modal hr {
+    border-top: 2px solid #bdc3c7;
+    margin: 2em 0;
 }
 
 
