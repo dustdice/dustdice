@@ -241,10 +241,10 @@ define([
 
                 D.div({ id: 'ctl-jackpot-box', onClick: this.props._toggleSettings },
                     D.div({ className: 'ctl-state-name' },
-                        D.span(null, 'JACKPOT PROB')
+                        D.span(null, 'JACKPOT')
                     ),
                     D.div({ className: 'ctl-state-amount' },
-                        D.span(null, Clib.jackPotProbText(Engine.wager, Engine.jackpot))
+                        D.span(null, Clib.formatSatoshis(Engine.jackpot) + ' bits')
                     )
                 )
 
