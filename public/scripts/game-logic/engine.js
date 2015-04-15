@@ -74,20 +74,7 @@ define([
           self.setErrorState('Could not find a valid access token');
         }
 
-
-
-
         // TODO: handle state, and expires_in
-
-        //Get settings from localStorage if they exist
-        var wager = JSON.parse(localStorage.wager ? localStorage.wager : null);
-        this.wager = (typeof wager === 'number' && wager > 0)? wager : this.wager;
-
-        var jackpot = JSON.parse(localStorage.jackpot ? localStorage.jackpot : null);
-        this.jackpot = (typeof jackpot === 'number' && jackpot > 0)? jackpot : this.jackpot;
-
-        var winProb = JSON.parse(localStorage.winProb ? localStorage.winProb : null);
-        this.winProb = (typeof localStorage.winProb === 'number' && winProb > 0 && winProb < 98)? winProb : this.winProb;
 
 
         WebApi.requestInitialData(self.accessToken, self.errorHandler(function(data) {
@@ -133,7 +120,7 @@ define([
                         return;
                     case 'BANKROLL_TOO_SMALL':
                         self.gameState = 'STANDING_BY';
-                        self.trigger('user-alert', "Vault rejected this bet because it exceeds they limits");
+                        self.trigger('user-alert', "MoneyPot rejected this bet because it exceeds they limits");
                         return;
                     case 'NOT_ENOUGH_BALANCE':
                         self.gameState = 'STANDING_BY';
@@ -165,7 +152,7 @@ define([
         /** Save the current state of the engine, do not send it by reference to other modules
             This object will be modified and saved in the graph history */
         self.currentBet = {
-            wager: Clib.roundTo100(self.wager), // Round the wager to the nearest bits
+            wager: Clib.removeAfterHundredth(self.wager), //Remove decimals after bits, its like floor(bits)
             winProb: self.winProb,
             hiLo: hiLo,
             balance: self.balance,
@@ -181,7 +168,7 @@ define([
          * You can't win the jackpot and win the bet and the same time
          */
         WebApi.bet(
-            Clib.roundTo100(self.currentBet.wager),
+            self.currentBet.wager,
             self.currentBet.winProb,
             self.currentBet.hash,
             self.currentBet.seed,
@@ -330,7 +317,7 @@ define([
     };
 
     GameEngine.prototype.goToVaultDeposit = function() {
-        window.location.href = 'https://vault.moneypot.com/me/receive';
+        window.location.href = 'https://www.moneypot.com/me/receive';
     };
 
     /** Helper functions **/
