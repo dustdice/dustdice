@@ -2,6 +2,7 @@ define([
     'lib/react',
     'components/game',
     'lib/fastclick'
+
 ], function(
     React,
     GameClass,

@@ -20,9 +20,6 @@
         /** Receive variables from the server and put them as global vars **/
         var PRODUCTION = {% if production %}true{% else %}false{% endif %};
     </script>
-
         <script data-main="scripts/{% if production %}{{config.jsBuildFilename}}{% else %}config{% endif %}" src="scripts/lib/require.js"></script>
-
-
     </body>
 </html>

@@ -10,9 +10,41 @@ html, body {
     font-size: 18px;
 }
 
-#game-container {
+#game-container, #game-container>div {
     width: 100%;
     height: 100%;
+}
+
+#chat-container-box.expand {
+    position: absolute;
+    top: 0;
+    right: 80%;
+    bottom: 0;
+    left: 0;
+}
+
+#chat-container-box.compress {
+    position: absolute;
+    top: 0;
+    right: 100%;
+    bottom: 0;
+    left: -20%;
+}
+
+#game-container-box.compress {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 20%;
+}
+
+#game-container-box.expand {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
 }
 
 #game-container>div {
@@ -148,8 +180,8 @@ h1 {
     font-size: 0.7em;
 }
 
-#expand-button {
-    margin-right: .1em;
+#expand-button, #chat-button {
+    margin-right: .2em;
 }
 
 .top-bar-state-name {
@@ -179,7 +211,7 @@ h1 {
     Bet Bar (bottom) and Bet Buttons (fixed)
     ========================================================================== */
 
-#controls-container {
+#controls-pre-container-box {
     position: absolute;
     bottom: 0;
     right: 0;
@@ -196,7 +228,7 @@ h1 {
 
 .ctl-button {
     font-size: inherit;
-    position: fixed;
+    position: absolute;
     border-radius: 10px;
     opacity: 0.5;
     background-color: rgba(37, 152, 91, 0.5);

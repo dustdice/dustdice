@@ -25,7 +25,8 @@ define([
         propTypes: {
             _toggleTutorial: React.PropTypes.func.isRequired,
             _toggleSettings: React.PropTypes.func.isRequired,
-            _toggleDepositAddress: React.PropTypes.func.isRequired
+            _toggleDepositAddress: React.PropTypes.func.isRequired,
+            _toggleChat: React.PropTypes.func.isRequired
         },
 
         getInitialState: function() {
@@ -89,6 +90,9 @@ define([
                 D.div({ id: 'top-bar-logo' },
                     D.img({ src: 'img/powder-white-icon.png' }),
                     D.h1(null, '\u00a0Dust Dice')
+                ),
+                D.button({ id: 'chat-button', type: 'button', className: 'btn btn-default top-bar-menu-btn', onClick: this.props._toggleChat },
+                    D.i({ className: 'fa fa-comment' })
                 ),
                 D.button({ id: 'expand-button', type: 'button', className: 'btn btn-default top-bar-menu-btn', onClick: this._toggleFullScreen },
                     (this.state.screenFull)? D.i({ className: 'fa fa-compress' }) : D.i({ className: 'fa fa-expand' })

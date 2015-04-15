@@ -4,14 +4,12 @@ define([
     'lib/keymaster', //TODO: This is window
     'lib/clib',
     'stores/game-settings'
-    //'jquery-text-width'
 ], function(
     React,
     Engine,
     KeyMaster,
     Clib,
     GameSettings
-    //jQuery,
 ){
     /* Constants */
     //var _widthTrigger = 992;
@@ -189,62 +187,71 @@ define([
             );
 
 
-            return D.div({ id: 'controls-container-box' },
+            return D.div(null,
 
-                //Game Buttons
-                betHiBtn,
-                betLoBtn,
-                chaseBetBtn,
-                divideBetBtn,
-
-                D.div({ id: 'ctl-bet-box', onClick: this.props._toggleSettings },
-                    D.div({ className: 'ctl-state-name' },
-                        D.span(null, 'BET')
-                    ),
-                    D.div({ className: 'crl-in-bottom' },
-                        D.div({ className: 'ctl-state-amount' },
-                            D.span(null, Clib.formatSatoshis(Engine.wager, 0))
-                        ),
-                        D.span({ className: 'ctrl-state-lbl' },
-                            '\u00a0', Clib.bitsTextTerm(Clib.satToBitRounded(Engine.wager))
-                        )
-                    )
+                //Absolute positioned buttons relative to the controls-container-div
+                D.div({ id: 'controls-container-buttons' },
+                    betHiBtn,
+                    betLoBtn,
+                    chaseBetBtn,
+                    divideBetBtn
                 ),
 
-                D.div({ id: 'ctl-payout-box', onClick: this.props._toggleSettings },
-                    D.div({ className: 'ctl-state-name' },
-                        D.span(null, 'PAYOUT')
-                    ),
-                    D.div({ className: 'crl-in-bottom' },
-                        D.div({ className: 'ctl-state-amount' },
-                            D.span(null, (98/Engine.winProb).toFixed(2))
-                        ),
-                        D.span({ className: 'ctrl-state-lbl' },
-                            D.i({ className: 'fa fa-times' })
-                        )
-                    )
-                ),
+                //The fixed bottom bar
+                D.div({ id: 'controls-pre-container-box' },
 
-                D.div({ id: 'ctl-win-prob-box', onClick: this.props._toggleSettings },
-                    D.div({ className: 'ctl-state-name' },
-                        D.span(null, 'WIN PROB')
-                    ),
-                    D.div({ className: 'crl-in-bottom' },
-                        D.div({ className: 'ctl-state-amount' },
-                            D.span(null, Engine.winProb)
-                        ),
-                        D.span({ className: 'ctrl-state-lbl' },
-                            D.i({ className: 'icon-percent'})
-                        )
-                    )
-                ),
+                    D.div({ id: 'controls-container-box' },
 
-                D.div({ id: 'ctl-jackpot-box', onClick: this.props._toggleSettings },
-                    D.div({ className: 'ctl-state-name' },
-                        D.span(null, 'JACKPOT')
-                    ),
-                    D.div({ className: 'ctl-state-amount' },
-                        D.span(null, Clib.formatSatoshis(Engine.jackpot) + ' bits')
+                        D.div({ id: 'ctl-bet-box', onClick: this.props._toggleSettings },
+                            D.div({ className: 'ctl-state-name' },
+                                D.span(null, 'BET')
+                            ),
+                            D.div({ className: 'crl-in-bottom' },
+                                D.div({ className: 'ctl-state-amount' },
+                                    D.span(null, Clib.formatSatoshis(Engine.wager, 0))
+                                ),
+                                D.span({ className: 'ctrl-state-lbl' },
+                                    '\u00a0', Clib.bitsTextTerm(Clib.satToBitRounded(Engine.wager))
+                                )
+                            )
+                        ),
+
+                        D.div({ id: 'ctl-payout-box', onClick: this.props._toggleSettings },
+                            D.div({ className: 'ctl-state-name' },
+                                D.span(null, 'PAYOUT')
+                            ),
+                            D.div({ className: 'crl-in-bottom' },
+                                D.div({ className: 'ctl-state-amount' },
+                                    D.span(null, (98/Engine.winProb).toFixed(2))
+                                ),
+                                D.span({ className: 'ctrl-state-lbl' },
+                                    D.i({ className: 'fa fa-times' })
+                                )
+                            )
+                        ),
+
+                        D.div({ id: 'ctl-win-prob-box', onClick: this.props._toggleSettings },
+                            D.div({ className: 'ctl-state-name' },
+                                D.span(null, 'WIN PROB')
+                            ),
+                            D.div({ className: 'crl-in-bottom' },
+                                D.div({ className: 'ctl-state-amount' },
+                                    D.span(null, Engine.winProb)
+                                ),
+                                D.span({ className: 'ctrl-state-lbl' },
+                                    D.i({ className: 'icon-percent'})
+                                )
+                            )
+                        ),
+
+                        D.div({ id: 'ctl-jackpot-box', onClick: this.props._toggleSettings },
+                            D.div({ className: 'ctl-state-name' },
+                                D.span(null, 'JACKPOT')
+                            ),
+                            D.div({ className: 'ctl-state-amount' },
+                                D.span(null, Clib.formatSatoshis(Engine.jackpot) + ' bits')
+                            )
+                        )
                     )
                 )
 

@@ -9,7 +9,8 @@ define([
     'components/settings',
     'components/tutorial',
     'components/deposit',
-    'stores/game-settings'
+    'stores/game-settings',
+    'vault-chat'
 ],
 function(
     React,
@@ -22,7 +23,8 @@ function(
     SettingsClass,
     TutorialClass,
     DepositAddressClass,
-    GameSettings
+    GameSettings,
+    VaultChat
 ){
     var D = React.DOM;
     var TopBar = React.createFactory(TopBarClass);
@@ -37,6 +39,7 @@ function(
 
         //Global UI States
         getInitialState: function() {
+            this.showChat = GameSettings.showChat;
             return {
                 modal: (GameSettings.hideTutorial)? '' : 'TUTORIAL',
                 engine: Engine
@@ -44,17 +47,31 @@ function(
         },
 
         componentDidMount: function() {
+            VaultChat.mount(document.getElementById('chat-container-box'));
+
             KeyMaster.key('s', this._toggleSettings);
             Engine.on('get-user-data', this._getUserData); //Connected
-            Engine.on('fatal-error', this._fatalError);
+            Engine.on('fatal-error', this._onChange);
             Engine.on('user-alert', this._userAlert);
+            GameSettings.on('show-chat-change', this._onChange);
         },
 
         componentWillUnmount: function() {
+            //TODO: Unmount Chat
+
             KeyMaster.key.unbind('s', this._toggleSettings);
             Engine.off('get-user-data', this._getUserData);
-            Engine.off('fatal-error', this._fatalError);
+            Engine.off('fatal-error', this._onChange);
             Engine.off('user-alert', this._userAlert);
+            GameSettings.off('show-chat-change', this._onChange);
+        },
+
+        //If the chat state change we got to redraw the graph by triggering the resize event
+        componentDidUpdate: function(prevProps, prevState) {
+            if(this.showChat !== GameSettings.showChat) {
+                this.showChat = GameSettings.showChat;
+                window.dispatchEvent(new Event('resize'));
+            }
         },
 
         _userAlert: function(error) {
@@ -62,6 +79,7 @@ function(
         },
 
         _getUserData: function() {
+            _.once(this._connectVault);
             this.setState({ engine: Engine }); //Just to re render
         },
 
@@ -77,7 +95,11 @@ function(
             this.setState({ modal: (this.state.modal === 'DEPOSIT')? '' : 'DEPOSIT' })
         },
 
-        _fatalError: function() {
+        _toggleChat: function() {
+            GameSettings.toggleShowChat();
+        },
+
+        _onChange: function() {
             this.setState({ engine: Engine });
         },
 
@@ -120,28 +142,34 @@ function(
 
             return D.div(null,
 
-                D.div({ id: 'top-bar-container' },
-                    TopBar({
-                        _toggleTutorial: this._toggleTutorial,
-                        _toggleSettings: this._toggleSettings,
-                        _toggleDepositAddress: this._toggleDepositAddress
-                    })
-                ),
+                D.div({ id: 'chat-container-box', className: GameSettings.showChat? 'expand' : 'compress' }),
 
-                D.div({ id: 'graph-container' },
-                    Graph()
-                ),
+                D.div({ id: 'game-container-box', className: GameSettings.showChat? 'compress' : 'expand' },
 
-                D.div({ id: 'controls-container' },
-                    Controls({
-                        _toggleSettings: this._toggleSettings,
-                        _toggleTutorial: this._toggleTutorial,
-                        _toggleDepositAddress: this._toggleDepositAddress,
-                        disableControls: this.state.modal
-                    })
-                ),
+                    D.div({ id: 'top-bar-container' },
+                        TopBar({
+                            _toggleTutorial: this._toggleTutorial,
+                            _toggleSettings: this._toggleSettings,
+                            _toggleDepositAddress: this._toggleDepositAddress,
+                            _toggleChat: this._toggleChat
+                        })
+                    ),
 
-                modal
+                    D.div({ id: 'graph-container' },
+                        Graph()
+                    ),
+
+                    D.div({ id: 'controls-container' },
+                        Controls({
+                            _toggleSettings: this._toggleSettings,
+                            _toggleTutorial: this._toggleTutorial,
+                            _toggleDepositAddress: this._toggleDepositAddress,
+                            disableControls: this.state.modal
+                        })
+                    ),
+
+                    modal
+                )
             )
         }
     });

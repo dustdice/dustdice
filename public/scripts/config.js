@@ -8,7 +8,8 @@ requirejs.config({
         //jqueryui: 'lib/flat-ui', //this is jquery ui plus the flat shit
         'jquery-text-width': 'lib/jquery-plugins/text-width',
         screenfull: 'lib/screenfull',
-        'react-bootstrap': 'lib/react-bootstrap'
+        'react-bootstrap': 'lib/react-bootstrap',
+        'vault-chat': '//localhost:9000/scripts/config'
     },
     shim: {
         'react-bootstrap': {

@@ -16,6 +16,7 @@ define([
         this.customBetMultiplier = Clib.localOrDef('customBetMultiplier', 2);
         this.hideTutorial = Clib.localOrDef('hideTutorial', false);
         this.graphRightMargin = Clib.localOrDef('graphRightMargin', 2);
+        this.showChat = Clib.localOrDef('showChat', false);
     };
 
     GameSettings.prototype.setGraphRightMargin = function(margin) {
@@ -40,6 +41,12 @@ define([
         this.showButtons = !this.showButtons;
         localStorage['showButtons'] = this.showButtons;
         this.trigger('show-buttons-change');
+    };
+
+    GameSettings.prototype.toggleShowChat = function() {
+        this.showChat = !this.showChat;
+        localStorage['showChat'] = this.showChat;
+        this.trigger('show-chat-change');
     };
 
     GameSettings.prototype.setHideTutorial = function() {

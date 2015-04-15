@@ -36,6 +36,7 @@ define([
 
             var data = {
                 balance: result[0].balance,
+                username: result[0].uname,
                 hash: result[1],
                 bankroll: result[2],
                 depositAddress: result[3]

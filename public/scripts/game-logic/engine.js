@@ -7,13 +7,15 @@ define([
     'lib/lodash',
     'lib/clib',
     'web-api/web-api',
-    'lib/sha256'
+    'lib/sha256',
+    'vault-chat'
 ], function(
     Events,
     _,
     Clib,
     WebApi,
-    SHA256
+    SHA256,
+    VaultChat
 ){
     //var historyMaxLength = 100;
 
@@ -52,6 +54,7 @@ define([
         self.vaultBankroll = null;
         self.maxWin = null;
         self.depositAddress = null;
+        self.username = null;
 
         self.currentBet = null; //The betting info while the gameState is 'BETTING'
 
@@ -75,8 +78,6 @@ define([
         }
 
 
-
-
         // TODO: handle state, and expires_in
 
         //Get settings from localStorage if they exist
@@ -93,11 +94,15 @@ define([
         WebApi.requestInitialData(self.accessToken, self.errorHandler(function(data) {
 
             self.balance = data.balance;
+            self.username = data.username;
             self.nextGameHash = data.hash;
             self.vaultBankroll = data.bankroll;
             self.depositAddress = data.depositAddress;
             self.maxWin = self.vaultBankroll * 0.01;
             self.gameState = 'STANDING_BY';
+
+            //Connect vault chat with my username
+            VaultChat.connect({ username: self.username });
 
             self.trigger('get-user-data');
         }));
