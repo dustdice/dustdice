@@ -109,7 +109,8 @@ define([
         _setMaxWager: function() {
             Engine.setWager(
               Math.max(100,
-                 Math.min(Clib.floorHundreds(Engine.balance), Clib.floorHundreds(Engine.maxWin))
+                 Math.min(Clib.floorHundreds(Engine.balance),
+                   Clib.floorHundreds(Engine.maxWin / ((98/Engine.winProb) - 1)))
               )
             );
         },
