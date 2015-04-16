@@ -152,7 +152,7 @@ define([
         /** Save the current state of the engine, do not send it by reference to other modules
             This object will be modified and saved in the graph history */
         self.currentBet = {
-            wager: Clib.removeAfterHundredth(self.wager), //Remove decimals after bits, its like floor(bits)
+            wager: Clib.floorHundreds(self.wager),
             winProb: self.winProb,
             hiLo: hiLo,
             balance: self.balance,
