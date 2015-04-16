@@ -17,41 +17,6 @@ define([
     var OverlayTrigger = React.createFactory(ReactBootstrap.OverlayTrigger);
     var ToolTip = React.createFactory(ReactBootstrap.Tooltip);
 
-    /** Validate the input text or number of the wager in bits */
-    function validateBetBits(bet) {
-        var validity = 'valid', message = '';
-        bet = Number(bet);
-        if(!Clib.isInteger(bet)) {
-            validity = 'wrong';
-            message = 'Should be an integer';
-        } else if(bet < 1) {
-            validity = 'wrong';
-            message = 'Should be bigger than zero';
-        } else if(bet > Clib.satToBit(Engine.balance)) {
-            validity = 'warning';
-            message = 'Not enough balance :o';
-        }
-
-        return [validity, message];
-    }
-
-    /** Validate the input text or number of the jackpot in bits **/
-    function validateJackpotBits(jackpot) {
-        var validity = 'valid', message = '';
-        jackpot = Number(jackpot);
-        if(!Clib.isInteger(jackpot)) {
-            validity = 'wrong';
-            message = 'Should be an integer';
-        } else if(jackpot < 1) {
-            validity = 'wrong';
-            message = 'Should be bigger than zero';
-        } else if(Clib.bitToSat(jackpot) > Engine.maxWin) {
-            validity = 'warning';
-            message = "The jackpot is bigger than the vault's max";
-        }
-
-        return [validity, message];
-    }
 
     function validateClientSeed(seed) {
         if(seed == '')
@@ -75,12 +40,12 @@ define([
         },
 
         getInitialState: function() {
-            var wagerBitsRounded = Clib.satToBitRounded(Engine.wager);
-            var wagerValidation = validateBetBits(wagerBitsRounded);
+            var wagerBitsFloored = Clib.satToBitFloored(Engine.wager);
+            var wagerValidation = Clib.validateBetBits(wagerBitsFloored, Engine.balance);
             var jackpotBits = Clib.satToBit(Engine.jackpot);
-            var jackpotValidation = validateJackpotBits(jackpotBits);
+            var jackpotValidation = Clib.validateJackpotBits(jackpotBits, Engine.maxWin);
             return {
-                wagerInputText: String(wagerBitsRounded),
+                wagerInputText: String(wagerBitsFloored),
                 wagerValidity: wagerValidation[0],
                 wagerValidityMessage: wagerValidation[1],
                 jackpotInputText: String(jackpotBits),
@@ -113,10 +78,10 @@ define([
             if(Engine.clientSeed != this.state.clientSeedText)
                 this.setState({ clientSeedText: String(Engine.clientSeed), invalidClientSeed: false  });
 
-            var wagerBitsRounded = Clib.satToBitRounded(Engine.wager);
-            if(wagerBitsRounded != this.state.wagerInputText) {
-                var wagerBitsString = String(wagerBitsRounded);
-                var wagerValidation = validateBetBits(wagerBitsString);
+            var wagerBitsFloored = Clib.satToBitFloored(Engine.wager);
+            if(wagerBitsFloored != this.state.wagerInputText) {
+                var wagerBitsString = String(wagerBitsFloored);
+                var wagerValidation = Clib.validateBetBits(wagerBitsString, Engine.balance);
                 this.setState({ wagerInputText: wagerBitsString, wagerValidity: wagerValidation[0], wagerValidityMessage: wagerValidation[1] });
             }
 
@@ -131,7 +96,7 @@ define([
         },
 
         _setWager: function(ev) {
-            var wagerValidation = validateBetBits(ev.target.value);
+            var wagerValidation = Clib.validateBetBits(ev.target.value, Engine.balance);
 
             this.setState({ wagerInputText: ev.target.value, wagerValidity: wagerValidation[0], wagerValidityMessage: wagerValidation[1] });
 
@@ -142,11 +107,11 @@ define([
         },
 
         _setMaxWager: function() {
-            Engine.setWager(Clib.min(Engine.balance, Engine.maxWin));
+            Engine.setWager(Clib.min(Clib.removeAfterHundredth(Engine.balance), Clib.removeAfterHundredth(Engine.maxWin)));
         },
 
         _setJackpot: function(ev) {
-            var jackpotValidation = validateJackpotBits(ev.target.value);
+            var jackpotValidation = Clib.validateJackpotBits(ev.target.value, Engine.maxWin);
 
             this.setState({ jackpotInputText: ev.target.value, jackpotValidity: jackpotValidation[0], jackpotValidityMessage: jackpotValidation[1] });
 
@@ -217,9 +182,9 @@ define([
                 this.props._toggleSettings();
         },
 
-        _setGraphRightMargin: function(e) {
-            GameSettings.setGraphRightMargin(e.target.value);
-        },
+        //_setGraphRightMargin: function(e) {
+        //    GameSettings.setGraphRightMargin(e.target.value);
+        //},
 
         render: function() {
 
@@ -265,9 +230,6 @@ define([
                             D.div({ className: 'input-group clear' },
                                 D.input({ type: 'text', className: 'form-control', id: 'set-input-wager', value: this.state.wagerInputText, onChange: this._setWager }),
                                 D.div({ className: 'input-group-addon'}, "bits")
-                                //D.span({ className: 'input-group-btn'},
-                                //    D.button({ className: 'btn btn-default', type: 'button', onClick: this._setMaxWager }, 'Max')
-                                //)
                             )
                         ),
 
@@ -281,8 +243,11 @@ define([
 
                         D.div({ className: jackPotDivClasses },
                             D.label({ className: 'control-label pull-left', htmlFor: 'set-jackpot-amount' }, 'Jackpot\u00a0\u00a0',
-                                LinkWithTooltip({ tooltip: 'If you lose you have a ' + Clib.jackPotProbText(Engine.wager, Engine.jackpot) + ' chance to win your bet back plus the jackpot (' + Clib.satToBit(Engine.wager) + ' + ' +  Clib.satToBit(Engine.jackpot) + ")bits. More in FAQ's" }, '?')
-                                //OverlayTrigger({ trigger: 'click', placement: 'top' }, '?')
+                                LinkWithTooltip(
+                                    { tooltip: 'If you lose you have a ' + Clib.jackpotAfterLosingProbText(Engine.wager, Engine.jackpot, Engine.winProb) +
+                                        ' chance of winning your bet back plus the jackpot (' + Clib.satToBit(Engine.wager) + ' + ' +  Clib.satToBit(Engine.jackpot) + ')bits.' +
+                                    'Or ' + Clib.jackPotProbText(Engine.wager, Engine.jackpot) +  " in total. More in FAQ's" },
+                                    '?')
                             ),
                             D.label({ className: 'control-label pull-right', htmlFor: 'set-jackpot-amount' }, this.state.jackpotValidityMessage? this.state.jackpotValidityMessage: ''),
                             D.div({ className: 'input-group clear' },
@@ -292,7 +257,7 @@ define([
                         ),
 
                         D.div({ className: 'form-group' + (betTooHigh? ' has-warning' : '') },
-                            D.label({ className: 'control-label pull-left', htmlFor: 'set-input-wager' }, betTooHigh? "The profit is bigger than vault's allowed profits" : ''),
+                            D.label({ className: 'control-label pull-left', htmlFor: 'set-input-wager' }, betTooHigh? "The profit is bigger than MoneyPot's max allowed profits" : ''),
                             D.div({ className: 'input-group clear' },
                                 D.div({ className: 'input-group-addon input-title'}, 'Win Profit'),
                                 D.input({ type: 'text', className: 'form-control', id: 'set-input-wager', value: Clib.formatSatoshis(achievableBetProfit, 2), readOnly: true })
@@ -301,7 +266,7 @@ define([
 
                         D.div({ className: 'form-group' },
                             D.div({ className: 'input-group clear' },
-                                D.div({ className: 'input-group-addon input-title'}, "Vault's Max Profit"),
+                                D.div({ className: 'input-group-addon input-title'}, "MoneyPot Max Profit"),
                                 D.input({ type: 'text', className: 'form-control', id: 'set-input-wager', value: Clib.formatSatoshis(Engine.maxWin, 2), readOnly: true })
                             )
                         )
@@ -386,7 +351,7 @@ define([
                             )
                         ),
 
-                        D.div({ className: 'modal-nav' },
+                        D.div({ classNam_: 'modal-nav' },
                             D.ul({ className: 'nav nav-tabs nav-justified' },
                                 D.li({ role: 'presentation', className: (this.state.tab === 'BET')? 'active' : '', onClick: this._selectTab('BET') }, D.a({ href: '#' }, 'Bet')),
                                 D.li({ role: 'presentation', className: (this.state.tab === 'FAIR')? 'active' : '', onClick: this._selectTab('FAIR')  }, D.a({ href: '#' }, 'Fair')),

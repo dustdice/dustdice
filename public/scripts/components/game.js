@@ -9,8 +9,8 @@ define([
     'components/settings',
     'components/tutorial',
     'components/deposit',
-    'stores/game-settings',
-    'vault-chat'
+    'components/chat',
+    'stores/game-settings'
 ],
 function(
     React,
@@ -23,13 +23,14 @@ function(
     SettingsClass,
     TutorialClass,
     DepositAddressClass,
-    GameSettings,
-    VaultChat
+    ChatClass,
+    GameSettings
 ){
     var D = React.DOM;
     var TopBar = React.createFactory(TopBarClass);
     var Graph = React.createFactory(GraphClass);
     var Controls = React.createFactory(ControlsClass);
+    var Chat = React.createFactory(ChatClass);
 
     var Settings = React.createFactory(SettingsClass);
     var Tutorial = React.createFactory(TutorialClass);
@@ -47,8 +48,6 @@ function(
         },
 
         componentDidMount: function() {
-            VaultChat.mount(document.getElementById('chat-container-box'));
-
             KeyMaster.key('s', this._toggleSettings);
             Engine.on('get-user-data', this._getUserData); //Connected
             Engine.on('fatal-error', this._onChange);
@@ -57,8 +56,6 @@ function(
         },
 
         componentWillUnmount: function() {
-            //TODO: Unmount Chat
-
             KeyMaster.key.unbind('s', this._toggleSettings);
             Engine.off('get-user-data', this._getUserData);
             Engine.off('fatal-error', this._onChange);
@@ -142,7 +139,9 @@ function(
 
             return D.div(null,
 
-                D.div({ id: 'chat-container-box', className: GameSettings.showChat? 'expand' : 'compress' }),
+                D.div({ id: 'chat-container-box', className: GameSettings.showChat? 'expand' : 'compress' },
+                    GameSettings.showChat? Chat() : null
+                ),
 
                 D.div({ id: 'game-container-box', className: GameSettings.showChat? 'compress' : 'expand' },
 

@@ -145,7 +145,7 @@ define([
                 this.state.betTooHigh?
                     'Supported':
                 this.state.notEnoughBalance?
-                    'Deposit in Vault' :
+                    'Get more bits' :
                     D.div(null, D.span(null, (101-Engine.winProb) + ' to 100 '), D.i({ className: 'fa fa-caret-square-o-right' }))
             );
 
@@ -211,7 +211,7 @@ define([
                                     D.span(null, Clib.formatSatoshis(Engine.wager, 0))
                                 ),
                                 D.span({ className: 'ctrl-state-lbl' },
-                                    '\u00a0', Clib.bitsTextTerm(Clib.satToBitRounded(Engine.wager))
+                                    '\u00a0', Clib.bitsTextTerm(Clib.satToBitFloored(Engine.wager))
                                 )
                             )
                         ),
@@ -244,17 +244,16 @@ define([
                             )
                         ),
 
-                        D.div({ id: 'ctl-jackpot-box', onClick: this.props._toggleSettings },
-                            D.div({ className: 'ctl-state-name' },
-                                D.span(null, 'JACKPOT')
+                        D.div({id: 'ctl-jackpot-box', onClick: this.props._toggleSettings},
+                            D.div({className: 'ctl-state-name'},
+                                D.span(null, 'JACKPOT PROB')
                             ),
-                            D.div({ className: 'ctl-state-amount' },
-                                D.span(null, Clib.formatSatoshis(Engine.jackpot) + ' bits')
+                            D.div({className: 'ctl-state-amount'},
+                                D.span(null, Clib.jackPotProbText(Engine.wager, Engine.jackpot))
                             )
                         )
                     )
                 )
-
             );
 
         }
