@@ -9,6 +9,7 @@ var serve = require('koa-static');
 
 var port = process.env.PORT || 3001;
 var production = process.env.NODE_ENV === 'production';
+var redirectURI = process.env.REDIRECT_URI || 'http://localhost:'+port+'/game';
 
 console.log('Running server, prod=', process.env.NODE_ENV === 'production');
 
@@ -43,11 +44,12 @@ app.context.render = render({
 
 app.use(router(app));
 
-/** Landing page **/
+//Landing page
 app.get('/', function *(next) {
     yield this.render('landing', {
         production: production,
-        landing: true
+        landing: true,
+        redirectURI: redirectURI
     });
 });
 

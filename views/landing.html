@@ -20,7 +20,7 @@
                 <br/>
                 <div class="btn-register-container">
                     <a class="btn btn-lg btn-success btn-register"
-                       href="{% if production %}https://moneypot.com{% else %}http://localhost:3000{% endif %}/oauth/authorize?app_id=1&amp;state=abc&amp;redirect_uri={% if production %}https://www.dustdice.com/game{% else %}http://localhost:3001/game{% endif %}&amp;response_type=token"
+                       href="{% if production %}https://moneypot.com{% else %}http://localhost:3000{% endif %}/oauth/authorize?app_id=1&amp;state=abc&amp;redirect_uri={{ redirectURI }}&amp;response_type=token"
                        role="button">
                         Login with MoneyPot
                         <br><small>(or register)</small>
@@ -36,7 +36,7 @@
                 <br/>
                 <div class="btn-register-container">
                     <a class="btn btn-lg btn-success btn-register"
-                       href="{% if production %}https://moneypot.com{% else %}http://localhost:3000{% endif %}/oauth/authorize?app_id=1&amp;state=abc&amp;redirect_uri={% if production %}https://www.dustdice.com/game{% else %}http://localhost:3001/game{% endif %}&amp;response_type=token"
+                       href="{% if production %}https://moneypot.com{% else %}http://localhost:3000{% endif %}/oauth/authorize?app_id=1&amp;state=abc&amp;redirect_uri={{ redirectURI }}&amp;response_type=token"
                        role="button">
                         Login with MoneyPot
                         <br><small>(or register)</small>
@@ -52,7 +52,7 @@
                 <br/>
                 <div class="btn-register-container">
                     <a class="btn btn-lg btn-success btn-register"
-                       href="{% if production %}https://moneypot.com{% else %}http://localhost:3000{% endif %}/oauth/authorize?app_id=1&amp;state=abc&amp;redirect_uri={% if production %}https://www.dustdice.com/game{% else %}http://localhost:3001/game{% endif %}&amp;response_type=token"
+                       href="{% if production %}https://moneypot.com{% else %}http://localhost:3000{% endif %}/oauth/authorize?app_id=1&amp;state=abc&amp;redirect_uri={{ redirectURI }}&amp;response_type=token"
                        role="button">
                         Login with MoneyPot
                         <br><small>(or register)</small>
