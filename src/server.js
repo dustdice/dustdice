@@ -6,6 +6,7 @@ var app = koa();
 var router = require('koa-router');
 var render = require('koa-swig');
 var serve = require('koa-static');
+var compress = require('koa-compress');
 
 var port = process.env.PORT || 3001;
 var production = process.env.NODE_ENV === 'production';
@@ -26,9 +27,10 @@ app.on('error', function(err) {
     console.error('Error: ', err, err.stack);
 });
 
-if(production)
+if(production) {
+    app.use(compress());
     app.use(serve('build'));
-else
+} else
     app.use(serve('public'));
 
 /** Configure template engine **/
