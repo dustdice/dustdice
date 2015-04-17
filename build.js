@@ -22,10 +22,7 @@ var config = {
     cssBuildFilename: hash('./public/css/app.css').substring(0, 8)
 };
 
-fs.writeFile('src/config.js', JSON.stringify(config), function (err) {
-    if (err) throw err;
-    console.log('Config file created');
-});
+fs.writeFileSync('./src/config.js', JSON.stringify(config));
 
 var options = {
     appDir: './public',
@@ -76,6 +73,8 @@ function execute(command) {
 
 }
 
+
+console.log('optimizing');
 requirejs.optimize(options, function (buildResponse) {
     //buildResponse is just a text output of the modules
     //included. Load the built file for the contents.
