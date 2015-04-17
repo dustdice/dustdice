@@ -86,7 +86,7 @@ define([
 
                 return D.div({ id: 'chat-inner-container' },
                     D.div({ id: 'chat-title' },
-                        D.h1(null, 'Chat (Beta)')
+                        D.h1(null, 'Chat')
                     ),
                     D.div({ id: 'chat-content', ref: 'chat' },
                         chatMessages
