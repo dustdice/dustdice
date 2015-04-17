@@ -76,7 +76,6 @@ function(
         },
 
         _getUserData: function() {
-            _.once(this._connectVault);
             this.setState({ engine: Engine }); //Just to re render
         },
 
