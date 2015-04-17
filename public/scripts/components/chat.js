@@ -9,6 +9,9 @@ define([
     ChatMessageClass
 
 ) {
+    /* Constants */
+    var SCROLL_OFFSET = 120; //Pixels needed to do auto scroll
+
     var D = React.DOM;
 
     var ChatMessage = React.createFactory(ChatMessageClass);
@@ -48,9 +51,26 @@ define([
                 var msg = e.target.value;
                 if(msg.length > 1 && msg.length < 500) {
                     this.chatAPI.sendMsg(msg);
+                    e.target.value = '';
                 }
-                e.target.value = '';
             }
+        },
+
+        /** If the length of the chat changed and the scroll position is near bottom scroll to the bottom **/
+        componentDidUpdate: function(prevProps, prevState) {
+
+            //if(prevState.engine.chat.length != this.listLength){
+                //this.listLength = this.state.engine.chat.length;
+
+            if(this.chatAPI && (this.chatAPI.conStatus === 'JOINED')) {
+                var msgsBox = React.findDOMNode(this.refs.chat);
+                var scrollBottom = msgsBox.scrollHeight-msgsBox.offsetHeight-msgsBox.scrollTop;
+
+                if(scrollBottom < SCROLL_OFFSET)
+                    msgsBox.scrollTop = msgsBox.scrollHeight;
+            }
+
+            //}
         },
 
         render: function() {
@@ -60,15 +80,15 @@ define([
                     D.img({ src: 'img/loading.gif' })
                 );
             } else {
-                var chatMessages = this.chatAPI.chatHistory.map(function(message) {
-                    return ChatMessage({ message: message });
+                var chatMessages = this.chatAPI.chatHistory.map(function(message, index) {
+                    return ChatMessage({ message: message, key: index });
                 });
 
                 return D.div({ id: 'chat-inner-container' },
                     D.div({ id: 'chat-title' },
                         D.h1(null, 'Chat (Beta)')
                     ),
-                    D.div({ id: 'chat-content' },
+                    D.div({ id: 'chat-content', ref: 'chat' },
                         chatMessages
                     ),
                     D.div({ id: 'chat-input-container' },

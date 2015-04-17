@@ -69,7 +69,6 @@ define([
 
     WebApi.prototype.onMessage = function(msg) {
         this.chatHistory.push(msg);
-        console.log('[msg] ', msg);
         this.trigger('message');
     };
 
