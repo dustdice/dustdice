@@ -11,9 +11,7 @@ define([
     SHA256,
     Engine
 ) {
-    var chatHost = window.document.location.host === 'www.dustdice.com' ?
-        'http://chat.moneypot.com/' :
-        window.document.location.host.replace(/:3001$/, ':4000');
+    var chatHost = chatURI || window.document.location.host.replace(/:3001$/, ':4000');
 
     var WebApi = function() {
         console.assert(Engine.gameState !== 'OFFLINE');
