@@ -162,7 +162,7 @@ function(
                             _toggleSettings: this._toggleSettings,
                             _toggleTutorial: this._toggleTutorial,
                             _toggleDepositAddress: this._toggleDepositAddress,
-                            disableControls: this.state.modal || this.showChat
+                            disableControls: this.state.modal || GameSettings.showChat
                         })
                     ),
 
