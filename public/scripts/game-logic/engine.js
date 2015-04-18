@@ -330,9 +330,11 @@ define([
             if (err)
                 return callback(err);
 
-            // TODO: Why do we duplicate the wager/winProb ?
+            self.balance += data.amount;
+
+            // TODO: Why do we duplicate the engine fields.. ?
             self.trigger('new-balance', {
-                balance: self.balance + data.amount,
+                balance: self.balance,
                 wager: self.wager,
                 winProb: self.winProb
             });
