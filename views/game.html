@@ -19,7 +19,7 @@
     <script>
         /** Receive variables from the server and put them as global vars **/
         var PRODUCTION = {% if production %}true{% else %}false{% endif %};
-        var chatURI = '{{ chatURI }}';
+        var CHAT_URI = '{{ chatURI }}';
     </script>
         <script data-main="scripts/{% if production %}{{config.jsBuildFilename}}{% else %}config{% endif %}" src="scripts/lib/require.js"></script>
     </body>

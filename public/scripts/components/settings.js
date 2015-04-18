@@ -107,7 +107,12 @@ define([
         },
 
         _setMaxWager: function() {
-            Engine.setWager(Clib.min(Clib.removeAfterHundredth(Engine.balance), Clib.removeAfterHundredth(Engine.maxWin)));
+            Engine.setWager(
+              Math.max(100,
+                 Math.min(Clib.floorHundreds(Engine.balance),
+                   Clib.floorHundreds(Engine.maxWin / ((98/Engine.winProb) - 1)))
+              )
+            );
         },
 
         _setJackpot: function(ev) {
@@ -244,9 +249,13 @@ define([
                         D.div({ className: jackPotDivClasses },
                             D.label({ className: 'control-label pull-left', htmlFor: 'set-jackpot-amount' }, 'Jackpot\u00a0\u00a0',
                                 LinkWithTooltip(
-                                    { tooltip: 'If you lose you have a ' + Clib.jackpotAfterLosingProbText(Engine.wager, Engine.jackpot, Engine.winProb) +
-                                        ' chance of winning your bet back plus the jackpot (' + Clib.satToBit(Engine.wager) + ' + ' +  Clib.satToBit(Engine.jackpot) + ')bits.' +
-                                    'Or ' + Clib.jackPotProbText(Engine.wager, Engine.jackpot) +  " in total. More in FAQ's" },
+                                    { tooltip:
+                                       'If you lose you have a ' +
+                                             Clib.jackpotAfterLosingProbText(Engine.wager, Engine.jackpot, Engine.winProb) +
+                                        ' chance of winning your bet back plus the jackpot (' +
+                                       Clib.satToBit(Engine.wager) + ' + ' +  Clib.satToBit(Engine.jackpot) +
+                                       ') bits or ' +
+                                    Clib.jackPotProbText(Engine.wager, Engine.jackpot) +  " in total. More in FAQs" },
                                     '?')
                             ),
                             D.label({ className: 'control-label pull-right', htmlFor: 'set-jackpot-amount' }, this.state.jackpotValidityMessage? this.state.jackpotValidityMessage: ''),

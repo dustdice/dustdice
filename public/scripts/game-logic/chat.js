@@ -11,7 +11,7 @@ define([
     SHA256,
     Engine
 ) {
-    var chatHost = chatURI || window.document.location.host.replace(/:3001$/, ':4000');
+    var chatHost = CHAT_URI || window.document.location.host.replace(/:3001$/, ':4000');
 
     var WebApi = function() {
         console.assert(Engine.gameState !== 'OFFLINE');
@@ -32,7 +32,6 @@ define([
         self.ws.on('message', self.onMessage.bind(this));
         self.ws.on('err', self.onError.bind(this)); //Error events from the server
         self.ws.on('error', self.onError.bind(this)); //Socket io errors
-
     };
 
     WebApi.prototype.onConnect = function() {

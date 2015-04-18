@@ -25,7 +25,7 @@ define([], function () {
             return bits * 100;
         },
 
-        removeAfterHundredth: function (number) {
+        floorHundreds: function (number) {
             return Math.floor(number / 100) * 100;
         },
 
@@ -88,7 +88,7 @@ define([], function () {
          * with no house edge:
          **/
         jackWinProbSatoshisRatio: function (wager, jackpot) {
-            wager = this.removeAfterHundredth(wager); // Must bet an a whole amount of satoshis
+            wager = this.floorHundreds(wager); // Must bet an a whole amount of satoshis
             return wager / 100 / (wager + jackpot);
         },
 
@@ -123,7 +123,7 @@ define([], function () {
          * with no house edge:
          **/
         jackAfterLosingWinProbSatoshisRatio: function (wager, jackpot, winProb) {
-            wager = this.removeAfterHundredth(wager); // Must bet an a whole amount of satoshis
+            wager = this.floorHundreds(wager); // Must bet an a whole amount of satoshis
             return (wager / 100 / (wager + jackpot)) / (1 -(winProb/100)) ;
         },
 
@@ -152,11 +152,7 @@ define([], function () {
         },
 
         browserSupport: function () {
-
             if (typeof Storage === 'undefined')
-                return false;
-
-            if(!window.crypto)
                 return false;
 
             return !!XMLHttpRequest;
@@ -205,14 +201,6 @@ define([], function () {
                   return complete(null, results);
               })
             });
-        },
-
-        max: function(qt1, qt2) {
-            return (qt1>qt2)? qt1 : qt2;
-        },
-
-        min: function(qt1, qt2) {
-            return (qt1>qt2)? qt2: qt1;
         },
 
         getHashParams: function () {

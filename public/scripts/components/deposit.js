@@ -50,7 +50,7 @@ define([
                     break;
                 case 'MONEYPOT':
                     body = D.div({ className: 'modal-body' },
-                        D.p(null, "This link will get you to DustDice App in MoneyPot, you can deposit and withdraw there"),
+                        D.p(null, "You can deposit and withdraw funds from and to you MoneyPot account:"),
                         D.a({ href: 'https://www.moneypot.com/apps/1-dust-dice'}, 'https://www.moneypot.com/apps/1-dust-dice')
                     );
                     break;
