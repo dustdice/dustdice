@@ -1,13 +1,17 @@
 define([
     'lib/react',
     'react-bootstrap',
-    'game-logic/engine'
+    'game-logic/engine',
+    'components/faucet'
 ],function(
     React,
     ReactBootstrap,
-    Engine
+    Engine,
+    FaucetClass
 ){
     var D = React.DOM;
+    var Faucet = React.createFactory(FaucetClass);
+
 
     return React.createClass({
         displayName: 'Deposit Address',
@@ -34,8 +38,8 @@ define([
             }
         },
 
-        render: function() {
 
+        render: function() {
             var body;
 
             switch(this.state.tab) {
@@ -44,7 +48,7 @@ define([
                         D.img({ src: 'https://blockchain.info/qr?data='+Engine.depositAddress+'&size=200'}),
                         D.br(),
                         D.br(),
-                        D.p(null, "Deposit to this MoneyPot address to directly send bits to DustDice Game, your bits are still inside MoneyPot"),
+                        D.p(null, "All amounts sent to this bitcoin address will automatically be credited into your DustDice account after a single bitcoin confirmation."),
                         D.b(null, Engine.depositAddress)
                     );
                     break;
@@ -54,6 +58,13 @@ define([
                         D.a({ href: 'https://www.moneypot.com/apps/1-dust-dice'}, 'https://www.moneypot.com/apps/1-dust-dice')
                     );
                     break;
+                case 'FAUCET':
+                    body = D.div({ className: 'modal-body' },
+                        Faucet()
+                    );
+                    break;
+              default:
+                throw new Error('Unrecognized tab state: '+ this.state.tab);
             }
 
             return D.div({ id: 'deposit-address-container', className: 'modal fade in', style: { display: 'block' }, onClick: this._handleBackDropClick },
@@ -69,14 +80,27 @@ define([
                                 )
                             ),
                             D.h4({ className: 'modal-title' },
-                                'Deposit Address'
+                                'Add funds'
                             )
                         ),
 
                         D.div({ className: 'modal-nav' },
                             D.ul({ className: 'nav nav-tabs nav-justified' },
-                                D.li({ role: 'presentation', className: (this.state.tab === 'ADDRESS')? 'active' : '', onClick: this._selectTab('ADDRESS') }, D.a({ href: '#' }, 'Address')),
-                                D.li({ role: 'presentation', className: (this.state.tab === 'MONEYPOT')? 'active' : '', onClick: this._selectTab('MONEYPOT')  }, D.a({ href: '#' }, 'MoneyPot'))
+                                D.li({
+                                    role: 'presentation',
+                                    className: this.state.tab === 'ADDRESS' ? 'active' : '',
+                                    onClick: this._selectTab('ADDRESS')
+                                }, D.a({ href: '#' }, 'Address')),
+                                D.li({
+                                    role: 'presentation',
+                                    className: this.state.tab === 'MONEYPOT' ? 'active' : '',
+                                    onClick: this._selectTab('MONEYPOT')
+                                }, D.a({ href: '#' }, 'MoneyPot')),
+                                D.li({
+                                    role: 'presentation',
+                                    className: this.state.tab === 'FAUCET' ? 'active' : '',
+                                    onClick: this._selectTab('FAUCET')
+                                }, D.a( { href: '#' }, 'Faucet'))
                             )
                         ),
 

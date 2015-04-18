@@ -102,24 +102,32 @@ define([
         var cond = hiLo ? '>' : '<';
         var number = hiLo? (100-winProb) : winProb+1;
 
-        var body = {
+        var body = JSON.stringify({
             hash: hash,
             wager: wager,
             client_seed: seed,
             cond: cond,
             number: number,
             jackpot: jackpot
-        };
-
-        body = JSON.stringify(body);
+        });
 
         new Requester({
             method: 'POST',
-            url: URL+'/v1/bet/jackpot-dice'+'?access_token='+accessToken,
+            url: URL+'/v1/bet/jackpot-dice?access_token='+accessToken,
             body: body,
             callback: responseErrorHandler(callback)
         });
+    };
 
+    WebApi.prototype.claimFaucet = function(accessToken, response, callback) {
+        var body = JSON.stringify({ response: response });
+
+        new Requester({
+            method: 'POST',
+            url: URL+'/v1/claim-faucet?access_token=' + accessToken,
+            body: body,
+            callback: responseErrorHandler(callback)
+        });
     };
 
     WebApi.prototype.getDepositAddress = function(accessToken, callback) {

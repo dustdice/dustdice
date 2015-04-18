@@ -286,7 +286,8 @@ define([
      * Refresh the balance and the bankroll
      * Triggers:
      * 'refreshing-data': On start
-     * 'new-balance': if it gets a new balance || 'refresh-data': If not a new balance
+     * 'new-balance':  amount
+     * if it gets a new balance || 'refresh-data': If not a new balance
      */
     GameEngine.prototype.refreshBalance = function() {
         var self = this;
@@ -318,8 +319,26 @@ define([
         }));
     };
 
-    GameEngine.prototype.goToVaultDeposit = function() {
-        window.location.href = 'https://www.moneypot.com/me/receive';
+    /**
+     * Claims the faucet
+     * triggers 'new-balance': if it gets a new balance
+     */
+    GameEngine.prototype.claimFaucet = function(response, callback) {
+        var self = this;
+
+        WebApi.claimFaucet(this.accessToken, response, function(err, data) {
+            if (err)
+                return callback(err);
+
+            // TODO: Why do we duplicate the wager/winProb ?
+            self.trigger('new-balance', {
+                balance: self.balance + data.amount,
+                wager: self.wager,
+                winProb: self.winProb
+            });
+
+            callback(null, data);
+        });
     };
 
     /** Helper functions **/
