@@ -8,7 +8,7 @@
 
         <!--<link href="css/bootstrap.min.css" rel="stylesheet">-->
         <!--<link rel="stylesheet" href="css/font-awesome.css">-->
-        <link href="css/{% if production %}{{config.cssBuildFilename}}{% else %}app{% endif %}.css" rel="stylesheet">
+        <link href="css/{% if config %}{{config.cssBuildFilename}}{% else %}app{% endif %}.css" rel="stylesheet">
         <link rel="shortcut icon" href="img/favicon-black.ico" type="image/x-icon"/>
         <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
     </head>
@@ -18,9 +18,9 @@
 
     <script>
         /** Receive variables from the server and put them as global vars **/
-        var PRODUCTION = {% if production %}true{% else %}false{% endif %};
+        var PRODUCTION = {{ production }};
         var CHAT_URI = '{{ chatURI }}';
     </script>
-        <script data-main="scripts/{% if production %}{{config.jsBuildFilename}}{% else %}config{% endif %}" src="scripts/lib/require.js"></script>
+        <script data-main="scripts/{% if config %}{{ config.jsBuildFilename }}{% else %}config{% endif %}" src="scripts/lib/require.js"></script>
     </body>
 </html>

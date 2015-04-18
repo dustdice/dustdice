@@ -7,8 +7,6 @@ var assert = require('assert');
 
 console.log('Running install script');
 
-if(process.env.NODE_ENV !== 'production')
-    return;
 
 function hash(filename) {
     var shasum = crypto.createHash('sha1');
@@ -16,13 +14,6 @@ function hash(filename) {
     return shasum.digest('hex');
 }
 
-//Set file names for the optimized files
-var config = {
-    jsBuildFilename: hash('./public/scripts/config.js').substring(0, 8),
-    cssBuildFilename: hash('./public/css/app.css').substring(0, 8)
-};
-
-fs.writeFileSync('./src/config.js', JSON.stringify(config));
 
 var options = {
     appDir: './public',
@@ -82,6 +73,16 @@ requirejs.optimize(options, function (buildResponse) {
     //var contents = fs.readFileSync(config.out, 'utf8');
 
     console.log(buildResponse);
+
+
+    //Set file names for the optimized files
+    var config = {
+        jsBuildFilename: hash('./build/scripts/config.js').substring(0, 8),
+        cssBuildFilename: hash('./build/css/app.css').substring(0, 8)
+    };
+
+
+    fs.writeFileSync('./build/config.json', JSON.stringify(config));
 
 
     //Copy the build files with the hashed name

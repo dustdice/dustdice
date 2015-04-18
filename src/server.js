@@ -14,12 +14,12 @@ var redirectURI = process.env.REDIRECT_URI || 'http://localhost:'+port+'/game';
 var chatURI = process.env.CHAT_URI || 'http://localhost:4000';
 var appId = process.env.APP_ID || 1;
 
-console.log('Running server, prod=', process.env.NODE_ENV === 'production');
+console.log('Running server, prod=', production);
 
 var config = null;
 if(production){
-    config = fs.readFileSync(__dirname + '/config.js');
-    config = JSON.parse(config);
+    config = JSON.parse(fs.readFileSync(__dirname + '/../build/config.json'));
+    console.log('Loaded hash configuration: ', config);
 }
 
 app.poweredBy = false;
@@ -28,22 +28,15 @@ app.on('error', function(err) {
     console.error('Error: ', err, err.stack);
 });
 
-if(production) {
-    app.use(compress());
-    app.use(serve('build'));
-} else
-    app.use(serve('public'));
+app.use(compress());
+app.use(serve(production ? 'build' : 'public'));
+
 
 /** Configure template engine **/
 app.context.render = render({
     root: './views',
-    autoescape: true,
-    cache: false, //'memory', // disable, set to false
+    cache: production ? 'memory' : false,
     ext: 'html'
-    //locals: {}, //Send something?
-    //filters: filters,
-    //tags: tags,
-    //extensions: extensions
 });
 
 app.use(router(app));
