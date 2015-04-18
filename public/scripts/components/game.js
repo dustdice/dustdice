@@ -22,7 +22,7 @@ function(
     ControlsClass,
     SettingsClass,
     TutorialClass,
-    DepositAddressClass,
+    DepositClass,
     ChatClass,
     GameSettings
 ){
@@ -34,7 +34,7 @@ function(
 
     var Settings = React.createFactory(SettingsClass);
     var Tutorial = React.createFactory(TutorialClass);
-    var DepositAddress = React.createFactory(DepositAddressClass);
+    var Deposit = React.createFactory(DepositClass);
 
     return React.createClass({
 
@@ -88,7 +88,11 @@ function(
         },
 
         _toggleDepositAddress: function() {
-            this.setState({ modal: (this.state.modal === 'DEPOSIT')? '' : 'DEPOSIT' })
+            this.setState({ modal: (this.state.modal === 'DEPOSIT')? '' : 'DEPOSIT', initialTab: 'ADDRESS' });
+        },
+
+        _toggleFaucet: function() {
+            this.setState({ modal: (this.state.modal === 'DEPOSIT')? '' : 'DEPOSIT',  initialTab: 'FAUCET' });
         },
 
         _toggleChat: function() {
@@ -129,8 +133,9 @@ function(
                     });
                     break;
                 case 'DEPOSIT':
-                    modal = DepositAddress({
-                       _toggleDepositAddress: this._toggleDepositAddress
+                    modal = Deposit({
+                       _toggleDepositAddress: this._toggleDepositAddress,
+                        initialTab: this.state.initialTab
                     });
                     break;
 
@@ -149,7 +154,8 @@ function(
                             _toggleTutorial: this._toggleTutorial,
                             _toggleSettings: this._toggleSettings,
                             _toggleDepositAddress: this._toggleDepositAddress,
-                            _toggleChat: this._toggleChat
+                            _toggleChat: this._toggleChat,
+                            _toggleFaucet: this._toggleFaucet
                         })
                     ),
 

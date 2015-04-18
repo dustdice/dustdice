@@ -17,12 +17,13 @@ define([
         displayName: 'Deposit Address',
 
         propTypes: {
-            _toggleDepositAddress: React.PropTypes.func.isRequired
+            _toggleDepositAddress: React.PropTypes.func.isRequired,
+            initialTab: React.PropTypes.string.isRequired
         },
 
         getInitialState: function() {
             return {
-                tab: 'ADDRESS'
+                tab: this.props.initialTab
             }
         },
 
