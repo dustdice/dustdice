@@ -18,7 +18,7 @@ define([], function () {
         },
 
         satToBitFloored: function (satoshis) {
-            return Math.round(this.satToBit(satoshis));
+            return Math.floor(this.satToBit(satoshis));
         },
 
         bitToSat: function (bits) {
