@@ -208,7 +208,7 @@ define([
                             ),
                             D.div({ className: 'crl-in-bottom' },
                                 D.div({ className: 'ctl-state-amount' },
-                                    D.span(null, Clib.formatSatoshis(Engine.wager, 0))
+                                    D.span(null, Clib.satToBitFloored(Engine.wager))
                                 ),
                                 D.span({ className: 'ctrl-state-lbl' },
                                     '\u00a0', Clib.bitsTextTerm(Clib.satToBitFloored(Engine.wager))

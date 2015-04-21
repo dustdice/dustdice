@@ -140,8 +140,18 @@ define([
     };
 
 
-    /** Engine API **/
-
+    /** Engine API
+     *
+     * Triggers:
+     * 'bet-sent': When the bet was sent and a copy of the bet info
+     *
+     * 'bet-end': When receiving the result of the bet
+     *
+     * We send a copy of the bet info because the graph requires to have a history of the bets by its own,
+     * so there is no need to the engine to have another one,
+     * and the graph can't get the state directly from the engine because it could change between the lapse 'bet-end' is triggered and
+     * the graph getting the state from the engine. The same to the 'claim-faucet' and 'new-balance' events.
+     */
     GameEngine.prototype.bet = function(hiLo) {
         var self = this;
 
@@ -220,7 +230,7 @@ define([
                 self.currentBet = null; //Clear the current Bet
 
                 //Send a copy of the game result values, do not edit this object in components!
-                Object.seal(game);//Avoid some component do weird things on the object
+                //Object.seal(game);//Avoid some component do weird things on the object
                 self.trigger('bet-end', game);
             })); //\WebApi.bet
 
@@ -231,7 +241,7 @@ define([
             winProb: self.winProb,
             hiLo: hiLo
         };
-        Object.seal(betSent); //Avoid some component do weird things on the object
+        //Object.seal(betSent); //Avoid some component do weird things on the object
         self.trigger('bet-sent', betSent);
     };
 
