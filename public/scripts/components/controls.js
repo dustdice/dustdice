@@ -44,7 +44,7 @@ define([
 
         propTypes: {
             _toggleSettings: React.PropTypes.func.isRequired,
-            disableControls: React.PropTypes.string.isRequired,
+            disableControls: React.PropTypes.bool.isRequired,
             _toggleDepositAddress: React.PropTypes.func.isRequired
         },
 
@@ -133,14 +133,15 @@ define([
                 'ctl-button': true,
                 'cant-bet': (this.state.notEnoughBalance || this.state.betTooHigh),
                 'betting': (isBetting && Engine.currentBet.hiLo === true),
-                'transparent': !GameSettings.showButtons
+                'transparent': !GameSettings.showButtons,
+                'disabled': this.props.disableControls
             });
             betHiBtn = D.button(
                 {
                     id: 'bet-hi-button',
                     className: betHiBtnClasses,
                     onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this.props._toggleDepositAddress : this._betHi,
-                    disabled: isBetting && GameSettings.showButtons
+                    disabled: ((isBetting || this.props.disableControls) && GameSettings.showButtons)
                 },
                 this.state.betTooHigh?
                     'Supported':
@@ -155,14 +156,15 @@ define([
                 'ctl-button': true,
                 'cant-bet': (this.state.notEnoughBalance || this.state.betTooHigh),
                 'betting': (isBetting && Engine.currentBet.hiLo === false),
-                'transparent': !GameSettings.showButtons
+                'transparent': !GameSettings.showButtons,
+                'disabled': this.props.disableControls
             });
             betLoBtn = D.button(
                 {
                     id: 'bet-lo-button',
                     className: betLoBtnClasses,
                     onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this.props._toggleDepositAddress : this._betLo,
-                    disabled: isBetting && GameSettings.showButtons
+                    disabled: ((isBetting || this.props.disableControls) && GameSettings.showButtons)
                 },
                 this.state.betTooHigh?
                     'Bet not':
@@ -175,13 +177,24 @@ define([
                 'btn': true,
                 'btn-default': true,
                 'ctl-button': true,
-                'transparent': !GameSettings.showButtons
+                'transparent': !GameSettings.showButtons,
+                'disabled': this.props.disableControls
             });
-            chaseBetBtn = D.button({ id: 'bet-chase-bet-button', className: chaseDivideBetBtnClasses, onClick: this._chaseBet },
+            chaseBetBtn = D.button({
+                    id: 'bet-chase-bet-button',
+                    className: chaseDivideBetBtnClasses,
+                    onClick: this._chaseBet,
+                    disabled: ((isBetting || this.props.disableControls) && GameSettings.showButtons)
+                },
                 D.span(null, 'x' + getBetMultiplier().toFixed(2)),
                 D.i({ className: 'fa fa-caret-square-o-up' })
             );
-            divideBetBtn = D.button({ id: 'bet-divide-bet-button', className: chaseDivideBetBtnClasses, onClick: this._divideBet },
+            divideBetBtn = D.button({
+                    id: 'bet-divide-bet-button',
+                    className: chaseDivideBetBtnClasses,
+                    onClick: this._divideBet,
+                    disabled: ((isBetting || this.props.disableControls) && GameSettings.showButtons)
+                },
                 D.i({ className: 'fa fa-caret-square-o-down' }),
                 D.span(null, '/' + getBetMultiplier().toFixed(2))
             );

@@ -235,16 +235,21 @@ h1 {
     background-color: rgba(37, 152, 91, 0.5);
     border: none;
     color: inherit;
+    cursor: pointer;
 }
 
 .btn[disabled] {
     color: #333;
-    cursor: not-allowed;
     filter: alpha(opacity=50);
     opacity: .2;
+    cursor: default;
 }
 
-#bet-hi-button[disabled], #bet-lo-button[disabled] {
+.btn.disabled {
+    cursor: default;
+}
+
+#bet-hi-button[disabled], #bet-lo-button[disabled], #bet-chase-bet-button[disabled], #bet-divide-bet-button[disabled] {
     opacity: 0.3;
     background-color: rgba(37, 152, 91, 0.5);
     color: inherit;
