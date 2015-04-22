@@ -20,9 +20,9 @@ define([
 
         self.conStatus = 'DISCONNECTED'; // DISCONNECTED || CONNECTED || LOGGED || JOINED || ERROR
         self.error = false;
-        self.chatHistory = [];
+        self.history = [];
         self.cid = null;
-
+        self.numUsers = null;
 
         self.ws = io(chatHost, { multiplex: false });
 
@@ -35,11 +35,9 @@ define([
     };
 
     WebApi.prototype.onConnect = function() {
-        console.log('[Chat] connection established');
         var self = this;
 
         var hash = SHA256.hash(Engine.accessToken);
-        console.log('[auth] authenticating hash ', hash);
         self.ws.emit('auth', hash, function(err, info) {
             if(err) {
                 self.conStatus = 'ERROR';
@@ -47,9 +45,18 @@ define([
                 return;
             }
 
-            console.log('[auth] ' + JSON.stringify(info));
+            self.ws.emit('join_channel', { aid: 1, chan: 'general' }, function(err, info) {
+                if (err) {
+                    console.error(err);
+                    return
+                }
 
-            self.ws.emit('join_channel', { app: 'dustdice', chan: 'general' });
+                self.cid = info.cid;
+                self.history = info.history;
+                self.numUsers = info.num_users;
+                self.conStatus = 'JOINED';
+                self.trigger('joined');
+            });
             self.conStatus = 'CONNECTED';
             self.trigger('logged');
 
@@ -65,15 +72,15 @@ define([
     };
 
     WebApi.prototype.onMessage = function(msg) {
-        this.chatHistory.push(msg);
+        this.history.push(msg);
         this.trigger('message');
     };
 
     WebApi.prototype.onChannelInfo = function(info) {
-        console.log('[info]', info);
-        this.cid = info.cid;
-        this.conStatus = 'JOINED';
-        this.trigger('joined');
+        //console.log('[info]', info);
+        //this.cid = info.cid;
+        //this.conStatus = 'JOINED';
+        //this.trigger('joined');
     };
 
     WebApi.prototype.onError = function(err) {

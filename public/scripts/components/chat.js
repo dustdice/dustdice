@@ -25,6 +25,7 @@ define([
 
         getInitialState: function() {
             this.chatAPI = new ChatAPI();
+            this.firstScrollDown = false;
             return {
                 ChatAPI: ChatAPI
             };
@@ -72,11 +73,20 @@ define([
                 //this.listLength = this.state.engine.chat.length;
 
             if(this.chatAPI && (this.chatAPI.conStatus === 'JOINED')) {
-                var msgsBox = React.findDOMNode(this.refs.chat);
-                var scrollBottom = msgsBox.scrollHeight-msgsBox.offsetHeight-msgsBox.scrollTop;
 
-                if(scrollBottom < SCROLL_OFFSET)
+                var msgsBox = React.findDOMNode(this.refs.chat);
+
+                if(!this.firstScrollDown) {
                     msgsBox.scrollTop = msgsBox.scrollHeight;
+                    this.firstScrollDown = true;
+                } else {
+                    var scrollBottom = msgsBox.scrollHeight-msgsBox.offsetHeight-msgsBox.scrollTop;
+
+                    if(scrollBottom < SCROLL_OFFSET)
+                        msgsBox.scrollTop = msgsBox.scrollHeight;
+                }
+            } else {
+                this.firstScrollDown = false;
             }
 
             //}
@@ -89,7 +99,7 @@ define([
                     D.img({ src: 'img/loading.gif' })
                 );
             } else {
-                var chatMessages = this.chatAPI.chatHistory.map(function(message, index) {
+                var chatMessages = this.chatAPI.history.map(function(message, index) {
                     return ChatMessage({ message: message, key: index });
                 });
 
