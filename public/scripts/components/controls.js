@@ -96,7 +96,8 @@ define([
                 Engine.decreaseWinProb();
         },
 
-        _betHi: function() {
+        _betHi: function(e) {
+            console.log(e.type, e.hasOwnProperty('t'))
             if(Engine.gameState != 'BETTING' && !this.state.notEnoughBalance && !this.state.betTooHigh && !this.props.disableControls)
                 Engine.bet(true);
         },

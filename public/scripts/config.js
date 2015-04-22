@@ -5,7 +5,6 @@ requirejs.config({
         'highcharts-theme': 'lib/dark-unica',
         'highcharts-bubble': 'lib/highcharts-bubble',
         'jquery': 'lib/jquery',
-        'jqueryui': 'lib/jquery-ui-1.11.2/jquery-ui.min',
         'screenfull': 'lib/screenfull',
         'react-bootstrap': 'lib/react-bootstrap',
         'class-names': 'lib/class-names'
@@ -25,7 +24,7 @@ requirejs.config({
         },
 
         'highcharts-theme': {
-            deps: ['highcharts', 'jqueryui', 'highcharts-bubble'],
+            deps: ['highcharts', 'highcharts-bubble'],
             exports: 'Highcharts'
         }
     }

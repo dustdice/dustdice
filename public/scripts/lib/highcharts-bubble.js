@@ -11,9 +11,13 @@ Highcharts.wrap(Highcharts.Pointer.prototype, 'onContainerClick', function (orig
     // Call the original event
     original.apply(this, Array.prototype.slice.call(arguments, 1));
 
+    //Fix for firefox
+    //Jquery look into event.target with hasOwnProperty but target is inherited
+    var target = e.type;
+
     // Trigger the event on the container's parent (to bubble the event out of highcharts)
     // unless the user wanted to stop it
     if (bubbleUp && typeof parent !== 'undefined' && parent) {
-        jQuery(pointer.chart.container.parentNode).trigger(e);
+        jQuery(pointer.chart.container.parentNode).trigger(target, e);
     }
 });
