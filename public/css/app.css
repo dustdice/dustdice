@@ -36,6 +36,12 @@ html, body {
     opacity: 0.5;
 }
 
+#game-container-box {
+    outline: none !important;
+    box-shadow: none !important;
+    overflow: hidden;
+}
+
 #game-container-box.compress {
     position: absolute;
     top: 0;
@@ -355,7 +361,7 @@ h1 {
     ========================================================================== */
 
 .modal {
-    overflow: scroll;
+    overflow-y: auto;
 }
 
 .modal label {
