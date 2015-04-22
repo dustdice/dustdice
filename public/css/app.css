@@ -37,6 +37,11 @@ html, body {
 }
 
 #game-container-box.compress {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+#game-container-box.compress {
     position: absolute;
     top: 0;
     bottom: 0;

@@ -5,6 +5,8 @@ define(function() {
                 parent = pointer.chart.container.parentNode,
                 bubbleUp = true;
 
+            console.log('onCointainerClick');
+
             // Add a method to the event to allow event handlers to prevent propagation if desired
             e.swallowByHighCharts = function() { bubbleUp = false; };
 
