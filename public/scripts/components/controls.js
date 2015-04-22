@@ -22,7 +22,7 @@ define([
             return GameSettings.customBetMultiplier;
         } else {
             //Chase mode
-            var payout = (98/Engine.winProb);
+            var payout = Engine.getPayout();
             return (payout/(payout-1));
         }
     }
@@ -147,7 +147,7 @@ define([
                     'Supported':
                 this.state.notEnoughBalance?
                     'Get more bits' :
-                    D.div(null, D.span(null, (101-Engine.winProb) + ' to 100 '), D.i({ className: 'fa fa-caret-square-o-right' }))
+                    D.div(null, D.span(null, 'Greater than  ' + (100-Engine.winProb)), D.i({ className: 'fa fa-caret-square-o-right' }))
             );
 
             var betLoBtnClasses = cx({
@@ -170,7 +170,7 @@ define([
                     'Bet not':
                 this.state.notEnoughBalance?
                     'Not enough bits' :
-                    D.div(null, D.i({ className: 'fa fa-caret-square-o-left' }), D.span(null, ('1 to ' + Engine.winProb)))
+                    D.div(null, D.i({ className: 'fa fa-caret-square-o-left' }), D.span(null, ('Less than ' + Engine.winProb)))
             );
 
             var chaseDivideBetBtnClasses = cx({
@@ -198,6 +198,8 @@ define([
                 D.i({ className: 'fa fa-caret-square-o-down' }),
                 D.span(null, '/' + getBetMultiplier().toFixed(2))
             );
+
+	          var potentialProfit = Clib.satToBit(Engine.getWager() * (Engine.getPayout() - 1));
 
 
             return D.div(null,
@@ -235,7 +237,7 @@ define([
                             ),
                             D.div({ className: 'crl-in-bottom' },
                                 D.div({ className: 'ctl-state-amount' },
-                                    D.span(null, (98/Engine.winProb).toFixed(2))
+                                    D.span(null, Engine.getPayout())
                                 ),
                                 D.span({ className: 'ctrl-state-lbl' },
                                     D.i({ className: 'fa fa-times' })
@@ -249,23 +251,27 @@ define([
                             ),
                             D.div({ className: 'crl-in-bottom' },
                                 D.div({ className: 'ctl-state-amount' },
-                                    D.span(null, Engine.winProb)
+                                    D.span(null, (Engine.winProb / 101 * 100).toFixed(2))
                                 ),
                                 D.span({ className: 'ctrl-state-lbl' },
                                     D.i({ className: 'icon-percent'})
                                 )
                             )
                         ),
-
-                        D.div({id: 'ctl-jackpot-box', onClick: this.props._toggleSettings},
-                            D.div({className: 'ctl-state-name'},
-                                D.span(null, 'JACKPOT PROB')
-                            ),
-                            D.div({className: 'ctl-state-amount'},
-                                D.span(null, Clib.jackPotProbText(Engine.wager, Engine.jackpot))
-                            )
-                        )
-                    )
+	                    D.div({ id: 'ctl-jackpot-bot', onClick: this.props._toggleSettings },
+		                    D.div({ className: 'ctl-state-name' },
+			                    D.span(null, 'POTENTIAL PROFIT')
+		                    ),
+		                    D.div({ className: 'crl-in-bottom' },
+			                    D.div({ className: 'ctl-state-amount' },
+				                    D.span(null, potentialProfit.toFixed(2))
+			                    ),
+			                    D.span({ className: 'ctrl-state-lbl' },
+				                    '\u00a0', Clib.bitsTextTerm(potentialProfit)
+			                    )
+		                    )
+	                    )
+                )
                 )
             );
 

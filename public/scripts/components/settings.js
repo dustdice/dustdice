@@ -239,9 +239,10 @@ define([
                         ),
 
                         D.div({ className: 'form-group' + (betTooHigh? ' has-warning' : '') },
-                            D.label({ className: 'control-label pull-left', htmlFor: 'set-win-chance-slider' }, 'Winning probability: ' + Engine.winProb + '%'),
-                            D.label({ className: 'control-label pull-right', htmlFor: 'set-win-chance-slider' }, 'Payout: ' + (98/Engine.winProb).toFixed(2) + 'x'),
-                            D.input({ className: 'set-win-prob-range clear', type: 'range', max: '97', min: '1', id: 'set-win-chance-slider', value: Engine.winProb, onChange: this._setWinProb })
+                            D.label({ className: 'control-label pull-left', htmlFor: 'set-win-chance-slider' }, 'Chance of winning: ' + Engine.winProb + ' in 101'),
+                            D.label({ className: 'control-label pull-right', htmlFor: 'set-win-chance-slider' },
+	                            'Payout: ', Engine.getPayout(), 'x'),
+                            D.input({ className: 'set-win-prob-range clear', type: 'range', max: '100', min: '1', id: 'set-win-chance-slider', value: Engine.winProb, onChange: this._setWinProb })
                         ),
 
                         D.hr(),

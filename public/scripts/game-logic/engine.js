@@ -30,7 +30,7 @@ define([
 
         self.balance = null;
 
-        self.winProb = Clib.localOrDef('winProb', 49);
+        self.winProb = Clib.localOrDef('winProb', 50);
 
         //Wager is a float but is rounded when betting and when showing it to the user, this allows to chase bet on small qty's to actually work, Use Math.round(), is as close as you can get.
         self.wager =  Clib.localOrDef('wager', 1e2);
@@ -93,6 +93,16 @@ define([
 
 
     }
+
+
+		GameEngine.prototype.getWager = function() {
+			return Clib.floorHundreds(this.wager);
+		};
+
+		GameEngine.prototype.getPayout = function() {
+			var t = .99 / (this.winProb / 101);
+			return Math.round(t * 100) / 100;
+		};
 
     /** The first error on the engine is set and trigger the error, next errors are obviated **/
     GameEngine.prototype.setErrorState = function(errorMsg) {
@@ -164,14 +174,14 @@ define([
         /** Save the current state of the engine, do not send it by reference to other modules
             This object will be modified and saved in the graph history */
         self.currentBet = {
-            wager: Clib.floorHundreds(self.wager),
+            wager: self.getWager(),
             winProb: self.winProb,
             hiLo: hiLo,
             balance: self.balance,
             hash: self.nextGameHash,
             seed: self.clientSeed,
             accessToken: self.accessToken,
-            jackpot: self.jackpot
+            payout: Math.round(self.getPayout() * self.getWager())
         };
 
         /**
@@ -186,13 +196,13 @@ define([
             self.currentBet.seed,
             self.currentBet.hiLo,
             self.currentBet.accessToken,
-            self.currentBet.jackpot,
+            self.currentBet.payout,
             self.errorHandler(function(game){
 
                 //Test the hash of the game & the outcome of the game
                 var hash = SHA256.hash(game.secret + '|' + game.salt);
                 var vaultOutcome = (game.secret + self.currentBet.seed) % Math.pow(2,32);
-                var outcome = Math.floor(vaultOutcome / (Math.pow(2,32) / 100) ) + 1;
+                var outcome = Math.floor(vaultOutcome / (Math.pow(2,32) / 101) );
                 if(self.nextGameHash !== hash || game.outcome !== outcome) {
                     self.setErrorState('Could not prove that the game was fair :/');
                     return;

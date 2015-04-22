@@ -97,23 +97,23 @@ define([
         });
     };
 
-    WebApi.prototype.bet = function(wager, winProb, hash, seed, hiLo, accessToken, jackpot, callback) {
+    WebApi.prototype.bet = function(wager, winProb, hash, seed, hiLo, accessToken, payout, callback) {
 
         var cond = hiLo ? '>' : '<';
-        var number = hiLo? (100-winProb) : winProb+1;
+        var number = hiLo? (101-winProb) : winProb+1;
 
         var body = JSON.stringify({
             hash: hash,
             wager: wager,
             client_seed: seed,
             cond: cond,
-            number: number,
-            jackpot: jackpot
+            target: number,
+	          payout: payout
         });
 
         new Requester({
             method: 'POST',
-            url: URL+'/v1/bet/jackpot-dice?access_token='+accessToken,
+            url: URL+'/v1/bets/101-dice?access_token='+accessToken,
             body: body,
             callback: responseErrorHandler(callback)
         });

@@ -21,6 +21,11 @@ define([], function () {
             return Math.floor(this.satToBit(satoshis));
         },
 
+	      satToBitsRounded: function (satoshis) {
+		      console.log('rounding: ', satoshis)
+		      return Math.round(this.satToBit(satoshis));
+	      },
+
         bitToSat: function (bits) {
             return bits * 100;
         },
@@ -79,7 +84,7 @@ define([], function () {
         },
 
         bitsTextTerm: function (bits) {
-            return (bits >= 2) ? 'bits' : 'bit';
+            return (bits < 1.005 && bits >= 0.995) ? 'bit' : 'bits';
         },
 
         /**
