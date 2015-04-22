@@ -32,6 +32,10 @@ html, body {
     left: -20%;
 }
 
+#chat-container-box.off-focus {
+    opacity: 0.5;
+}
+
 #game-container-box.compress {
     position: absolute;
     top: 0;
@@ -46,6 +50,10 @@ html, body {
     bottom: 0;
     right: 0;
     left: 0;
+}
+
+#game-container-box.off-focus {
+    opacity: 0.5;
 }
 
 #game-container>div {
@@ -331,6 +339,16 @@ h1 {
     box-shadow: none !important;
 }
 
+.ctl-button.transparent:hover {
+    font-size: inherit;
+    position: absolute;
+    border-radius: 10px;
+    opacity: 0.5;
+    background-color: rgba(37, 152, 91, 0.5);
+    border: none;
+    color: inherit;
+    cursor: pointer;
+}
 
 /* ==========================================================================
     Modals General Config

@@ -10,7 +10,8 @@ define([
     'components/tutorial',
     'components/deposit',
     'components/chat',
-    'stores/game-settings'
+    'stores/game-settings',
+    'class-names'
 ],
 function(
     React,
@@ -24,7 +25,8 @@ function(
     TutorialClass,
     DepositClass,
     ChatClass,
-    GameSettings
+    GameSettings,
+    CX
 ){
     var D = React.DOM;
     var TopBar = React.createFactory(TopBarClass);
@@ -43,6 +45,7 @@ function(
             this.showChat = GameSettings.showChat;
             return {
                 modal: (GameSettings.hideTutorial)? '' : 'TUTORIAL',
+                focus: 'GAME', // GAME || CHAT
                 engine: Engine
             }
         },
@@ -103,6 +106,18 @@ function(
             this.setState({ engine: Engine });
         },
 
+        _handleChatClick: function() {
+            if(this.state.focus !== 'CHAT')
+                this.setState({ focus: 'CHAT' });
+        },
+
+        _handleGameClick: function() {
+            if(this.state.focus !== 'GAME') {
+                this.setState({ focus: 'GAME' });
+                React.findDOMNode(this.refs.gameContainer).focus();
+            }
+        },
+
         render: function() {
 
             //If the engine does not have the user's data
@@ -141,39 +156,55 @@ function(
 
             }
 
-            return D.div(null,
+            var chatContainerClasses = CX(
+                GameSettings.showChat? 'expand' : 'compress',
+                {
+                    'off-focus': this.state.focus !== 'CHAT'
+                }
+            );
+            var chat = D.div({ id: 'chat-container-box', className: chatContainerClasses, onClick: this._handleChatClick },
+                GameSettings.showChat? Chat({
+                    offFocus: this.state.focus !== 'CHAT'
+                }) : null
+            );
 
-                D.div({ id: 'chat-container-box', className: GameSettings.showChat? 'expand' : 'compress' },
-                    GameSettings.showChat? Chat() : null
+            var gameContainerClasses = CX(
+                GameSettings.showChat? 'compress' : 'expand',
+                {
+                    'off-focus': this.state.focus !== 'GAME'
+                }
+            );
+            var game = D.div({ id: 'game-container-box', ref: 'gameContainer', className: gameContainerClasses, onClick: this._handleGameClick, tabIndex: 0 },
+
+                D.div({ id: 'top-bar-container' },
+                    TopBar({
+                        _toggleTutorial: this._toggleTutorial,
+                        _toggleSettings: this._toggleSettings,
+                        _toggleDepositAddress: this._toggleDepositAddress,
+                        _toggleChat: this._toggleChat,
+                        _toggleFaucet: this._toggleFaucet
+                    })
                 ),
 
-                D.div({ id: 'game-container-box', className: GameSettings.showChat? 'compress' : 'expand' },
+                D.div({ id: 'graph-container' },
+                    Graph()
+                ),
 
-                    D.div({ id: 'top-bar-container' },
-                        TopBar({
-                            _toggleTutorial: this._toggleTutorial,
-                            _toggleSettings: this._toggleSettings,
-                            _toggleDepositAddress: this._toggleDepositAddress,
-                            _toggleChat: this._toggleChat,
-                            _toggleFaucet: this._toggleFaucet
-                        })
-                    ),
+                D.div({ id: 'controls-container' },
+                    Controls({
+                        _toggleSettings: this._toggleSettings,
+                        _toggleTutorial: this._toggleTutorial,
+                        _toggleDepositAddress: this._toggleDepositAddress,
+                        disableControls: !!this.state.modal || (this.state.focus !== 'GAME')
+                    })
+                ),
 
-                    D.div({ id: 'graph-container' },
-                        Graph()
-                    ),
+                modal
+            );
 
-                    D.div({ id: 'controls-container' },
-                        Controls({
-                            _toggleSettings: this._toggleSettings,
-                            _toggleTutorial: this._toggleTutorial,
-                            _toggleDepositAddress: this._toggleDepositAddress,
-                            disableControls: !!this.state.modal || GameSettings.showChat
-                        })
-                    ),
-
-                    modal
-                )
+            return D.div(null,
+                chat,
+                game
             )
         }
     });

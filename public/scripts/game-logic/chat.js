@@ -20,9 +20,7 @@ define([
 
         self.conStatus = 'DISCONNECTED'; // DISCONNECTED || CONNECTED || LOGGED || JOINED || ERROR
         self.error = false;
-        self.chatHistory = [
-            { user: 'DustDice', text: 'The controls are disabled while the chat is open' }
-        ];
+        self.chatHistory = [];
         self.cid = null;
 
 

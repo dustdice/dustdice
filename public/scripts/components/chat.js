@@ -19,6 +19,10 @@ define([
     return React.createClass({
         displayName: 'Chat',
 
+        propTypes: {
+            offFocus: React.PropTypes.bool.isRequired
+        },
+
         getInitialState: function() {
             this.chatAPI = new ChatAPI();
             return {
@@ -56,6 +60,11 @@ define([
             }
         },
 
+        _handleChatClick: function() {
+            if(this.props.offFocus)
+                React.findDOMNode(this.refs.input).focus();
+        },
+
         /** If the length of the chat changed and the scroll position is near bottom scroll to the bottom **/
         componentDidUpdate: function(prevProps, prevState) {
 
@@ -84,7 +93,7 @@ define([
                     return ChatMessage({ message: message, key: index });
                 });
 
-                return D.div({ id: 'chat-inner-container' },
+                return D.div({ id: 'chat-inner-container', onClick: this._handleChatClick },
                     D.div({ id: 'chat-title' },
                         D.h1(null, 'Chat')
                     ),
@@ -92,7 +101,7 @@ define([
                         chatMessages
                     ),
                     D.div({ id: 'chat-input-container' },
-                        D.input({ id: 'chat-input', type: 'text', onKeyDown: this._sendMessage })
+                        D.input({ id: 'chat-input', type: 'text', ref: 'input', onKeyDown: this._sendMessage })
                     )
                 );
             }
