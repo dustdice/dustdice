@@ -127,7 +127,7 @@ define([
                 'btn-default': true,
                 'ctl-button': true,
                 'cant-bet': (this.state.notEnoughBalance || this.state.betTooHigh),
-                'betting': (isBetting && Engine.currentBet.hiLo === true),
+                'betting': (isBetting && Engine.currentBet.cond === '>'),
                 'transparent': !GameSettings.showButtons,
                 'disabled': this.props.disableControls
             });
@@ -150,7 +150,7 @@ define([
                 'btn-default': true,
                 'ctl-button': true,
                 'cant-bet': (this.state.notEnoughBalance || this.state.betTooHigh),
-                'betting': (isBetting && Engine.currentBet.hiLo === false),
+                'betting': (isBetting && Engine.currentBet.cond === '<'),
                 'transparent': !GameSettings.showButtons,
                 'disabled': this.props.disableControls
             });

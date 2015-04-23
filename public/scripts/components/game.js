@@ -12,8 +12,7 @@ define([
     'components/chat',
     'stores/game-settings',
     'class-names'
-],
-function(
+], function(
     React,
     KeyMaster,
     Clib,

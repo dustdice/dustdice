@@ -3,7 +3,7 @@ define([
     'react-bootstrap',
     'game-logic/engine',
     'components/faucet'
-],function(
+], function(
     React,
     ReactBootstrap,
     Engine,
