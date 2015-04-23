@@ -64,73 +64,85 @@ define([
 
                             Carousel({ id: 'tutorial-carousel', activeIndex: this.state.index, direction: this.state.direction, onSelect: this._handleSelect},
                                 CarouselItem(null,
-                                    D.img({width: 900, height: 500, alt: "900x500", src: "/img/screen-shot-clear.png"}),
-                                    D.div({className: "carousel-caption"},
+                                    D.img({ width: 900, height: 500, alt: "900x500", src: "/img/tutorial/screenshot-clean.png" }),
+                                    D.div({ className: "carousel-caption" },
                                         D.h3(null, "Welcome to Dust Dice"),
                                         D.p(null, "Here we'll show you how to play")
                                     )
                                 ),
                                 CarouselItem(null,
-                                    D.img({width: 900, height: 500, alt: "900x500", src: "/img/screen-shot-bet.png"}),
-                                    D.div({className: "carousel-caption"},
+                                    D.img({ width: 900, height: 500, alt: "900x500", src: "/img/tutorial/screenshot-bet.png" }),
+                                    D.div({ className: "carousel-caption" },
                                         D.p(null, "This is your current bet")
                                     )
                                 ),
                                 CarouselItem(null,
-                                    D.img({width: 900, height: 500, alt: "900x500", src: "/img/screen-shot-bet-chase.png"}),
-                                    D.div({className: "carousel-caption"},
+                                    D.img({ width: 900, height: 500, alt: "900x500", src: "/img/tutorial/screenshot-bet-chase.png" }),
+                                    D.div({ className: "carousel-caption" },
                                         D.p(null, "Decrease or increase your bet")
                                     )
                                 ),
                                 CarouselItem(null,
-                                    D.img({width: 900, height: 500, alt: "900x500", src: "/img/screen-shot-bet-controls.png"}),
-                                    D.div({className: "carousel-caption"},
+                                    D.img({ width: 900, height: 500, alt: "900x500", src: "/img/tutorial/screenshot-bet-controls.png" }),
+                                    D.div({ className: "carousel-caption" },
                                         D.p(null, "Bet if you think the next number will be low, or high. You can use left or right arrow keys for this too")
                                     )
                                 ),
                                 CarouselItem(null,
-                                    D.img({width: 900, height: 500, alt: "900x500", src: "/img/screen-shot-balance-graph.png"}),
-                                    D.div({className: "carousel-caption"},
+                                    D.img({ width: 900, height: 500, alt: "900x500", src: "/img/tutorial/screenshot-balance-graph.png" }),
+                                    D.div({ className: "carousel-caption" },
                                         D.p(null, "The big dot shows your current balance")
                                     )
                                 ),
                                 CarouselItem(null,
-                                    D.img({width: 900, height: 500, alt: "900x500", src: "/img/screen-shot-projection.png"}),
-                                    D.div({className: "carousel-caption"},
+                                    D.img({ width: 900, height: 500, alt: "900x500", src: "/img/tutorial/screenshot-projection.png" }),
+                                    D.div({ className: "carousel-caption" },
                                         D.p(null, "The projection shows what you stand to make and lose from your bet")
                                     )
                                 ),
                                 CarouselItem(null,
-                                    D.img({width: 900, height: 500, alt: "900x500", src: "/img/screen-shot-balance.png"}),
-                                    D.div({className: "carousel-caption"},
+                                    D.img({ width: 900, height: 500, alt: "900x500", src: "/img/tutorial/screenshot-balance.png" }),
+                                    D.div({ className: "carousel-caption" },
                                         D.p(null, "This is your balance, and can be refreshed with a click.")
                                     )
                                 ),
                                 CarouselItem(null,
-                                    D.img({width: 900, height: 500, alt: "900x500", src: "/img/screen-shot-bonus.png"}),
-                                    D.div({className: "carousel-caption"},
-                                        D.p(null, "Configure your own jackpot, and see how likely you are to win it")
+                                    D.img({ width: 900, height: 500, alt: "900x500", src: "/img/tutorial/screenshot-potential-profit.png" }),
+                                    D.div({ className: "carousel-caption" },
+                                        D.p(null, "This is the profit you could get if you win the current bet")
                                     )
                                 ),
                                 CarouselItem(null,
-                                    D.img({width: 900, height: 500, alt: "900x500", src: "/img/screen-shot-fullscreen.png"}),
-                                    D.div({className: "carousel-caption"},
+                                    D.img({ width: 900, height: 500, alt: "900x500", src: "/img/tutorial/screenshot-chat.png" }),
+                                    D.div({ className: "carousel-caption" },
+                                        D.p(null, "We have an awesome chat, talk to everyone!")
+                                    )
+                                ),
+                                CarouselItem(null,
+                                    D.img({ width: 900, height: 500, alt: "900x500", src: "/img/tutorial/screenshot-faucet.png" }),
+                                    D.div({ className: "carousel-caption" },
+                                        D.p(null, "Free money!, yes, free as in free beer")
+                                    )
+                                ),
+                                CarouselItem(null,
+                                    D.img({ width: 900, height: 500, alt: "900x500", src: "/img/tutorial/screenshot-fullscreen.png" }),
+                                    D.div({ className: "carousel-caption" },
                                         D.p(null, "Don't miss the immersive fullscreen experience!")
                                     )
                                 ),
                                 CarouselItem(null,
-                                    D.img({width: 900, height: 500, alt: "900x500", src: "/img/screen-shot-menu.png"}),
-                                    D.div({className: "carousel-caption"},
+                                    D.img({ width: 900, height: 500, alt: "900x500", src: "/img/tutorial/screenshot-menu.png" }),
+                                    D.div({ className: "carousel-caption" },
                                         D.p(null, "Check out more settings, like hiding buttons once you get the hang of it")
                                     )
                                 ),
-                              CarouselItem(null,
-                                D.img({width: 900, height: 500, alt: "900x500", src: "/img/screen-shot-clear.png"}),
-                                D.div({className: "carousel-caption"},
-                                  D.h3(null, "Good luck!"),
-                                  D.p(null, "And never dice the same way again")
+                                CarouselItem(null,
+                                    D.img({ width: 900, height: 500, alt: "900x500", src: "/img/tutorial/screenshot-clean.png" }),
+                                    D.div({ className: "carousel-caption" },
+                                        D.h3(null, "Good luck!"),
+                                        D.p(null, "And never dice the same way again")
+                                    )
                                 )
-                              )
                             ),
                             D.br(),
                             D.p({ className: 'text-center' }, D.b(null, 'Keyboard Controls')),

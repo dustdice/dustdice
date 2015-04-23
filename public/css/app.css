@@ -159,6 +159,10 @@ html, body {
     border-radius: 4px;
 }
 
+#top-bar-balance:hover i {
+    color: coral;
+}
+
 #top-bar-refresh-balance {
     float: left;
 }
@@ -167,6 +171,7 @@ html, body {
     position: absolute;
     top: 0;
     left: 45%;
+    cursor: default;
 }
 
 #top-bar-logo > img {
@@ -183,12 +188,17 @@ h1 {
     margin: 0;
 }
 
-.top-bar-menu-btn {
+.top-bar-menu-btn, .top-bar-menu-btn:focus {
     background-color: rgba(189, 195, 199, 0.5);
     opacity: 0.5;
     padding: 0.6em 0.9em;
     border: none;
     color: inherit;
+}
+
+.top-bar-menu-btn:hover {
+    color: coral;
+    background-color: #e6e6e6;
 }
 
 #top-bar-box li a span.glyphicon {
@@ -197,6 +207,7 @@ h1 {
 
 #expand-button, #chat-button, #faucet-button {
     margin-right: .2em;
+    outline: none;
 }
 
 .top-bar-state-name {
@@ -233,7 +244,7 @@ h1 {
     left: 0;
     background-color: rgba(255, 255, 255, 0.1);
     margin-bottom: -0.3em;
-    padding: 0.4em 0.3em 0.3em 0.5em;
+    padding: 0.4em 0.3em 0.3em 0;
 }
 
 #controls-container-box {
@@ -325,8 +336,24 @@ h1 {
 
 #ctl-bet-box, #ctl-payout-box, #ctl-win-chances-box, #ctl-jackpot-box {
     float: left;
-    width: 25%;
+    width: calc(25% - 4.5em/4);
     cursor: pointer;
+}
+
+#ctl-settings-btn {
+    float: left;
+    width: 2em;
+    text-align: center;
+    cursor: pointer;
+    margin: 0 1.5em 0 0.3em;
+}
+
+#ctl-bet-box:hover, #ctl-payout-box:hover, #ctl-win-chances-box:hover, #ctl-jackpot-box:hover, #ctl-settings-btn:hover {
+    color: coral;
+}
+
+#ctl-settings-btn>i{
+    font-size: 1.3em;
 }
 
 .ctl-state-amount {

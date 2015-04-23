@@ -142,7 +142,7 @@ define([
                     'Supported':
                 this.state.notEnoughBalance?
                     'Get more bits' :
-                    D.div(null, D.span(null, 'Greater than  ' + (100-Engine.winChances)), D.i({ className: 'fa fa-caret-square-o-right' }))
+                    D.div(null, D.span(null, 'Bet > ' + (100-Engine.winChances)), D.i({ className: 'fa fa-caret-square-o-right' }))
             );
 
             var betLoBtnClasses = cx({
@@ -165,7 +165,7 @@ define([
                     'Bet not':
                 this.state.notEnoughBalance?
                     'Not enough bits' :
-                    D.div(null, D.i({ className: 'fa fa-caret-square-o-left' }), D.span(null, ('Less than ' + Engine.winChances)))
+                    D.div(null, D.i({ className: 'fa fa-caret-square-o-left' }), D.span(null, ('Bet < ' + Engine.winChances)))
             );
 
             var chaseDivideBetBtnClasses = cx({
@@ -211,6 +211,10 @@ define([
 
                     D.div({ id: 'controls-container-box' },
 
+                        D.div({ id: 'ctl-settings-btn', onClick: this.props._toggleSettings },
+                            D.i({ className: 'fa fa-cog'})
+                        ),
+
                         D.div({ id: 'ctl-bet-box', onClick: this.props._toggleSettings },
                             D.div({ className: 'ctl-state-name' },
                                 D.span(null, 'BET')
@@ -252,7 +256,7 @@ define([
                                 )
                             )
                         ),
-	                    D.div({ id: 'ctl-jackpot-bot', onClick: this.props._toggleSettings },
+	                    D.div({ id: 'ctl-jackpot-box', onClick: this.props._toggleSettings },
 		                    D.div({ className: 'ctl-state-name' },
 			                    D.span(null, 'POTENTIAL PROFIT')
 		                    ),

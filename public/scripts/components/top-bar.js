@@ -3,13 +3,15 @@ define([
     'screenfull',
     'lib/clib',
     'lib/react',
-    'react-bootstrap'
+    'react-bootstrap',
+    'stores/game-settings'
 ], function(
     Engine,
     ScreenFull,
     Clib,
     React,
-    ReactBootstrap
+    ReactBootstrap,
+    GameSettings
 ){
     var D = React.DOM;
     var DropdownButton = React.createFactory(ReactBootstrap.DropdownButton);
@@ -68,6 +70,10 @@ define([
             Engine.refreshBalance();
         },
 
+        _toggleChat: function() {
+            GameSettings.toggleShowChat();
+        },
+
         render: function() {
 
             return D.div({ id: 'top-bar-box' },
@@ -93,13 +99,18 @@ define([
                     D.h1(null, '\u00a0Dust Dice')
                 ),
 
-                D.button({ id: 'chat-button', type: 'button', className: 'btn btn-default top-bar-menu-btn', onClick: this.props._toggleChat },
+                D.button({
+                        id: 'chat-button',
+                        type: 'button',
+                        className: 'btn btn-default top-bar-menu-btn hidden-xs',
+                        onClick: this.props._toggleChat
+                    },
                     D.i({ className: 'fa fa-comment' })
                 ),
                 D.button({
                         id: 'faucet-button',
                         type: 'button',
-                        className: 'btn btn-default top-bar-menu-btn',
+                        className: 'btn btn-default top-bar-menu-btn hidden-xs',
                         onClick: this.props._toggleFaucet
                     },
                     D.i({ className: 'fa fa-eyedropper' })
@@ -108,11 +119,14 @@ define([
                     (this.state.screenFull)? D.i({ className: 'fa fa-compress' }) : D.i({ className: 'fa fa-expand' })
                 ),
                 DropdownButton({ className: 'top-bar-menu-btn', bsStyle: 'default', pullRight: true, title: D.i({ className: 'fa fa-bars' }) },
+                    MenuItem({ onSelect: this.props._toggleDepositAddress }, 'Deposit'),
+                    MenuItem({ onSelect: this.props._toggleSettings }, 'Settings'),
+                    MenuItem({ onSelect: this.props._toggleChat }, (GameSettings.showChat? 'Hide' : 'Show') + ' Chat'),
                     MenuItem({ href: '/faq' }, "FAQ's ", D.span({ className: 'glyphicon glyphicon-new-window' })),
                     MenuItem({ href: 'https://www.moneypot.com' }, 'Account ', D.span({ className: 'glyphicon glyphicon-new-window' })),
-                    MenuItem({ onSelect: this.props._toggleDepositAddress }, 'Deposit'),
-                    MenuItem({ onSelect: this.props._toggleTutorial }, 'Tutorial'),
-                    MenuItem({ onSelect: this.props._toggleSettings }, 'Settings')
+
+                    MenuItem({ onSelect: this.props._toggleTutorial }, 'Tutorial')
+
 
                 )
             );
