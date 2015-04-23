@@ -6118,7 +6118,7 @@ function isBuf(obj) {
 },{}],48:[function(_dereq_,module,exports){
 module.exports=_dereq_(32)
 },{}],49:[function(_dereq_,module,exports){
-/*! JSON tutorial.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
+/*! JSON screenshots.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
   var getClass = {}.toString, isProperty, forEach, undef;
