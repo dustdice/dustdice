@@ -42,15 +42,10 @@ define([
         getInitialState: function() {
             var wagerBitsFloored = Clib.satToBitFloored(Engine.wager);
             var wagerValidation = Clib.validateBetBits(wagerBitsFloored, Engine.balance);
-            var jackpotBits = Clib.satToBit(Engine.jackpot);
-            var jackpotValidation = Clib.validateJackpotBits(jackpotBits, Engine.maxWin);
             return {
                 wagerInputText: String(wagerBitsFloored),
                 wagerValidity: wagerValidation[0],
                 wagerValidityMessage: wagerValidation[1],
-                jackpotInputText: String(jackpotBits),
-                jackpotValidity: jackpotValidation[0],
-                jackpotValidityMessage: jackpotValidation[1],
                 clientSeedText: String(Engine.clientSeed),
                 invalidClientSeed: false,
                 customBetMultiplierText: GameSettings.customBetMultiplier,
@@ -91,8 +86,8 @@ define([
             return { engine: Engine, gameSettings: GameSettings }; //Just to render on changes
         },
 
-        _setWinProb: function(ev) {
-            Engine.setWinProb(parseInt(ev.target.value));
+        _setwinChances: function(ev) {
+            Engine.setwinChances(parseInt(ev.target.value));
         },
 
         _setWager: function(ev) {
@@ -110,20 +105,11 @@ define([
             Engine.setWager(
               Math.max(100,
                  Math.min(Clib.floorHundreds(Engine.balance),
-                   Clib.floorHundreds(Engine.maxWin / ((98/Engine.winProb) - 1)))
+                   Clib.floorHundreds(Engine.maxWin / (Engine.getPayout()-1) ))
               )
             );
-        },
 
-        _setJackpot: function(ev) {
-            var jackpotValidation = Clib.validateJackpotBits(ev.target.value, Engine.maxWin);
 
-            this.setState({ jackpotInputText: ev.target.value, jackpotValidity: jackpotValidation[0], jackpotValidityMessage: jackpotValidation[1] });
-
-            if(jackpotValidation[0] === 'wrong')
-                return;
-
-            Engine.setJackpot(Clib.bitToSat(parseInt(ev.target.value)));
         },
 
         _setClientSeed: function(ev) {
@@ -174,12 +160,12 @@ define([
                 Engine.clearHistory();
         },
 
-        _increaseWinProb: function() {
-            Engine.increaseWinProb();
+        _increasewinChances: function() {
+            Engine.increasewinChances();
         },
 
-        _decreaseWinProb: function() {
-            Engine.decreaseWinProb();
+        _decreasewinChances: function() {
+            Engine.decreasewinChances();
         },
 
         _handleBackDropClick: function(e) {
@@ -200,19 +186,12 @@ define([
                 case 'BET':
 
                     var wager = (this.state.wagerValidity !== 'wrong')? Clib.bitToSat(Number(this.state.wagerInputText)) : Engine.wager;
-                    var achievableBetProfit = wager * (98/Engine.winProb) - wager;
-                    var betTooHigh = (achievableBetProfit > Engine.maxWin);
+                    var betTooHigh = Engine.isBetTooHigh();
 
                     var wagerDivClasses = cx({
                         'form-group': true,
                         'has-error': (this.state.wagerValidity === 'wrong'),
                         'has-warning': (this.state.wagerValidity === 'warning') || betTooHigh
-                    });
-
-                    var jackPotDivClasses = cx({
-                        'form-group': true,
-                        'has-error': (this.state.jackpotValidity === 'wrong'),
-                        'has-warning': (this.state.jackpotValidity === 'warning')
                     });
 
                     var LinkWithTooltip = React.createFactory(React.createClass({
@@ -239,38 +218,19 @@ define([
                         ),
 
                         D.div({ className: 'form-group' + (betTooHigh? ' has-warning' : '') },
-                            D.label({ className: 'control-label pull-left', htmlFor: 'set-win-chance-slider' }, 'Chance of winning: ' + Engine.winProb + ' in 101'),
+                            D.label({ className: 'control-label pull-left', htmlFor: 'set-win-chance-slider' }, 'Chance of winning: ' + Engine.winChances + ' in 101'),
                             D.label({ className: 'control-label pull-right', htmlFor: 'set-win-chance-slider' },
 	                            'Payout: ', Engine.getPayout(), 'x'),
-                            D.input({ className: 'set-win-prob-range clear', type: 'range', max: '100', min: '1', id: 'set-win-chance-slider', value: Engine.winProb, onChange: this._setWinProb })
+                            D.input({ className: 'set-win-chances-range clear', type: 'range', max: '99', min: '1', id: 'set-win-chance-slider', value: Engine.winChances, onChange: this._setwinChances })
                         ),
 
                         D.hr(),
-
-                        D.div({ className: jackPotDivClasses },
-                            D.label({ className: 'control-label pull-left', htmlFor: 'set-jackpot-amount' }, 'Jackpot\u00a0\u00a0',
-                                LinkWithTooltip(
-                                    { tooltip:
-                                       'If you lose you have a ' +
-                                             Clib.jackpotAfterLosingProbText(Engine.wager, Engine.jackpot, Engine.winProb) +
-                                        ' chance of winning your bet back plus the jackpot (' +
-                                       Clib.satToBit(Engine.wager) + ' + ' +  Clib.satToBit(Engine.jackpot) +
-                                       ') bits or ' +
-                                    Clib.jackPotProbText(Engine.wager, Engine.jackpot) +  " in total. More in FAQs" },
-                                    '?')
-                            ),
-                            D.label({ className: 'control-label pull-right', htmlFor: 'set-jackpot-amount' }, this.state.jackpotValidityMessage? this.state.jackpotValidityMessage: ''),
-                            D.div({ className: 'input-group clear' },
-                                D.input({ type: 'text', className: 'form-control clear', id: 'set-jackpot-amount', value: this.state.jackpotInputText, onChange: this._setJackpot }),
-                                D.div({ className: 'input-group-addon'}, "bits")
-                            )
-                        ),
 
                         D.div({ className: 'form-group' + (betTooHigh? ' has-warning' : '') },
                             D.label({ className: 'control-label pull-left', htmlFor: 'set-input-wager' }, betTooHigh? "The profit is bigger than MoneyPot's max allowed profits" : ''),
                             D.div({ className: 'input-group clear' },
                                 D.div({ className: 'input-group-addon input-title'}, 'Win Profit'),
-                                D.input({ type: 'text', className: 'form-control', id: 'set-input-wager', value: Clib.formatSatoshis(achievableBetProfit, 2), readOnly: true })
+                                D.input({ type: 'text', className: 'form-control', id: 'set-input-wager', value: Clib.formatSatoshis(Engine.getPotentialProfit(), 2), readOnly: true })
                             )
                         ),
 
@@ -335,8 +295,8 @@ define([
                         ),
 
                         D.b(null, 'More controls:'),
-                        D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this._decreaseWinProb }, 'Decrease win probability (Q)'),
-                        D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this._increaseWinProb }, 'Increase win probability (R)'),
+                        D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this._decreasewinChances }, 'Decrease win probability (Q)'),
+                        D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this._increasewinChances }, 'Increase win probability (R)'),
                         D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this._clearHistory }, 'Clear History (C)'),
                         D.button({ type: 'button', className: 'btn btn-default btn-block', onClick: this.props._toggleSettings }, 'Close/Open settings (S)')
                     );

@@ -21,11 +21,6 @@ define([], function () {
             return Math.floor(this.satToBit(satoshis));
         },
 
-	      satToBitsRounded: function (satoshis) {
-		      console.log('rounding: ', satoshis)
-		      return Math.round(this.satToBit(satoshis));
-	      },
-
         bitToSat: function (bits) {
             return bits * 100;
         },
@@ -51,24 +46,6 @@ define([], function () {
             return [validity, message];
         },
 
-        //Validate the input text or number of the jackpot in bits **/
-        validateJackpotBits: function(jackpot, maxWin) {
-            var validity = 'valid', message = '';
-            jackpot = Number(jackpot);
-            if(!this.isInteger(jackpot)) {
-                validity = 'wrong';
-                message = 'Should be an integer';
-            } else if(jackpot < 1) {
-                validity = 'wrong';
-                message = 'Should be bigger than zero';
-            } else if(this.bitToSat(jackpot) > maxWin) {
-                validity = 'warning';
-                message = "The jackpot is bigger than the MoneyPot's max";
-            }
-
-            return [validity, message];
-        },
-
         formatSatoshis: function (n, decimals) {
             return this.formatDecimals(Math.floor(n) / 100, decimals);
         },
@@ -85,75 +62,6 @@ define([], function () {
 
         bitsTextTerm: function (bits) {
             return (bits < 1.005 && bits >= 0.995) ? 'bit' : 'bits';
-        },
-
-        /**
-         * Probability ratio(1 = 100%) of winning a jackpot of x BTC
-         * using 1% of your bet for the jackpot
-         * with no house edge:
-         **/
-        jackWinProbSatoshisRatio: function (wager, jackpot) {
-            wager = this.floorHundreds(wager); // Must bet an a whole amount of satoshis
-            return wager / 100 / (wager + jackpot);
-        },
-
-
-        jackPotProbText: function(wager, jackpot) {
-
-            var ratio = this.jackWinProbSatoshisRatio(wager, jackpot);
-
-            if(ratio <= 1) {
-                var multi = '';
-                var inHowMany = 1/ratio;
-
-                if (inHowMany > 1e9) {
-                    inHowMany = inHowMany/1e9;
-                    multi = 'B';
-                } else if (inHowMany > 1e6) {
-                    inHowMany = inHowMany/1e6;
-                    multi = 'M';
-                } else if (inHowMany > 1e3) {
-                    inHowMany = inHowMany/1e3;
-                    multi = 'K';
-                }
-                return '1 in ' + Math.round(inHowMany) + multi;
-            } else {
-                return '1 in 1';
-            }
-        },
-
-        /**
-         * Probability ratio(1 = 100%) of winning a jackpot of x BTC after losing the bet
-         * using 1% of your bet for the jackpot
-         * with no house edge:
-         **/
-        jackAfterLosingWinProbSatoshisRatio: function (wager, jackpot, winProb) {
-            wager = this.floorHundreds(wager); // Must bet an a whole amount of satoshis
-            return (wager / 100 / (wager + jackpot)) / (1 -(winProb/100)) ;
-        },
-
-        jackpotAfterLosingProbText: function(wager, jackpot, winProb) {
-
-            var ratio = this.jackAfterLosingWinProbSatoshisRatio(wager, jackpot, winProb);
-
-            if(ratio <= 1) {
-                var multi = '';
-                var inHowMany = 1/ratio;
-
-                if (inHowMany > 1e9) {
-                    inHowMany = inHowMany/1e9;
-                    multi = 'B';
-                } else if (inHowMany > 1e6) {
-                    inHowMany = inHowMany/1e6;
-                    multi = 'M';
-                } else if (inHowMany > 1e3) {
-                    inHowMany = inHowMany/1e3;
-                    multi = 'K';
-                }
-                return '1 in ' + Math.round(inHowMany) + multi;
-            } else {
-                return '1 in 1';
-            }
         },
 
         browserSupport: function () {

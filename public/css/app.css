@@ -323,7 +323,7 @@ h1 {
     line-height: .5em;
 }
 
-#ctl-bet-box, #ctl-payout-box, #ctl-win-prob-box, #ctl-jackpot-box {
+#ctl-bet-box, #ctl-payout-box, #ctl-win-chances-box, #ctl-jackpot-box {
     float: left;
     width: 25%;
     cursor: pointer;

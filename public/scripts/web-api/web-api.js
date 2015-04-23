@@ -82,8 +82,8 @@ define([
     WebApi.prototype.requestNextGameHash = function(accessToken, callback) {
 
         new Requester({
-            method: 'GET',
-            url: URL+'/v1/bet/generate-hash?access_token='+accessToken,
+            method: 'POST',
+            url: URL+'/v1/bet-hashes?access_token='+accessToken,
             callback: responseErrorHandler(callback)
         });
     };
@@ -97,10 +97,9 @@ define([
         });
     };
 
-    WebApi.prototype.bet = function(wager, winProb, hash, seed, hiLo, accessToken, payout, callback) {
+    WebApi.prototype.bet = function(wager, winChances, hash, seed, cond, accessToken, payout, callback) {
 
-        var cond = hiLo ? '>' : '<';
-        var number = hiLo? (101-winProb) : winProb+1;
+        var number = (cond === '>')? (100-winChances) : winChances;
 
         var body = JSON.stringify({
             hash: hash,
@@ -108,7 +107,7 @@ define([
             client_seed: seed,
             cond: cond,
             target: number,
-	          payout: payout
+            payout: payout
         });
 
         new Requester({

@@ -30,7 +30,7 @@ define([
 
         self.balance = null;
 
-        self.winProb = Clib.localOrDef('winProb', 50);
+        self.winChances = Clib.localOrDef('winChances', 50);
 
         //Wager is a float but is rounded when betting and when showing it to the user, this allows to chase bet on small qty's to actually work, Use Math.round(), is as close as you can get.
         self.wager =  Clib.localOrDef('wager', 1e2);
@@ -95,15 +95,6 @@ define([
     }
 
 
-		GameEngine.prototype.getWager = function() {
-			return Clib.floorHundreds(this.wager);
-		};
-
-		GameEngine.prototype.getPayout = function() {
-			var t = .99 / (this.winProb / 101);
-			return Math.round(t * 100) / 100;
-		};
-
     /** The first error on the engine is set and trigger the error, next errors are obviated **/
     GameEngine.prototype.setErrorState = function(errorMsg) {
         var self = this;
@@ -162,10 +153,9 @@ define([
      * and the graph can't get the state directly from the engine because it could change between the lapse 'bet-end' is triggered and
      * the graph getting the state from the engine. The same to the 'claim-faucet' and 'new-balance' events.
      */
-    GameEngine.prototype.bet = function(hiLo) {
+    GameEngine.prototype.bet = function(cond) {
         var self = this;
 
-        console.assert(typeof hiLo === 'boolean');
         console.assert(self.balance >= self.wager && self.wager > 0);
         console.assert(self.gameState != 'BETTING');
 
@@ -175,8 +165,8 @@ define([
             This object will be modified and saved in the graph history */
         self.currentBet = {
             wager: self.getWager(),
-            winProb: self.winProb,
-            hiLo: hiLo,
+            winChances: self.winChances,
+            cond: cond,
             balance: self.balance,
             hash: self.nextGameHash,
             seed: self.clientSeed,
@@ -191,10 +181,10 @@ define([
          */
         WebApi.bet(
             self.currentBet.wager,
-            self.currentBet.winProb,
+            self.currentBet.winChances,
             self.currentBet.hash,
             self.currentBet.seed,
-            self.currentBet.hiLo,
+            self.currentBet.cond,
             self.currentBet.accessToken,
             self.currentBet.payout,
             self.errorHandler(function(game){
@@ -226,8 +216,8 @@ define([
                 game.balance = self.balance;
                 //Append game info to the result
                 game.wager = self.currentBet.wager;
-                game.winProb = self.currentBet.winProb;
-                game.hiLo = self.currentBet.hiLo;
+                game.winChances = self.currentBet.winChances;
+                game.cond = self.currentBet.cond;
 
 
                 self.gameHistory.push(game);
@@ -248,8 +238,8 @@ define([
         var betSent = {
             wager: self.wager,
             balance: self.balance,
-            winProb: self.winProb,
-            hiLo: hiLo
+            winChances: self.winChances,
+            cond: cond
         };
         //Object.seal(betSent); //Avoid some component do weird things on the object
         self.trigger('bet-sent', betSent);
@@ -272,11 +262,12 @@ define([
         this.trigger('new-jackpot');
     };
 
-    GameEngine.prototype.setWinProb = function(newWinProb) {
-        console.assert(Clib.isInteger(newWinProb) && newWinProb>=1 && newWinProb <= 97);
-        this.winProb = newWinProb;
-        localStorage.winProb = this.winProb;
-        this.trigger('new-win-prob');
+    GameEngine.prototype.setwinChances = function(newwinChances) {
+        //console.assert(Clib.isInteger(newwinChances) && newwinChances>=2 && newwinChances <= 99);
+        console.assert(Clib.isInteger(newwinChances));
+        this.winChances = newwinChances;
+        localStorage.winChances = this.winChances;
+        this.trigger('new-win-chances');
     };
 
     GameEngine.prototype.setClientSeed = function(newSeed) {
@@ -292,14 +283,14 @@ define([
 
     /** Engine API Helpers **/
 
-    GameEngine.prototype.increaseWinProb = function() {
-        if(this.winProb<= 96)
-            this.setWinProb(this.winProb + 1);
+    GameEngine.prototype.increasewinChances = function() {
+        if(this.winChances<= 98)
+            this.setwinChances(this.winChances + 1);
     };
 
-    GameEngine.prototype.decreaseWinProb = function() {
-        if(this.winProb>=2)
-            this.setWinProb(this.winProb - 1);
+    GameEngine.prototype.decreasewinChances = function() {
+        if(this.winChances>=2)
+            this.setwinChances(this.winChances - 1);
     };
 
     /**
@@ -331,7 +322,7 @@ define([
                 self.trigger('new-balance', {
                     balance: self.balance,
                     wager: self.wager,
-                    winProb: self.winProb //TODO: And if instead of sending the current state i just get it from the graph?
+                    winChances: self.winChances
                 });
             }
 
@@ -352,11 +343,10 @@ define([
 
             self.balance += data.amount;
 
-            // TODO: Why do we duplicate the engine fields.. ?
             self.trigger('new-balance', {
                 balance: self.balance,
                 wager: self.wager,
-                winProb: self.winProb
+                winChances: self.winChances
             });
 
             callback(null, data);
@@ -365,12 +355,26 @@ define([
 
     /** Helper functions **/
 
+    //The wager the engines does when betting
+    GameEngine.prototype.getWager = function() {
+        return Clib.floorHundreds(this.wager);
+    };
+
+    GameEngine.prototype.getPotentialProfit = function() {
+        return this.getWager() * (this.getPayout()-1);
+    };
+
+    GameEngine.prototype.getPayout = function() {
+        var t = .99 / (this.winChances / 101);
+        return Math.ceil(t * 100) / 100;
+    };
+
     GameEngine.prototype.isBetTooHigh = function() {
-        return ((this.wager * (98/this.winProb) - this.wager) > this.maxWin)  || (this.jackpot > this.maxWin);
+        return this.getPotentialProfit() > this.maxWin;
     };
 
     GameEngine.prototype.isBetValid = function() {
-        return (this.wager > this.balance);
+        return this.getWager() > this.balance;
     };
 
 

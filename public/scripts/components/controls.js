@@ -29,11 +29,6 @@ define([
 
     function getState() {
         var state = {};
-        state.engine = Engine; //Just a reference no real reason to do this but to remember than this reflects a change of the state
-
-        //Calculate control states that are based on engine states
-        //state.canDivideBet = (Engine.wager >= 200);
-        //state.canDoubleBet = ( Engine.wager*2 <= Engine.balance && Engine.wager*2 <= Engine.maxBet  );
         state.notEnoughBalance = Engine.isBetValid();
         state.betTooHigh = Engine.isBetTooHigh();
         return state;
@@ -56,8 +51,8 @@ define([
             Engine.on('all', this._onChange);
             GameSettings.on('all', this._onChange);
             KeyMaster.key('c', this._clearHistory);
-            KeyMaster.key('q', this._decreaseWinProb);
-            KeyMaster.key('r', this._increaseWinProb);
+            KeyMaster.key('q', this._decreasewinChances);
+            KeyMaster.key('r', this._increasewinChances);
             KeyMaster.key('up', this._chaseBet);
             KeyMaster.key('down', this._divideBet);
             KeyMaster.key('right', this._betHi);
@@ -68,8 +63,8 @@ define([
             Engine.off('all', this._onChange);
             GameSettings.off('all', this._onChange);
             KeyMaster.key.unbind('c', this._clearHistory);
-            KeyMaster.key.unbind('q', this._decreaseWinProb);
-            KeyMaster.key.unbind('r', this._increaseWinProb);
+            KeyMaster.key.unbind('q', this._decreasewinChances);
+            KeyMaster.key.unbind('r', this._increasewinChances);
             KeyMaster.key.unbind('up', this._chaseBet);
             KeyMaster.key.unbind('down', this._divideBet);
             KeyMaster.key.unbind('right', this._betHi);
@@ -86,24 +81,24 @@ define([
                 Engine.clearHistory();
         },
 
-        _increaseWinProb: function() {
+        _increasewinChances: function() {
             if(!this.props.disableControls)
-                Engine.increaseWinProb();
+                Engine.increasewinChances();
         },
 
-        _decreaseWinProb: function() {
+        _decreasewinChances: function() {
             if(!this.props.disableControls)
-                Engine.decreaseWinProb();
+                Engine.decreasewinChances();
         },
 
         _betHi: function() {
             if(Engine.gameState != 'BETTING' && !this.state.notEnoughBalance && !this.state.betTooHigh && !this.props.disableControls)
-                Engine.bet(true);
+                Engine.bet('>');
         },
 
         _betLo: function() {
             if(Engine.gameState != 'BETTING' && !this.state.notEnoughBalance && !this.state.betTooHigh && !this.props.disableControls)
-                Engine.bet(false)
+                Engine.bet('<')
         },
 
         _chaseBet: function() {
@@ -147,7 +142,7 @@ define([
                     'Supported':
                 this.state.notEnoughBalance?
                     'Get more bits' :
-                    D.div(null, D.span(null, 'Greater than  ' + (100-Engine.winProb)), D.i({ className: 'fa fa-caret-square-o-right' }))
+                    D.div(null, D.span(null, 'Greater than  ' + (100-Engine.winChances)), D.i({ className: 'fa fa-caret-square-o-right' }))
             );
 
             var betLoBtnClasses = cx({
@@ -170,7 +165,7 @@ define([
                     'Bet not':
                 this.state.notEnoughBalance?
                     'Not enough bits' :
-                    D.div(null, D.i({ className: 'fa fa-caret-square-o-left' }), D.span(null, ('Less than ' + Engine.winProb)))
+                    D.div(null, D.i({ className: 'fa fa-caret-square-o-left' }), D.span(null, ('Less than ' + Engine.winChances)))
             );
 
             var chaseDivideBetBtnClasses = cx({
@@ -199,8 +194,7 @@ define([
                 D.span(null, '/' + getBetMultiplier().toFixed(2))
             );
 
-	          var potentialProfit = Clib.satToBit(Engine.getWager() * (Engine.getPayout() - 1));
-
+            var potentialProfit = Clib.satToBit(Engine.getPotentialProfit());
 
             return D.div(null,
 
@@ -245,13 +239,13 @@ define([
                             )
                         ),
 
-                        D.div({ id: 'ctl-win-prob-box', onClick: this.props._toggleSettings },
+                        D.div({ id: 'ctl-win-chances-box', onClick: this.props._toggleSettings },
                             D.div({ className: 'ctl-state-name' },
-                                D.span(null, 'WIN PROB')
+                                D.span(null, 'WIN CHANCES')
                             ),
                             D.div({ className: 'crl-in-bottom' },
                                 D.div({ className: 'ctl-state-amount' },
-                                    D.span(null, (Engine.winProb / 101 * 100).toFixed(2))
+                                    D.span(null, (Engine.winChances / 101 * 100).toFixed(2))
                                 ),
                                 D.span({ className: 'ctrl-state-lbl' },
                                     D.i({ className: 'icon-percent'})
