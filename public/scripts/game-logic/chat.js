@@ -72,6 +72,10 @@ define([
     };
 
     WebApi.prototype.onMessage = function(msg) {
+
+        if (self.history.length > 500)
+            self.history.splice(0, 400);
+
         this.history.push(msg);
         this.trigger('message');
     };
