@@ -13,7 +13,6 @@ define([
     var SCROLL_OFFSET = 120; //Pixels needed to do auto scroll
 
     var D = React.DOM;
-
     var ChatMessage = React.createFactory(ChatMessageClass);
 
     return React.createClass({

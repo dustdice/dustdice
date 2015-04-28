@@ -3,16 +3,17 @@ define([
     'lib/clib',
     'game-logic/engine',
     'stores/game-settings',
-    'react-bootstrap'
+    'react-bootstrap',
+    'class-names'
 ],function(
     React,
     Clib,
     Engine,
     GameSettings,
-    ReactBootstrap
+    ReactBootstrap,
+    CX
 ){
     var D = React.DOM;
-    var cx = React.addons.classSet;
 
     var OverlayTrigger = React.createFactory(ReactBootstrap.OverlayTrigger);
     var ToolTip = React.createFactory(ReactBootstrap.Tooltip);
@@ -188,7 +189,7 @@ define([
                     var wager = (this.state.wagerValidity !== 'wrong')? Clib.bitToSat(Number(this.state.wagerInputText)) : Engine.wager;
                     var betTooHigh = Engine.isBetTooHigh();
 
-                    var wagerDivClasses = cx({
+                    var wagerDivClasses = CX({
                         'form-group': true,
                         'has-error': (this.state.wagerValidity === 'wrong'),
                         'has-warning': (this.state.wagerValidity === 'warning') || betTooHigh

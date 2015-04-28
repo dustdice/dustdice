@@ -1,6 +1,6 @@
 define([
     'lib/react',
-    'lib/keymaster', //TODO: This is window,
+    'lib/mousetrap', //TODO: This is window,
     'lib/clib',
     'game-logic/engine',
     'components/top-bar',
@@ -14,7 +14,7 @@ define([
     'class-names'
 ], function(
     React,
-    KeyMaster,
+    MouseTrap,
     Clib,
     Engine,
     TopBarClass,
@@ -50,7 +50,7 @@ define([
         },
 
         componentDidMount: function() {
-            KeyMaster.key('s', this._toggleSettings);
+            MouseTrap.bind('s', this._toggleSettings);
             Engine.on('get-user-data', this._getUserData); //Connected
             Engine.on('fatal-error', this._onChange);
             Engine.on('user-alert', this._userAlert);
@@ -58,7 +58,7 @@ define([
         },
 
         componentWillUnmount: function() {
-            KeyMaster.key.unbind('s', this._toggleSettings);
+            MouseTrap.unbind('s', this._toggleSettings);
             Engine.off('get-user-data', this._getUserData);
             Engine.off('fatal-error', this._onChange);
             Engine.off('user-alert', this._userAlert);

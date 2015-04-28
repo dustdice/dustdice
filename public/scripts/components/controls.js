@@ -1,21 +1,22 @@
 define([
     'lib/react',
     'game-logic/engine',
-    'lib/keymaster', //TODO: This is window
+    'lib/mousetrap',
     'lib/clib',
-    'stores/game-settings'
+    'stores/game-settings',
+    'class-names'
 ], function(
     React,
     Engine,
-    KeyMaster,
+    MouseTrap,
     Clib,
-    GameSettings
+    GameSettings,
+    CX
 ){
     /* Constants */
     //var _widthTrigger = 992;
 
     var D = React.DOM;
-    var cx = React.addons.classSet;
 
     function getBetMultiplier() {
         if(GameSettings.useCustomBetMultiplier) {
@@ -50,25 +51,25 @@ define([
         componentDidMount: function() {
             Engine.on('all', this._onChange);
             GameSettings.on('all', this._onChange);
-            KeyMaster.key('c', this._clearHistory);
-            KeyMaster.key('q', this._decreasewinChances);
-            KeyMaster.key('r', this._increasewinChances);
-            KeyMaster.key('up', this._chaseBet);
-            KeyMaster.key('down', this._divideBet);
-            KeyMaster.key('right', this._betHi);
-            KeyMaster.key('left', this._betLo);
+            MouseTrap.bind('c', this._clearHistory);
+            MouseTrap.bind('q', this._decreasewinChances);
+            MouseTrap.bind('r', this._increasewinChances);
+            MouseTrap.bind('up', this._chaseBet);
+            MouseTrap.bind('down', this._divideBet);
+            MouseTrap.bind('right', this._betHi);
+            MouseTrap.bind('left', this._betLo);
         },
 
         componentWillUnmount: function() {
             Engine.off('all', this._onChange);
             GameSettings.off('all', this._onChange);
-            KeyMaster.key.unbind('c', this._clearHistory);
-            KeyMaster.key.unbind('q', this._decreasewinChances);
-            KeyMaster.key.unbind('r', this._increasewinChances);
-            KeyMaster.key.unbind('up', this._chaseBet);
-            KeyMaster.key.unbind('down', this._divideBet);
-            KeyMaster.key.unbind('right', this._betHi);
-            KeyMaster.key.unbind('left', this._betLo);
+            MouseTrap.unbind('c', this._clearHistory);
+            MouseTrap.unbind('q', this._decreasewinChances);
+            MouseTrap.unbind('r', this._increasewinChances);
+            MouseTrap.unbind('up', this._chaseBet);
+            MouseTrap.unbind('down', this._divideBet);
+            MouseTrap.unbind('right', this._betHi);
+            MouseTrap.unbind('left', this._betLo);
         },
 
         _onChange: function() {
@@ -122,7 +123,7 @@ define([
 
             var betHiBtn, betLoBtn, chaseBetBtn, divideBetBtn;
 
-            var betHiBtnClasses = cx({
+            var betHiBtnClasses = CX({
                 'btn': true,
                 'btn-default': true,
                 'ctl-button': true,
@@ -145,7 +146,7 @@ define([
                     D.div(null, D.span(null, 'Bet > ' + (100-Engine.winChances)), D.i({ className: 'fa fa-caret-square-o-right' }))
             );
 
-            var betLoBtnClasses = cx({
+            var betLoBtnClasses = CX({
                 'btn': true,
                 'btn-default': true,
                 'ctl-button': true,
@@ -168,7 +169,7 @@ define([
                     D.div(null, D.i({ className: 'fa fa-caret-square-o-left' }), D.span(null, ('Bet < ' + Engine.winChances)))
             );
 
-            var chaseDivideBetBtnClasses = cx({
+            var chaseDivideBetBtnClasses = CX({
                 'btn': true,
                 'btn-default': true,
                 'ctl-button': true,
