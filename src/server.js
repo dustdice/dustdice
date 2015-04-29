@@ -43,6 +43,11 @@ app.use(router(app));
 
 //Landing page
 app.get('/', function *(next) {
+
+    //If the logged in cookie is here redirect to the game
+    if(this.cookies.get('access_token'))
+        return this.redirect('game');
+
     yield this.render('landing', {
         production: production,
         landing: true,
