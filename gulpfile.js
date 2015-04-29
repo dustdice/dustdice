@@ -85,8 +85,9 @@ var options = {
     out: './build/scripts/config.js',
 
     mainConfigFile: "./public/scripts/config.js",
-    preserveLicenseComments: true,
-    optimize: "none", //uglify2
+    preserveLicenseComments: false,
+    generateSourceMaps: true,
+    optimize: "uglify2",
 
     wrap: {
         startFile: './src/startWrap.frag',
