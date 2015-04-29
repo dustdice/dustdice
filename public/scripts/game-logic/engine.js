@@ -123,6 +123,10 @@ define([
                 console.assert(err.message);
 
                 switch (err.message) {
+                    case 'AUTH_DISABLED':
+                        Cookies.expire('access_token');
+                        self.setErrorState('This app is disabled, you can enable it back in MoneyPot.com');
+                        return;
                     case 'INVALID_ACCESS_TOKEN':
                         Cookies.expire('access_token');
                         self.setErrorState('INVALID ACCOUNT');
