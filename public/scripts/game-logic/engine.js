@@ -7,13 +7,15 @@ define([
     'lib/lodash',
     'lib/clib',
     'web-api/web-api',
-    'lib/sha256'
+    'lib/sha256',
+    'lib/cookies'
 ], function(
     Events,
     _,
     Clib,
     WebApi,
-    SHA256
+    SHA256,
+    Cookies
 ){
     //var historyMaxLength = 100;
 
@@ -88,6 +90,9 @@ define([
             self.maxWin = self.vaultBankroll * 0.01;
             self.gameState = 'STANDING_BY';
 
+            //Set the access token and the expiration date in a cookie two days earlier, we don't want to expire while the user is playing
+            Cookies.set('access_token', self.accessToken, { expires: data.expiresIn - 172800 });
+
             self.trigger('get-user-data');
         }));
 
@@ -118,7 +123,12 @@ define([
                 console.assert(err.message);
 
                 switch (err.message) {
+                    case 'AUTH_DISABLED':
+                        Cookies.expire('access_token');
+                        self.setErrorState('This app is disabled, you can enable it back in MoneyPot.com');
+                        return;
                     case 'INVALID_ACCESS_TOKEN':
+                        Cookies.expire('access_token');
                         self.setErrorState('INVALID ACCOUNT');
                         return;
                     case 'BANKROLL_TOO_SMALL':
@@ -221,9 +231,6 @@ define([
 
 
                 self.gameHistory.push(game);
-
-                //if(self.gameHistory.length > historyMaxLength)
-                //    self.gameHistory.shift();
 
                 self.gameState = 'STANDING_BY';
 

@@ -21,6 +21,10 @@
         var PRODUCTION = {{ production }};
         var CHAT_URI = '{{ chatURI }}';
     </script>
-        <script data-main="scripts/{% if config %}{{ config.jsBuildFilename }}{% else %}config{% endif %}" src="scripts/lib/require.js"></script>
+        {% if config %}
+        <script src="scripts/{{ config.jsBuildFilename }}.js"></script>
+        {% else %}
+        <script data-main="scripts/config" src="scripts/lib/require.js"></script>
+        {% endif %}
     </body>
 </html>
