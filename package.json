@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "DustDice Site",
   "scripts": {
-    "postinstall": "node build.js",
+    "postinstall": "gulp install",
     "start": "node --harmony src/server.js",
     "start-dev": "nodemon --harmony src/server.js"
   },
@@ -17,8 +17,17 @@
     "koa-router": "^4.2.0",
     "koa-static": "^1.4.9",
     "koa-swig": "^2.0.0",
-    "requirejs": "^2.1.17"
+    "merge-stream": "^0.1.7",
+    "requirejs": "^2.1.17",
+    "run-sequence": "^1.1.0",
+    "del": "^1.1.1",
+    "gulp": "^3.8.11",
+    "gulp-minify-css": "^1.1.0",
+    "requirejs": "^2.1.17",
+    "vinyl-paths": "^1.0.0"
   },
   "private": true,
-  "main": "src/server.js"
+  "main": "src/server.js",
+  "devDependencies": {
+  }
 }

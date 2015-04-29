@@ -19,14 +19,23 @@ var options = {
     appDir: './public',
     baseUrl: 'scripts',
     dir: './build',
-    name: 'config',
+    //name: 'config',
 
-    removeCombined: true,
+    //removeCombined: true,
     mainConfigFile: "public/scripts/config.js",
-    preserveLicenseComments: false,
+    preserveLicenseComments: true,
     optimize: "none", //uglify2
     optimizeCss: "standard",
-    findNestedDependencies: true
+    findNestedDependencies: true,
+
+    //wrap: true,
+
+    wrap: {
+        startFile: './src/startWrap.frag',
+        endFile: './src/endWrap.frag'
+    },
+
+    include: ['./public/scripts/lib/almond', './public/scripts/config']
 
     //If i use almond it breaks
     //include: ['config'],
