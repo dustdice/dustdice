@@ -7,35 +7,42 @@ var minifyCss = require('gulp-minify-css');
 var runSequence = require('run-sequence');
 var merge = require('merge-stream');
 var crypto = require('crypto');
-var exec = require('child_process').exec;
-var assert = require('assert');
+var es = require('event-stream');
+var hash = require('gulp-hash');
+var extend = require('gulp-extend');
+var replace = require('gulp-replace');
+var rename = require("gulp-rename");
 
-console.log('Running install script');
-
+var production = process.env.NODE_ENV === 'production';
+var configJsonPath = './build/config.json';
 
 gulp.task('install', function(callback) {
-    runSequence('clean:build', ['minify-js', 'minify-css', 'copy:assets'], 'config-hash', callback);
+    runSequence('clean:build', ['minify-js', 'minify-css', 'copy:assets'], 'hash-files', 'get-file-names', 'replace-maps-name', callback);
 });
 
-/** Copy the final CSS and JS to build folder with the hashed names and store the name in config.js **/
-gulp.task('config-hash', function(callback) {
-    //Set file names for the optimized files
-    var config = {
-        jsBuildFilename: hash('./build/scripts/config.js').substring(0, 8),
-        cssBuildFilename: hash('./build/css/app.css').substring(0, 8)
-    };
-
-    fs.writeFile('./build/config.json', JSON.stringify(config), function(err) {
-        if(err)
-            callback(err);
-
-        //Copy the build files with the hashed name
-        execute('cp ./build/scripts/config.js ./build/scripts/' + config.jsBuildFilename + '.js');
-        execute('cp ./build/css/app.css ./build/css/' + config.cssBuildFilename + '.css');
-
-        callback(); //OK
-    });
+/** Delete everything inside build folder **/
+gulp.task('clean:build', function () {
+    return gulp.src('build/*')
+        .pipe(vinylPaths(del));
 });
+
+/** RequireJS Optimizer options **/
+var options = {
+    baseUrl: "./public/scripts",
+    out: "./build/scripts/config.js",
+
+    mainConfigFile: "./public/scripts/config.js",
+    preserveLicenseComments: false,
+    generateSourceMaps: true,
+    optimize: production? "uglify2" : "none",
+
+    wrap: {
+        startFile: './src/startWrap.frag',
+        endFile: './src/endWrap.frag'
+    },
+
+    include: ['lib/almond', 'config']
+};
 
 /** Minify the Javascript with requireJs optizer **/
 gulp.task('minify-js', function(callback) {
@@ -63,12 +70,6 @@ gulp.task('minify-css', function() {
     return merge(appStream, landingStream);
 });
 
-/** Delete everything inside build folder **/
-gulp.task('clean:build', function () {
-    return gulp.src('build/*')
-        .pipe(vinylPaths(del));
-});
-
 /** Copy the necessary files to prod folder **/
 gulp.task('copy:assets', function() {
     var imgStream = gulp.src('public/img/**')
@@ -79,49 +80,64 @@ gulp.task('copy:assets', function() {
     return merge(imgStream, fontsStream);
 });
 
-/** RequireJS Optimizer options **/
-var options = {
-    baseUrl: './public/scripts',
-    out: './build/scripts/config.js',
-
-    mainConfigFile: "./public/scripts/config.js",
-    preserveLicenseComments: false,
-    generateSourceMaps: true,
-    optimize: "uglify2",
-
-    wrap: {
-        startFile: './src/startWrap.frag',
-        endFile: './src/endWrap.frag'
-    },
-
-    include: ['lib/almond', 'config']
+/** Hash the config.js and the app.css files  **/
+var hashOptions = {
+    template: '<%= name %>-<%= hash %><%= ext %>'
 };
+gulp.task('hash-files', function(callback) {
+    runSequence('hash-css', 'hash-js', callback);
+});
 
-function hash(filename) {
-    var shasum = crypto.createHash('sha1');
-    shasum.update(fs.readFileSync(filename));
-    return shasum.digest('hex');
+    gulp.task('hash-css', function() {
+        return addToManifest(
+            gulp.src('./build/css/app.css')
+                .pipe(hash(hashOptions))
+                .pipe(gulp.dest('build/css'))
+        );
+    });
+
+    gulp.task('hash-js', function() {
+        return addToManifest(
+            gulp.src('./build/scripts/config.js')
+                .pipe(hash(hashOptions))
+                .pipe(gulp.dest('build/scripts'))
+        );
+    });
+
+/** Get the hashed file names of config.js and app.css **/
+var configFile = null;
+gulp.task('get-file-names', function (callback) {
+    fs.readFile('./build/config.json', function(err, data) {
+        if (err)
+            return callback(err);
+
+        configFile = JSON.parse(data);
+        callback();
+    });
+});
+
+/** RequireJs Optimizer does not support an option to hash the name of the file, so we need to hash it and then replace the name of the source maps **/
+gulp.task('replace-maps-name', function(){
+
+    var replaceStream = gulp.src('./build/scripts/' + configFile['config.js'], { base: './' })
+        .pipe(replace('sourceMappingURL=config.js', 'sourceMappingURL=' + configFile['config.js']))
+        .pipe(replace('sourceMappingURL=config.js.map', 'sourceMappingURL=' + configFile['config.js'] + '.map'))
+        .pipe(gulp.dest('./'));
+
+    var mapStream = gulp.src('./build/scripts/config.js.map')
+        .pipe(rename('scripts/'+ configFile['config.js'] + '.map'))
+        .pipe(gulp.dest('./build'));
+
+    return merge(replaceStream, mapStream);
+});
+
+// Adds the files in `srcStream` to the manifest file, extending the manifest's current contents.
+function addToManifest(srcStream) {
+    return es.concat(
+        gulp.src(configJsonPath),
+        srcStream
+            .pipe(hash.manifest(configJsonPath))
+    )
+        .pipe(extend(configJsonPath, false, 4))
+        .pipe(gulp.dest('.'));
 }
-
-var todo = [];
-function execute(command) {
-    todo.push(command);
-
-    if (todo.length === 1)
-        run();
-
-    function run() {
-        var command = todo[0];
-        exec(command, function(err, stdout, stderr) {
-            console.log('exec result (' + command + ') ', err, stdout, stderr);
-            assert(!err);
-            if (stderr) console.error(stderr);
-
-            todo.shift();
-            if (todo.length > 0)
-                run();
-        });
-    }
-
-}
-

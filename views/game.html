@@ -8,7 +8,7 @@
 
         <!--<link href="css/bootstrap.min.css" rel="stylesheet">-->
         <!--<link rel="stylesheet" href="css/font-awesome.css">-->
-        <link href="css/{% if config %}{{config.cssBuildFilename}}{% else %}app{% endif %}.css" rel="stylesheet">
+        <link href="css/{% if config %}{{config['app.css']}}{% else %}app.css{% endif %}" rel="stylesheet">
         <link rel="shortcut icon" href="img/favicon-black.ico" type="image/x-icon"/>
         <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
     </head>
@@ -22,7 +22,7 @@
         var CHAT_URI = '{{ chatURI }}';
     </script>
         {% if config %}
-        <script src="scripts/{{ config.jsBuildFilename }}.js"></script>
+        <script src="scripts/{{ config['config.js'] }}"></script>
         {% else %}
         <script data-main="scripts/config" src="scripts/lib/require.js"></script>
         {% endif %}
