@@ -37,9 +37,6 @@ define([
         //Wager is a float but is rounded when betting and when showing it to the user, this allows to chase bet on small qty's to actually work, Use Math.round(), is as close as you can get.
         self.wager =  Clib.localOrDef('wager', 1e2);
 
-        //Low jackpot because we are poor :p
-        self.jackpot =  Clib.localOrDef('jackpot', 100000e2);
-
         //The game had a fatal error and reload page is needed
         self.error = false;
 
@@ -122,13 +119,14 @@ define([
             if (err) {
                 console.assert(err.message);
 
+                //On any error expire the cookie to avoid redirecting cycles
+                Cookies.expire('access_token');
+
                 switch (err.message) {
                     case 'AUTH_DISABLED':
-                        Cookies.expire('access_token');
                         self.setErrorState('This app is disabled, you can enable it back in MoneyPot.com');
                         return;
                     case 'INVALID_ACCESS_TOKEN':
-                        Cookies.expire('access_token');
                         self.setErrorState('INVALID ACCOUNT');
                         return;
                     case 'BANKROLL_TOO_SMALL':
@@ -184,11 +182,7 @@ define([
             payout: Math.round(self.getPayout() * self.getWager())
         };
 
-        /**
-         * DustDice bet API
-         *
-         * You can't win the jackpot and win the bet and the same time
-         */
+        /** DustDice bet API */
         WebApi.bet(
             self.currentBet.wager,
             self.currentBet.winChances,
@@ -209,13 +203,6 @@ define([
                 }
 
                 self.clientSeed = Clib.randomUint32();
-
-                //FOR TESTING THE JACKPOT
-                //Do we won the jackpot? Could give us false positive if the bet is the same than the jackpot and we win that works for testing
-                //if(game.profit == self.jackpot)
-
-                if(game.profit > 0 && !game.wonJackpot)
-                    game.wonBet = true;
 
                 //Set the new balance in the engine
                 self.balance += game.profit;
@@ -260,13 +247,6 @@ define([
         this.wager = newWager;
         localStorage.wager = this.wager;
         this.trigger('new-wager')
-    };
-
-    GameEngine.prototype.setJackpot = function(jackpot) {
-        console.assert(Clib.isInteger(jackpot) && jackpot > 0);
-        this.jackpot = jackpot;
-        localStorage.jackpot = this.jackpot;
-        this.trigger('new-jackpot');
     };
 
     GameEngine.prototype.setwinChances = function(newwinChances) {
