@@ -60,7 +60,7 @@ gulp.task('minify-js', function(callback) {
 /** Minify game and landing css into build dir **/
 gulp.task('minify-css', function() {
     var appStream = gulp.src('public/css/app.css')
-        .pipe(minifyCss({compatibility: 'ie8'}))
+        .pipe(minifyCss({ advanced: false, aggressiveMerging: false, restructuring: false, shorthandCompacting: false }))
         .pipe(gulp.dest('build/css'));
 
     var landingStream = gulp.src('public/css/landing.css')
