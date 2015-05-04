@@ -7,7 +7,8 @@ requirejs.config({
         'jquery': 'lib/jquery',
         'screenfull': 'lib/screenfull',
         'react-bootstrap': 'lib/react-bootstrap',
-        'class-names': 'lib/class-names'
+        'class-names': 'lib/class-names',
+        'recaptcha': 'https://www.google.com/recaptcha/api.js?render=explicit'
     },
     shim: {
         'react-bootstrap': {
@@ -26,7 +27,9 @@ requirejs.config({
         'highcharts-theme': {
             deps: ['highcharts', 'highcharts-bubble'],
             exports: 'Highcharts'
-        }
+        },
+
+        'recaptcha': { exports: 'grecaptcha' }
     }
 });
 

@@ -1,7 +1,7 @@
 define([
     'lib/react',
     'lib/mousetrap', //TODO: This is window,
-    'lib/clib',
+    'game-logic/clib',
     'game-logic/engine',
     'components/top-bar',
     'components/graph',
@@ -9,6 +9,7 @@ define([
     'components/settings',
     'components/tutorial',
     'components/deposit',
+    'components/stats',
     'components/chat',
     'stores/game-settings',
     'class-names'
@@ -23,6 +24,7 @@ define([
     SettingsClass,
     TutorialClass,
     DepositClass,
+    StatsClass,
     ChatClass,
     GameSettings,
     CX
@@ -36,6 +38,7 @@ define([
     var Settings = React.createFactory(SettingsClass);
     var Tutorial = React.createFactory(TutorialClass);
     var Deposit = React.createFactory(DepositClass);
+    var Stats = React.createFactory(StatsClass);
 
     return React.createClass({
 
@@ -97,6 +100,10 @@ define([
             this.setState({ modal: (this.state.modal === 'DEPOSIT')? '' : 'DEPOSIT',  initialTab: 'FAUCET' });
         },
 
+        _toggleStats: function() {
+            this.setState({ modal: (this.state.modal === 'STATS')? '' : 'STATS' });
+        },
+
         _toggleChat: function() {
             GameSettings.toggleShowChat();
         },
@@ -152,7 +159,11 @@ define([
                         initialTab: this.state.initialTab
                     });
                     break;
-
+                case 'STATS':
+                    modal = Stats({
+                       _toggleStats: this._toggleStats
+                    });
+                    break;
             }
 
             var chatContainerClasses = CX(
@@ -181,7 +192,8 @@ define([
                         _toggleSettings: this._toggleSettings,
                         _toggleDepositAddress: this._toggleDepositAddress,
                         _toggleChat: this._toggleChat,
-                        _toggleFaucet: this._toggleFaucet
+                        _toggleFaucet: this._toggleFaucet,
+                        _toggleStats: this._toggleStats
                     })
                 ),
 

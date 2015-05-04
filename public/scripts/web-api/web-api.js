@@ -1,5 +1,5 @@
 define([
-        'lib/clib'
+        'game-logic/clib'
     ], function(
         Clib
     ) {
@@ -38,6 +38,9 @@ define([
                 balance: result[0].balance,
                 username: result[0].uname,
                 expiresIn: result[0]['expires_in'],
+                bettedCount: result[0]['betted_count'],
+                bettedProfit: result[0]['betted_profit'],
+                bettedWager: result[0]['betted_wager'],
                 hash: result[1],
                 bankroll: result[2],
                 depositAddress: result[3]
@@ -64,6 +67,9 @@ define([
 
             var data = {
                 balance: result[0].balance,
+                bettedCount: result[0]['betted_count'],
+                bettedProfit: result[0]['betted_profit'],
+                bettedWager: result[0]['betted_wager'],
                 bankroll: result[1]
             };
 

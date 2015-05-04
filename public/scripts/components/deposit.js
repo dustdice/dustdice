@@ -50,7 +50,7 @@ define([
                         D.br(),
                         D.br(),
                         D.p(null, "All amounts sent to this bitcoin address will automatically be credited into your DustDice account after a single bitcoin confirmation."),
-                        D.b(null, Engine.depositAddress)
+                        D.b({ className: 'bitcoin-address' }, Engine.depositAddress)
                     );
                     break;
                 case 'MONEYPOT':

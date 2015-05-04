@@ -2,7 +2,7 @@ define([
     'lib/react',
     'game-logic/engine',
     'lib/mousetrap',
-    'lib/clib',
+    'game-logic/clib',
     'stores/game-settings',
     'class-names'
 ], function(

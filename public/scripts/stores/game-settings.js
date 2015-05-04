@@ -1,7 +1,7 @@
 define([
     'lib/events',
     'lib/lodash',
-    'lib/clib'
+    'game-logic/clib'
 ], function(
     Events,
     _,

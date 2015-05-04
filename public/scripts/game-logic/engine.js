@@ -5,7 +5,7 @@
 define([
     'lib/events',
     'lib/lodash',
-    'lib/clib',
+    'game-logic/clib',
     'web-api/web-api',
     'lib/sha256',
     'lib/cookies'
@@ -81,6 +81,9 @@ define([
 
             self.balance = data.balance;
             self.username = data.username;
+            self.bettedCount = data.bettedCount;
+            self.bettedProfit = data.bettedProfit;
+            self.bettedWager = data.bettedWager;
             self.nextGameHash = data.hash;
             self.vaultBankroll = data.bankroll;
             self.depositAddress = data.depositAddress;
@@ -209,6 +212,10 @@ define([
                 //Set the new hash in the engine
                 self.nextGameHash = game.next_hash;
 
+                self.bettedCount++;
+                self.bettedProfit += game.profit;
+                self.bettedWager += self.currentBet.wager;
+
                 //Append the new balance in the game
                 game.balance = self.balance;
                 //Append game info to the result
@@ -267,6 +274,12 @@ define([
         this.trigger('history-clear');
     };
 
+    GameEngine.prototype.logOut = function() {
+        Cookies.expire('access_token');
+        localStorage.clear();
+        window.location = 'http://dustdice.com';
+    };
+
 
     /** Engine API Helpers **/
 
@@ -302,6 +315,9 @@ define([
 
             self.gameState = 'STANDING_BY';
             self.vaultBankroll = data.bankroll;
+            self.bettedCount = data.bettedCount;
+            self.bettedProfit = data.bettedProfit;
+            self.bettedWager = data.bettedWager;
 
             if(self.balance !== data.balance) {
                 self.balance = data.balance;

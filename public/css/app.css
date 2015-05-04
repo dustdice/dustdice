@@ -424,6 +424,10 @@ h1 {
     margin: 2em 0;
 }
 
+.nav-tabs.nav-justified > li {
+    display: table-cell;
+    width: 1%;
+}
 
 /* ==========================================================================
     Game Settings (modal)
@@ -556,6 +560,14 @@ input[type=range]:focus::-ms-fill-upper {
     text-align: center;
 }
 
+.bitcoin-address {
+    word-break: break-all;
+}
+
+#faucet-recaptcha>div>div {
+    width: auto !important;
+    height: auto !important;
+}
 
 /* ==========================================================================
     Animations

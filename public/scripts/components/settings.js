@@ -1,6 +1,6 @@
 define([
     'lib/react',
-    'lib/clib',
+    'game-logic/clib',
     'game-logic/engine',
     'stores/game-settings',
     'react-bootstrap',

@@ -1,7 +1,7 @@
 define([
     'game-logic/engine',
     'screenfull',
-    'lib/clib',
+    'game-logic/clib',
     'lib/react',
     'react-bootstrap',
     'stores/game-settings'
@@ -29,7 +29,8 @@ define([
             _toggleSettings: React.PropTypes.func.isRequired,
             _toggleDepositAddress: React.PropTypes.func.isRequired,
             _toggleChat: React.PropTypes.func.isRequired,
-            _toggleFaucet: React.PropTypes.func.isRequired
+            _toggleFaucet: React.PropTypes.func.isRequired,
+            _toggleStats: React.PropTypes.func.isRequired
         },
 
         getInitialState: function() {
@@ -72,6 +73,10 @@ define([
 
         _toggleChat: function() {
             GameSettings.toggleShowChat();
+        },
+
+        _logOut: function() {
+            Engine.logOut();
         },
 
         render: function() {
@@ -122,12 +127,11 @@ define([
                     MenuItem({ onSelect: this.props._toggleDepositAddress }, 'Deposit'),
                     MenuItem({ onSelect: this.props._toggleSettings }, 'Settings'),
                     MenuItem({ onSelect: this.props._toggleChat }, (GameSettings.showChat? 'Hide' : 'Show') + ' Chat'),
+                    MenuItem({ onSelect: this.props._toggleStats }, 'Stats'),
                     MenuItem({ href: '/faq' }, "FAQ's ", D.span({ className: 'glyphicon glyphicon-new-window' })),
                     MenuItem({ href: 'https://www.moneypot.com' }, 'Account ', D.span({ className: 'glyphicon glyphicon-new-window' })),
-
-                    MenuItem({ onSelect: this.props._toggleTutorial }, 'Tutorial')
-
-
+                    MenuItem({ onSelect: this.props._toggleTutorial }, 'Tutorial'),
+                    MenuItem({ onSelect: this._logOut }, 'Log out ', D.span({ className: 'glyphicon glyphicon-new-window' }))
                 )
             );
         }
