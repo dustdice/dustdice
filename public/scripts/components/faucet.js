@@ -18,13 +18,10 @@ define([
 
         _recaptchaSubmit: function(response) {
 
-            console.log('Got response: ', response);
-
             var self = this;
             self.setState({ stage: 'CLAIMING' });
 
             Engine.claimFaucet(response, function(err, data) {
-                console.log('Faucet claim: ', err, data);
                 if (!self.isMounted()) return;
 
                 if (err) {
