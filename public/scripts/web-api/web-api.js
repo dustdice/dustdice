@@ -66,10 +66,10 @@ define([
                 return callback(err);
 
             var data = {
-                balance: result[0]['balance'],
-                bettedCount: result[0]['betted_count'],
-                bettedProfit: result[0]['betted_profit'],
-                bettedWager: result[0]['betted_wager'],
+                balance: result[0]['auth']['user']['balance'],
+                bettedCount: result[0]['auth']['user']['betted_count'],
+                bettedProfit: result[0]['auth']['user']['betted_profit'],
+                bettedWager: result[0]['auth']['user']['betted_wager'],
                 bankroll: result[1]['balance']
             };
 
