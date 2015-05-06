@@ -257,7 +257,7 @@ define([
                                 )
                             )
                         ),
-	                    D.div({ id: 'ctl-jackpot-box', onClick: this.props._toggleSettings },
+	                    D.div({ id: 'ctl-potential-profit-box', onClick: this.props._toggleSettings },
 		                    D.div({ className: 'ctl-state-name' },
 			                    D.span(null, 'POTENTIAL PROFIT')
 		                    ),

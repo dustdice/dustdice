@@ -1,9 +1,7 @@
 define([
-    'lib/react',
-    'recaptcha'
+    'lib/react'
 ],function(
-    React,
-    Recaptcha
+    React
 ){
     var D = React.DOM;
 

@@ -334,7 +334,7 @@ h1 {
     line-height: .5em;
 }
 
-#ctl-bet-box, #ctl-payout-box, #ctl-win-chances-box, #ctl-jackpot-box {
+#ctl-bet-box, #ctl-payout-box, #ctl-win-chances-box, #ctl-potential-profit-box {
     float: left;
     width: calc(25% - 4.5em/4);
     cursor: pointer;
@@ -348,7 +348,7 @@ h1 {
     margin: 0 1.5em 0 0.3em;
 }
 
-#ctl-bet-box:hover, #ctl-payout-box:hover, #ctl-win-chances-box:hover, #ctl-jackpot-box:hover, #ctl-settings-btn:hover {
+#ctl-bet-box:hover, #ctl-payout-box:hover, #ctl-win-chances-box:hover, #ctl-potential-profit-box:hover, #ctl-settings-btn:hover {
     color: coral;
 }
 

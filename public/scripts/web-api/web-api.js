@@ -35,15 +35,15 @@ define([
                 return callback(err);
 
             var data = {
-                balance: result[0].balance,
-                username: result[0].uname,
+                balance: result[0]['auth']['user']['balance'],
+                username: result[0]['auth']['user']['uname'],
                 expiresIn: result[0]['expires_in'],
-                bettedCount: result[0]['betted_count'],
-                bettedProfit: result[0]['betted_profit'],
-                bettedWager: result[0]['betted_wager'],
-                hash: result[1],
-                bankroll: result[2],
-                depositAddress: result[3]
+                bettedCount: result[0]['auth']['user']['betted_count'],
+                bettedProfit: result[0]['auth']['user']['betted_profit'],
+                bettedWager: result[0]['auth']['user']['betted_wager'],
+                hash: result[1]['hash'],
+                bankroll: result[2]['balance'],
+                depositAddress: result[3]['deposit_address']
             };
 
             callback(null, data);
@@ -66,11 +66,11 @@ define([
                 return callback(err);
 
             var data = {
-                balance: result[0].balance,
+                balance: result[0]['balance'],
                 bettedCount: result[0]['betted_count'],
                 bettedProfit: result[0]['betted_profit'],
                 bettedWager: result[0]['betted_wager'],
-                bankroll: result[1]
+                bankroll: result[1]['balance']
             };
 
             callback(null, data);
@@ -81,7 +81,7 @@ define([
 
         new Requester({
             method: 'GET',
-            url: URL+'/v1/tokens/'+accessToken+'?access_token='+accessToken,
+            url: URL+'/v1/token?access_token='+accessToken,
             callback: responseErrorHandler(callback)
         });
     };
@@ -90,7 +90,7 @@ define([
 
         new Requester({
             method: 'POST',
-            url: URL+'/v1/bet-hashes?access_token='+accessToken,
+            url: URL+'/v1/hashes?access_token='+accessToken,
             callback: responseErrorHandler(callback)
         });
     };
@@ -155,14 +155,13 @@ define([
 
             //Known Error with a response from the server
             if (response.statusCode >= 400 && response.statusCode < 600)
-                return callback(new Error(response.body));
+                return callback(response.body);
 
             //Success
             callback(null, response.body);
         }
 
     }
-
 
     /** Requester middleware **/
 
@@ -209,9 +208,6 @@ define([
             }
         }
     };
-
-
-
 
     return new WebApi();
 });

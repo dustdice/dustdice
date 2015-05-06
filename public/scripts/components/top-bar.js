@@ -79,6 +79,11 @@ define([
             Engine.logOut();
         },
 
+        _handleBackDropClick: function(e) {
+            if(e.target === e.currentTarget)
+                this.props._toggleTutorial();
+        },
+
         render: function() {
 
             return D.div({ id: 'top-bar-box' },

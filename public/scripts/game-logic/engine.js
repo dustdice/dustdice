@@ -120,12 +120,12 @@ define([
 
         return function(err, data) {
             if (err) {
-                console.assert(err.message);
+                console.log(err);
 
                 //On any error expire the cookie to avoid redirecting cycles
                 Cookies.expire('access_token');
 
-                switch (err.message) {
+                switch (err.error) {
                     case 'AUTH_DISABLED':
                         self.setErrorState('This app is disabled, you can enable it back in MoneyPot.com');
                         return;
@@ -257,7 +257,6 @@ define([
     };
 
     GameEngine.prototype.setwinChances = function(newwinChances) {
-        //console.assert(Clib.isInteger(newwinChances) && newwinChances>=2 && newwinChances <= 99);
         console.assert(Clib.isInteger(newwinChances));
         this.winChances = newwinChances;
         localStorage.winChances = this.winChances;
