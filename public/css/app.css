@@ -16,57 +16,6 @@ html, body {
     height: 100%;
 }
 
-#chat-container-box.expand {
-    position: absolute;
-    top: 0;
-    right: 80%;
-    bottom: 0;
-    left: 0;
-}
-
-#chat-container-box.compress {
-    position: absolute;
-    top: 0;
-    right: 100%;
-    bottom: 0;
-    left: -20%;
-}
-
-#chat-container-box.off-focus {
-    opacity: 0.5;
-}
-
-#game-container-box {
-    outline: none !important;
-    box-shadow: none !important;
-    overflow: hidden;
-}
-
-#game-container-box.compress {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 20%;
-}
-
-#game-container-box.expand {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-}
-
-#game-container-box.off-focus {
-    opacity: 0.5;
-}
-
-#game-container>div {
-    width: 100%;
-    height: 100%;
-}
-
 
 /* ==========================================================================
    Fake Icons due they are not in Font Awesome
@@ -218,8 +167,103 @@ h1 {
 
 
 /* ==========================================================================
+   Vertical Menu
+   ========================================================================== */
+
+#vertical-menu {
+    position: fixed;
+    top: 50%;
+    left: -10px;
+    transform: rotate(270deg);
+}
+
+#vertical-menu button{
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0 0.3em 0.3em 0.3em;
+    border-radius: 4px;
+    border: none;
+    color: inherit;
+}
+
+#vertical-menu button:hover {
+    color: coral;
+}
+
+#vertical-menu button span {
+    text-transform: uppercase;
+    font-size: 0.7em;
+}
+
+
+/* ==========================================================================
+   Chat
+   ========================================================================== */
+
+#chat-container-box.expand {
+    position: absolute;
+    top: 0;
+    right: 80%;
+    bottom: 0;
+    left: 0;
+}
+@media only screen and (max-width : 768px) {
+    #chat-container-box.expand {
+        right: 0;
+    }
+}
+
+#chat-container-box.compress {
+    position: absolute;
+    top: 0;
+    right: 100%;
+    bottom: 0;
+    left: -20%;
+}
+
+#chat-container-box.off-focus {
+    opacity: 0.5;
+}
+
+#chat-header h1 {
+    float: left;
+}
+
+
+/* ==========================================================================
    Graph
    ========================================================================== */
+
+#game-container-box {
+    outline: none !important;
+    box-shadow: none !important;
+    overflow: hidden;
+}
+
+#game-container-box.compress {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 20%;
+}
+@media only screen and (max-width : 768px) {
+    #game-container-box.compress {
+        left: 100%;
+        right: -20%;
+    }
+}
+
+#game-container-box.expand {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+#game-container-box.off-focus {
+    opacity: 0.5;
+}
 
 #graph-container {
     width: 100%;

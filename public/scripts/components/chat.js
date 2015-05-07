@@ -19,7 +19,8 @@ define([
         displayName: 'Chat',
 
         propTypes: {
-            offFocus: React.PropTypes.bool.isRequired
+            offFocus: React.PropTypes.bool.isRequired,
+            _closeChat: React.PropTypes.func.isRequired
         },
 
         getInitialState: function() {
@@ -103,8 +104,11 @@ define([
                 });
 
                 return D.div({ id: 'chat-inner-container', onClick: this._handleChatClick },
-                    D.div({ id: 'chat-title' },
-                        D.h1(null, 'Chat')
+                    D.div({ id: 'chat-header' },
+                        D.h1(null, 'Chat'),
+                        D.button({ type: 'button', className: 'close pull right', onClick: this.props._closeChat },
+                            D.span({ className: 'glyphicon glyphicon-remove' })
+                        )
                     ),
                     D.div({ id: 'chat-content', ref: 'chat' },
                         chatMessages

@@ -105,7 +105,15 @@ define([
         },
 
         _toggleChat: function() {
+            if(!GameSettings.showChat)
+                this.setState({ focus: 'CHAT' });
             GameSettings.toggleShowChat();
+        },
+
+        _closeChat: function(e) {
+            this.setState({ focus: 'GAME' });
+            GameSettings.toggleShowChat();
+            e.stopPropagation();
         },
 
         _onChange: function() {
@@ -125,6 +133,14 @@ define([
         },
 
         render: function() {
+
+
+            var verticalMenu = !GameSettings.showChat?
+                D.div({ id: 'vertical-menu', onClick: this._toggleChat },
+                    D.button({ className: '' },
+                        D.span(null, 'chat')
+                    )
+                ) : null;
 
             //If the engine does not have the user's data
             if(Engine.error)
@@ -174,7 +190,8 @@ define([
             );
             var chat = D.div({ id: 'chat-container-box', className: chatContainerClasses, onClick: this._handleChatClick },
                 GameSettings.showChat? Chat({
-                    offFocus: this.state.focus !== 'CHAT'
+                    offFocus: this.state.focus !== 'CHAT',
+                    _closeChat: this._closeChat
                 }) : null
             );
 
@@ -214,8 +231,9 @@ define([
             );
 
             return D.div(null,
-                chat,
-                game
+                game,
+                verticalMenu,
+                chat
             )
         }
     });

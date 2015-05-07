@@ -109,14 +109,14 @@ define([
                     D.h1(null, '\u00a0Dust Dice')
                 ),
 
-                D.button({
-                        id: 'chat-button',
-                        type: 'button',
-                        className: 'btn btn-default top-bar-menu-btn hidden-xs',
-                        onClick: this.props._toggleChat
-                    },
-                    D.i({ className: 'fa fa-comment' })
-                ),
+                //D.button({
+                //        id: 'chat-button',
+                //        type: 'button',
+                //        className: 'btn btn-default top-bar-menu-btn hidden-xs',
+                //        onClick: this.props._toggleChat
+                //    },
+                //    D.i({ className: 'fa fa-comment' })
+                //),
                 D.button({
                         id: 'faucet-button',
                         type: 'button',
