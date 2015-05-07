@@ -25,7 +25,10 @@ define([
                 if (!self.isMounted()) return;
 
                 if (err) {
-                    self.setState({ stage: 'ERROR', err: err.message });
+                    if(err.error === 'FAUCET_ALREADY_CLAIMED')
+                        self.setState({ stage: 'ERROR', err: 'The faucet was already claimed less than 5 minutes ago.' });
+                    else
+                        Engine.setErrorState(err.error);
                     return;
                 }
 

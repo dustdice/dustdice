@@ -96,7 +96,6 @@ define([
             self.trigger('get-user-data');
         }));
 
-
     }
 
 
