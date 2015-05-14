@@ -11,7 +11,8 @@ define([
     'components/deposit',
     'components/stats',
     'components/chat',
-    'stores/game-settings',
+    'components/vertical-menu',
+    'stores/game',
     'class-names'
 ], function(
     React,
@@ -26,7 +27,8 @@ define([
     DepositClass,
     StatsClass,
     ChatClass,
-    GameSettings,
+    VerticalMenuClass,
+    GameStore,
     CX
 ){
     var D = React.DOM;
@@ -34,6 +36,7 @@ define([
     var Graph = React.createFactory(GraphClass);
     var Controls = React.createFactory(ControlsClass);
     var Chat = React.createFactory(ChatClass);
+    var VerticalMenu = React.createFactory(VerticalMenuClass);
 
     var Settings = React.createFactory(SettingsClass);
     var Tutorial = React.createFactory(TutorialClass);
@@ -42,36 +45,44 @@ define([
 
     return React.createClass({
 
+        displayName: 'Game',
+
         //Global UI States
         getInitialState: function() {
-            this.showChat = GameSettings.showChat;
-            return {
-                modal: (GameSettings.hideTutorial)? '' : 'TUTORIAL',
-                focus: 'GAME', // GAME || CHAT
-                engine: Engine
-            }
+            this.showChat = GameStore.showChat; //Helper to know if the chat state change to let the graph know it has to re-render
+            return null;
         },
 
+        //Follow only specific events to avoid re-rendering every child component if not needed
         componentDidMount: function() {
             MouseTrap.bind('s', this._toggleSettings);
-            Engine.on('get-user-data', this._getUserData); //Connected
+            Engine.on('get-user-data', this._onChange); //Connected
             Engine.on('fatal-error', this._onChange);
             Engine.on('user-alert', this._userAlert);
-            GameSettings.on('show-chat-change', this._onChange);
+            GameStore.on('show-chat-change', this._onChange);
+            GameStore.on('modal-change', this._onChange);
+            GameStore.on('focus-change', this._onChange);
         },
 
         componentWillUnmount: function() {
             MouseTrap.unbind('s', this._toggleSettings);
-            Engine.off('get-user-data', this._getUserData);
+            Engine.off('get-user-data', this._onChange);
             Engine.off('fatal-error', this._onChange);
             Engine.off('user-alert', this._userAlert);
-            GameSettings.off('show-chat-change', this._onChange);
+            GameStore.off('show-chat-change', this._onChange);
+            GameStore.off('modal-change', this._onChange);
+            GameStore.off('focus-change', this._onChange);
+        },
+
+        _onChange: function() {
+            //Let know react that this component should re-render because something change in the state
+            this.setState({ engine: Engine });
         },
 
         //If the chat state change we got to redraw the graph by triggering the resize event
         componentDidUpdate: function(prevProps, prevState) {
-            if(this.showChat !== GameSettings.showChat) {
-                this.showChat = GameSettings.showChat;
+            if(this.showChat !== GameStore.showChat) {
+                this.showChat = GameStore.showChat;
                 window.dispatchEvent(new Event('resize'));
             }
         },
@@ -80,69 +91,50 @@ define([
             alert(error);
         },
 
-        _getUserData: function() {
-            this.setState({ engine: Engine }); //Just to re render
-        },
-
         _toggleSettings: function() {
-            this.setState({ modal: (this.state.modal === 'SETTINGS')? '' : 'SETTINGS' });
+            GameStore.setUnsetModalFocus({ name: 'SETTINGS' });
         },
 
         _toggleTutorial: function() {
-            this.setState({ modal: (this.state.modal === 'TUTORIAL')? '' : 'TUTORIAL' });
+            GameStore.setUnsetModalFocus({ name: 'TUTORIAL' });
         },
 
         _toggleDepositAddress: function() {
-            this.setState({ modal: (this.state.modal === 'DEPOSIT')? '' : 'DEPOSIT', initialTab: 'ADDRESS' });
+            GameStore.setUnsetModalFocus({ name: 'DEPOSIT', initialTab: 'ADDRESS' });
         },
 
         _toggleFaucet: function() {
-            this.setState({ modal: (this.state.modal === 'DEPOSIT')? '' : 'DEPOSIT',  initialTab: 'FAUCET' });
+            GameStore.setUnsetModalFocus({ name: 'DEPOSIT', initialTab: 'FAUCET' });
         },
 
         _toggleStats: function() {
-            this.setState({ modal: (this.state.modal === 'STATS')? '' : 'STATS' });
+            GameStore.setUnsetModalFocus({ name: 'STATS' });
         },
 
-        _toggleChat: function() {
-            if(!GameSettings.showChat)
-                this.setState({ focus: 'CHAT' });
-            GameSettings.toggleShowChat();
-        },
-
-        _closeChat: function(e) {
-            this.setState({ focus: 'GAME' });
-            GameSettings.toggleShowChat();
-            e.stopPropagation();
-        },
-
-        _onChange: function() {
-            this.setState({ engine: Engine });
+        _toggleShowChat: function(e) {
+            GameStore.toggleShowChatFocus();
+            if(e)
+                e.stopPropagation();
         },
 
         _handleChatClick: function() {
-            if(this.state.focus !== 'CHAT')
-                this.setState({ focus: 'CHAT' });
+            if(GameStore.focus !== 'CHAT')
+                GameStore.setFocus('CHAT');
         },
 
         _handleGameClick: function() {
-            if(this.state.focus !== 'GAME') {
-                this.setState({ focus: 'GAME' });
-                React.findDOMNode(this.refs.gameContainer).focus();
+            if(GameStore.focus !== 'GAME') {
+                GameStore.setFocus('GAME');
+                React.findDOMNode(this.refs.gameContainer).focus(); //TODO: Is this necessary?
             }
         },
 
         render: function() {
 
+            var verticalMenu = !GameStore.showChat?
+                VerticalMenu() : null;
 
-            var verticalMenu = !GameSettings.showChat?
-                D.div({ id: 'vertical-menu', onClick: this._toggleChat },
-                    D.button({ className: '' },
-                        D.span(null, 'chat')
-                    )
-                ) : null;
-
-            //If the engine does not have the user's data
+            //The engine went to a fatal error state
             if(Engine.error)
                 return D.div({ id: 'fatal-error-container'},
                     D.img({ src: '/img/cloud-error.svg' }),
@@ -152,13 +144,14 @@ define([
                     D.a({ href: PRODUCTION? 'https://dustdice.com' : 'http://localhost:3001' }, 'Go to DustDice.com')
                 );
 
+            //Waiting for the user data (loading)
             if(Engine.gameState === 'OFFLINE')
                 return D.div({ id: 'loading-container'},
                     D.img({ src: '/img/loading.gif' })
                 );
 
             var modal;
-            switch (this.state.modal) {
+            switch (GameStore.modal.name) {
                 case 'TUTORIAL':
                     modal = Tutorial({
                         _toggleTutorial: this._toggleTutorial
@@ -172,45 +165,52 @@ define([
                 case 'DEPOSIT':
                     modal = Deposit({
                        _toggleDepositAddress: this._toggleDepositAddress,
-                        initialTab: this.state.initialTab
+                        settings: GameStore.modal
                     });
                     break;
                 case 'STATS':
                     modal = Stats({
-                       _toggleStats: this._toggleStats
+                        toggleStats: this._toggleStats,
+                        settings: GameStore.modal
                     });
                     break;
             }
 
             var chatContainerClasses = CX(
-                GameSettings.showChat? 'expand' : 'compress',
+                GameStore.showChat? 'expand' : 'compress',
                 {
-                    'off-focus': this.state.focus !== 'CHAT'
+                    'off-focus': GameStore.focus !== 'CHAT'
                 }
             );
             var chat = D.div({ id: 'chat-container-box', className: chatContainerClasses, onClick: this._handleChatClick },
-                GameSettings.showChat? Chat({
-                    offFocus: this.state.focus !== 'CHAT',
-                    _closeChat: this._closeChat
+                GameStore.showChat? Chat({
+                    offFocus: GameStore.focus !== 'CHAT',
+                    toggleShowChat: this._toggleShowChat
                 }) : null
             );
 
             var gameContainerClasses = CX(
-                GameSettings.showChat? 'compress' : 'expand',
+                GameStore.showChat? 'compress' : 'expand',
                 {
-                    'off-focus': this.state.focus !== 'GAME'
+                    'off-focus': GameStore.focus !== 'GAME'
                 }
             );
-            var game = D.div({ id: 'game-container-box', ref: 'gameContainer', className: gameContainerClasses, onClick: this._handleGameClick, tabIndex: 0 },
+            var game = D.div({
+                    id: 'game-container-box',
+                    ref: 'gameContainer',
+                    className: gameContainerClasses,
+                    onClick: this._handleGameClick,
+                    tabIndex: 0
+                },
 
                 D.div({ id: 'top-bar-container' },
                     TopBar({
-                        _toggleTutorial: this._toggleTutorial,
-                        _toggleSettings: this._toggleSettings,
-                        _toggleDepositAddress: this._toggleDepositAddress,
-                        _toggleChat: this._toggleChat,
-                        _toggleFaucet: this._toggleFaucet,
-                        _toggleStats: this._toggleStats
+                        toggleTutorial: this._toggleTutorial,
+                        toggleSettings: this._toggleSettings,
+                        toggleDepositAddress: this._toggleDepositAddress,
+                        toggleChat: this._toggleShowChat,
+                        toggleFaucet: this._toggleFaucet,
+                        toggleStats: this._toggleStats
                     })
                 ),
 
@@ -223,7 +223,7 @@ define([
                         _toggleSettings: this._toggleSettings,
                         _toggleTutorial: this._toggleTutorial,
                         _toggleDepositAddress: this._toggleDepositAddress,
-                        disableControls: !!this.state.modal || (this.state.focus !== 'GAME')
+                        disableControls: !!GameStore.modal.name || (GameStore.focus !== 'GAME')
                     })
                 ),
 

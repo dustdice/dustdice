@@ -2,64 +2,59 @@ define([
     'lib/socket.io',
     'lib/events',
     'lib/lodash',
-    'lib/sha256',
-    'game-logic/engine'
+    'lib/sha256'
 ], function(
     io,
     Events,
     _,
-    SHA256,
-    Engine
+    SHA256
 ) {
     var chatHost = CHAT_URI || window.document.location.host.replace(/:3001$/, ':4000');
 
     var WebApi = function() {
-        console.assert(Engine.gameState !== 'OFFLINE');
         _.extend(this, Events);
-        var self = this;
 
-        self.conStatus = 'DISCONNECTED'; // DISCONNECTED || CONNECTED || LOGGED || JOINED || ERROR
-        self.error = false;
-        self.history = [];
-        self.cid = null;
-        self.numUsers = null;
+        this.conStatus = 'DISCONNECTED'; // DISCONNECTED || CONNECTED || LOGGED || JOINED || ERROR
+        this.error = false;
+        this.history = [];
+        this.cid = null;
+        this.numUsers = null;
+    };
 
-        self.ws = io(chatHost, { multiplex: false });
+    WebApi.prototype.connect = function(accessToken) {
+        this.accessToken = accessToken;
 
-        self.ws.on('connect', self.onConnect.bind(this));
-        self.ws.on('disconnect', self.onDisconnect.bind(this));
-        self.ws.on('channel_info', self.onChannelInfo.bind(this));
-        self.ws.on('message', self.onMessage.bind(this));
-        self.ws.on('err', self.onError.bind(this)); //Error events from the server
-        self.ws.on('error', self.onError.bind(this)); //Socket io errors
+        this.ws = io(chatHost, { multiplex: false });
+
+        this.ws.on('connect', this.onConnect.bind(this));
+        this.ws.on('disconnect', this.onDisconnect.bind(this));
+        this.ws.on('error', this.onError.bind(this)); //Socket io errors
+
+        this.ws.on('new_message', this.onMessage.bind(this));
+        this.ws.on('client_error', this.onError.bind(this));
+        this.ws.on('user_joined', this.onUserJoined.bind(this));
+        this.ws.on('user_left', this.onUserLeft.bind(this));
+        this.ws.on('system_message', this.onSystemMessage.bind(this));
     };
 
     WebApi.prototype.onConnect = function() {
         var self = this;
 
-        var hash = SHA256.hash(Engine.accessToken);
-        self.ws.emit('auth', hash, function(err, info) {
+        var authPayload = {
+            app_id: 1,
+            token_hash: SHA256.hash(self.accessToken)
+        };
+        self.ws.emit('auth', authPayload, function(err, data) {
             if(err) {
                 self.conStatus = 'ERROR';
                 self.trigger('error');
                 return;
             }
 
-            self.ws.emit('join_channel', { aid: 1, chan: 'general' }, function(err, info) {
-                if (err) {
-                    console.error(err);
-                    return
-                }
-
-                self.cid = info.cid;
-                self.history = info.history;
-                self.numUsers = info.num_users;
-                self.conStatus = 'JOINED';
-                self.trigger('joined');
-            });
-            self.conStatus = 'CONNECTED';
-            self.trigger('logged');
-
+            self.room = data.room;
+            self.user = data.user;
+            self.conStatus = 'JOINED';
+            self.trigger('joined');
         });
 
         self.conStatus = 'CONNECTED';
@@ -72,19 +67,27 @@ define([
     };
 
     WebApi.prototype.onMessage = function(msg) {
-
         if (self.history.length > 500)
             self.history.splice(0, 400);
 
-        this.history.push(msg);
+        this.room.history.push(msg);
         this.trigger('message');
     };
 
-    WebApi.prototype.onChannelInfo = function(info) {
-        //console.log('[info]', info);
-        //this.cid = info.cid;
-        //this.conStatus = 'JOINED';
-        //this.trigger('joined');
+    WebApi.prototype.onUserJoined = function(user) {
+        if(this.conStatus === 'JOINED') {
+            this.room.users[user.uname] = user;
+            this.trigger('user_joined');
+        }
+    };
+
+    WebApi.prototype.onUserLeft = function(user) {
+        delete this.room.users[user.uname];
+        this.trigger('user_left');
+    };
+
+    WebApi.prototype.onSystemMessage = function(message) {
+        console.log(message);
     };
 
     WebApi.prototype.onError = function(err) {
@@ -96,9 +99,10 @@ define([
     };
 
     WebApi.prototype.sendMsg = function(msg) {
-        this.ws.emit('message', { cid: this.cid, text: msg });
+        this.ws.emit('new_message', msg, function(err) {
+        });
     };
 
-    return WebApi;
+    return new WebApi();
 
 });

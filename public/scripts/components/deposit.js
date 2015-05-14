@@ -18,12 +18,12 @@ define([
 
         propTypes: {
             _toggleDepositAddress: React.PropTypes.func.isRequired,
-            initialTab: React.PropTypes.string.isRequired
+            settings: React.PropTypes.object
         },
 
         getInitialState: function() {
             return {
-                tab: this.props.initialTab
+                tab: this.props.settings.initialTab? this.props.settings.initialTab : 'ADDRESS'
             }
         },
 
@@ -38,7 +38,6 @@ define([
                 self.setState({ tab: tab });
             }
         },
-
 
         render: function() {
             var body;

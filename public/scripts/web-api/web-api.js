@@ -138,8 +138,16 @@ define([
 
     WebApi.prototype.getDepositAddress = function(accessToken, callback) {
         new Requester({
-           method: 'GET',
+            method: 'GET',
             url: URL+'/v1/deposit-address?access_token='+accessToken,
+            callback: responseErrorHandler(callback)
+        });
+    };
+
+    WebApi.prototype.getUserStats = function(username, accessToken, callback) {
+        new Requester({
+            method: 'GET',
+            url: URL+'/v1/user-stats?uname='+ username +'&access_token='+accessToken,
             callback: responseErrorHandler(callback)
         });
     };

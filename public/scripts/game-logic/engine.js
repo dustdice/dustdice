@@ -6,6 +6,7 @@ define([
     'lib/events',
     'lib/lodash',
     'game-logic/clib',
+    'game-logic/chat',
     'web-api/web-api',
     'lib/sha256',
     'lib/cookies'
@@ -13,6 +14,7 @@ define([
     Events,
     _,
     Clib,
+    Chat,
     WebApi,
     SHA256,
     Cookies
@@ -22,6 +24,9 @@ define([
     function GameEngine() {
         _.extend(this, Events);
         var self = this;
+
+        if(!Clib.browserSupport())
+            self.setErrorState('We unfortunately don\'t support your browser');
 
         /** Constants **/
         self.HOUSE_EDGE = 2;
@@ -56,26 +61,19 @@ define([
         self.currentBet = null; //The betting info while the gameState is 'BETTING'
 
         self.gameHistory = []; // { wager: satoshis, payout: 2.03, win: boolean }
+    }
 
+    GameEngine.prototype.connect = function(urlParams) {
+        var self = this;
 
-        if(!Clib.browserSupport())
-            self.setErrorState('We unfortunately don\'t support your browser');
-
-        var params = Clib.getHashParams();
-
-        window.history.replaceState({}, '', '#');
-
-        if (params['access_token']) {
-          self.accessToken = params['access_token'];
-          localStorage['access_token'] = self.accessToken;
+        if (urlParams['access_token']) {
+            self.accessToken = urlParams['access_token'];
+            localStorage['access_token'] = self.accessToken;
         } else if (localStorage['access_token']) {
-          self.accessToken = localStorage['access_token'];
+            self.accessToken = localStorage['access_token'];
         } else {
-          self.setErrorState('Could not find a valid access token');
+            self.setErrorState('Could not find a valid access token');
         }
-
-        // TODO: handle state, and expires_in
-
 
         WebApi.requestInitialData(self.accessToken, self.errorHandler(function(data) {
 
@@ -93,10 +91,13 @@ define([
             //Set the access token and the expiration date in a cookie two days earlier, we don't want to expire while the user is playing
             Cookies.set('access_token', self.accessToken, { expires: data.expiresIn - 172800 });
 
+            //Connect the chat
+            Chat.connect(self.accessToken);
+
             self.trigger('get-user-data');
         }));
 
-    }
+    };
 
 
     /** The first error on the engine is set and trigger the error, next errors are obviated **/
@@ -377,8 +378,6 @@ define([
     GameEngine.prototype.isBetValid = function() {
         return this.getWager() > this.balance;
     };
-
-
 
     return new GameEngine();
 });

@@ -2,14 +2,14 @@ define([
     'lib/react',
     'game-logic/clib',
     'game-logic/engine',
-    'stores/game-settings',
+    'stores/game',
     'react-bootstrap',
     'class-names'
 ],function(
     React,
     Clib,
     Engine,
-    GameSettings,
+    GameStore,
     ReactBootstrap,
     CX
 ){
@@ -49,7 +49,7 @@ define([
                 wagerValidityMessage: wagerValidation[1],
                 clientSeedText: String(Engine.clientSeed),
                 invalidClientSeed: false,
-                customBetMultiplierText: GameSettings.customBetMultiplier,
+                customBetMultiplierText: GameStore.customBetMultiplier,
                 customBetMultiplierInvalid: false,
                 tab: 'BET' // BET || FAIR
             }
@@ -57,12 +57,12 @@ define([
 
         componentDidMount: function() {
             Engine.on('all', this._onChange);
-            GameSettings.on('all', this._onChange);
+            GameStore.on('all', this._onChange);
         },
 
         componentWillUnmount: function() {
             Engine.off('all', this._onChange);
-            GameSettings.off('all', this._onChange);
+            GameStore.off('all', this._onChange);
         },
 
         _onChange: function() {
@@ -81,10 +81,10 @@ define([
                 this.setState({ wagerInputText: wagerBitsString, wagerValidity: wagerValidation[0], wagerValidityMessage: wagerValidation[1] });
             }
 
-            if(Number(this.state.customBetMultiplierText) !== GameSettings.customBetMultiplier)
-                this.setState({ customBetMultiplierText: String(GameSettings.customBetMultiplier) });
+            if(Number(this.state.customBetMultiplierText) !== GameStore.customBetMultiplier)
+                this.setState({ customBetMultiplierText: String(GameStore.customBetMultiplier) });
 
-            return { engine: Engine, gameSettings: GameSettings }; //Just to render on changes
+            return { engine: Engine, GameStore: GameStore }; //Just to render on changes
         },
 
         _setwinChances: function(ev) {
@@ -128,7 +128,7 @@ define([
         },
 
         _toggleShowButtons: function() {
-            GameSettings.toggleShowButtons();
+            GameStore.toggleShowButtons();
         },
 
         _selectTab: function(tab) {
@@ -139,7 +139,7 @@ define([
         },
 
         _toggleCustomBetMultiplier: function() {
-            GameSettings.toggleCustomBetMultiplier();
+            GameStore.toggleCustomBetMultiplier();
         },
 
         _setCustomBetMultiplier: function(ev) {
@@ -152,7 +152,7 @@ define([
                 this.setState({ customBetMultiplierInvalid: 'Should be greater than zero' });
             else {
                 this.setState({ customBetMultiplierInvalid: false });
-                GameSettings.setCustomBetMultiplier(multiplier);
+                GameStore.setCustomBetMultiplier(multiplier);
             }
 
         },
@@ -175,7 +175,7 @@ define([
         },
 
         //_setGraphRightMargin: function(e) {
-        //    GameSettings.setGraphRightMargin(e.target.value);
+        //    GameStore.setGraphRightMargin(e.target.value);
         //},
 
         render: function() {
@@ -271,14 +271,14 @@ define([
                     body = D.div({ className: 'modal-body' },
 
                         D.div({ className: 'form-group' },
-                            D.input({ id: 'remove-game-buttons', type: 'checkbox', checked: !GameSettings.showButtons, onChange: this._toggleShowButtons }),
+                            D.input({ id: 'remove-game-buttons', type: 'checkbox', checked: !GameStore.showButtons, onChange: this._toggleShowButtons }),
                             D.label({ htmlFor: 'remove-game-buttons' }, '\u00a0Hide Game Buttons')
                         ),
 
                         //[Feature disabled]
                         //D.div({ className: 'form-group' },
-                        //    D.label({ className: 'control-label pull-left', htmlFor: 'set-graph-right-margin' }, 'Right graph margin: ' + GameSettings.graphRightMargin),
-                        //    D.input({ className: 'set-graph-right-margin clear', type: 'range', max: '10', min: '1', id: 'set-graph-right-margin', value: GameSettings.graphRightMargin, onChange: this._setGraphRightMargin })
+                        //    D.label({ className: 'control-label pull-left', htmlFor: 'set-graph-right-margin' }, 'Right graph margin: ' + GameStore.graphRightMargin),
+                        //    D.input({ className: 'set-graph-right-margin clear', type: 'range', max: '10', min: '1', id: 'set-graph-right-margin', value: GameStore.graphRightMargin, onChange: this._setGraphRightMargin })
                         //),
 
                         D.div({ className: 'form-group' + (this.state.customBetMultiplierInvalid? ' has-error' : '') },
@@ -286,7 +286,7 @@ define([
                             D.label({ className: 'control-label pull-right', htmlFor: 'set-input-wager' }, this.state.customBetMultiplierInvalid? this.state.customBetMultiplierInvalid : ''),
                             D.div({ className: 'input-group clear' },
                                 D.span({ className: 'input-group-addon'},
-                                    D.input({ type: 'checkbox', checked: GameSettings.useCustomBetMultiplier, onChange: this._toggleCustomBetMultiplier })
+                                    D.input({ type: 'checkbox', checked: GameStore.useCustomBetMultiplier, onChange: this._toggleCustomBetMultiplier })
                                 ),
                                 D.input({ type: 'text', className: 'form-control', value: this.state.customBetMultiplierText, onChange: this._setCustomBetMultiplier }),
                                 D.span({ className: 'input-group-addon'},

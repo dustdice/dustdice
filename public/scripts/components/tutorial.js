@@ -1,11 +1,11 @@
 define([
     'lib/react',
     'react-bootstrap',
-    'stores/game-settings'
+    'stores/game'
 ],function(
     React,
     ReactBootstrap,
-    GameSettings
+    GameStore
 ){
     var D = React.DOM;
     var Carousel = React.createFactory(ReactBootstrap.Carousel);
@@ -26,7 +26,7 @@ define([
         },
 
         componentDidMount: function() {
-          GameSettings.setHideTutorial();
+          GameStore.setHideTutorial();
         },
 
         _handleSelect: function(selectedIndex, selectedDirection) {

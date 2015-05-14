@@ -4,14 +4,14 @@ define([
     'game-logic/clib',
     'lib/react',
     'react-bootstrap',
-    'stores/game-settings'
+    'stores/game'
 ], function(
     Engine,
     ScreenFull,
     Clib,
     React,
     ReactBootstrap,
-    GameSettings
+    GameStore
 ){
     var D = React.DOM;
     var DropdownButton = React.createFactory(ReactBootstrap.DropdownButton);
@@ -25,12 +25,12 @@ define([
         displayName: 'TopBar',
 
         propTypes: {
-            _toggleTutorial: React.PropTypes.func.isRequired,
-            _toggleSettings: React.PropTypes.func.isRequired,
-            _toggleDepositAddress: React.PropTypes.func.isRequired,
-            _toggleChat: React.PropTypes.func.isRequired,
-            _toggleFaucet: React.PropTypes.func.isRequired,
-            _toggleStats: React.PropTypes.func.isRequired
+            toggleTutorial: React.PropTypes.func.isRequired,
+            toggleSettings: React.PropTypes.func.isRequired,
+            toggleDepositAddress: React.PropTypes.func.isRequired,
+            toggleChat: React.PropTypes.func.isRequired,
+            toggleFaucet: React.PropTypes.func.isRequired,
+            toggleStats: React.PropTypes.func.isRequired
         },
 
         getInitialState: function() {
@@ -72,7 +72,7 @@ define([
         },
 
         _toggleChat: function() {
-            GameSettings.toggleShowChat();
+            GameStore.toggleShowChatFocus();
         },
 
         _logOut: function() {
@@ -81,7 +81,7 @@ define([
 
         _handleBackDropClick: function(e) {
             if(e.target === e.currentTarget)
-                this.props._toggleTutorial();
+                this.props.toggleTutorial();
         },
 
         render: function() {
@@ -113,7 +113,7 @@ define([
                 //        id: 'chat-button',
                 //        type: 'button',
                 //        className: 'btn btn-default top-bar-menu-btn hidden-xs',
-                //        onClick: this.props._toggleChat
+                //        onClick: this.props.toggleChat
                 //    },
                 //    D.i({ className: 'fa fa-comment' })
                 //),
@@ -121,7 +121,7 @@ define([
                         id: 'faucet-button',
                         type: 'button',
                         className: 'btn btn-default top-bar-menu-btn hidden-xs',
-                        onClick: this.props._toggleFaucet
+                        onClick: this.props.toggleFaucet
                     },
                     D.i({ className: 'fa fa-eyedropper' })
                 ),
@@ -129,13 +129,15 @@ define([
                     (this.state.screenFull)? D.i({ className: 'fa fa-compress' }) : D.i({ className: 'fa fa-expand' })
                 ),
                 DropdownButton({ className: 'top-bar-menu-btn', bsStyle: 'default', pullRight: true, title: D.i({ className: 'fa fa-bars' }) },
-                    MenuItem({ onSelect: this.props._toggleDepositAddress }, 'Deposit'),
-                    MenuItem({ onSelect: this.props._toggleSettings }, 'Settings'),
-                    MenuItem({ onSelect: this.props._toggleChat }, (GameSettings.showChat? 'Hide' : 'Show') + ' Chat'),
-                    MenuItem({ onSelect: this.props._toggleStats }, 'Stats'),
+                    MenuItem({ onSelect: this.props.toggleDepositAddress }, 'Deposit'),
+                    MenuItem({ onSelect: this.props.toggleSettings }, 'Settings'),
+                    MenuItem({ onSelect: this.props.toggleChat, onClick: function(e) {
+                        e.stopPropagation(); //Avoid focus going to GAME after opening CHAT
+                    } }, (GameStore.showChat? 'Hide' : 'Show') + ' Chat'),
+                    MenuItem({ onSelect: this.props.toggleStats }, 'Stats'),
                     MenuItem({ href: '/faq' }, "FAQ's ", D.span({ className: 'glyphicon glyphicon-new-window' })),
                     MenuItem({ href: 'https://www.moneypot.com' }, 'Account ', D.span({ className: 'glyphicon glyphicon-new-window' })),
-                    MenuItem({ onSelect: this.props._toggleTutorial }, 'Tutorial'),
+                    MenuItem({ onSelect: this.props.toggleTutorial }, 'Tutorial'),
                     MenuItem({ onSelect: this._logOut }, 'Log out ', D.span({ className: 'glyphicon glyphicon-new-window' }))
                 )
             );

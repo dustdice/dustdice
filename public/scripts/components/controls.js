@@ -3,14 +3,14 @@ define([
     'game-logic/engine',
     'lib/mousetrap',
     'game-logic/clib',
-    'stores/game-settings',
+    'stores/game',
     'class-names'
 ], function(
     React,
     Engine,
     MouseTrap,
     Clib,
-    GameSettings,
+    GameStore,
     CX
 ){
     /* Constants */
@@ -19,8 +19,8 @@ define([
     var D = React.DOM;
 
     function getBetMultiplier() {
-        if(GameSettings.useCustomBetMultiplier) {
-            return GameSettings.customBetMultiplier;
+        if(GameStore.useCustomBetMultiplier) {
+            return GameStore.customBetMultiplier;
         } else {
             //Chase mode
             var payout = Engine.getPayout();
@@ -50,7 +50,7 @@ define([
 
         componentDidMount: function() {
             Engine.on('all', this._onChange);
-            GameSettings.on('all', this._onChange);
+            GameStore.on('all', this._onChange);
             MouseTrap.bind('c', this._clearHistory);
             MouseTrap.bind('q', this._decreasewinChances);
             MouseTrap.bind('r', this._increasewinChances);
@@ -62,7 +62,7 @@ define([
 
         componentWillUnmount: function() {
             Engine.off('all', this._onChange);
-            GameSettings.off('all', this._onChange);
+            GameStore.off('all', this._onChange);
             MouseTrap.unbind('c', this._clearHistory);
             MouseTrap.unbind('q', this._decreasewinChances);
             MouseTrap.unbind('r', this._increasewinChances);
@@ -129,7 +129,7 @@ define([
                 'ctl-button': true,
                 'cant-bet': (this.state.notEnoughBalance || this.state.betTooHigh),
                 'betting': (isBetting && Engine.currentBet.cond === '>'),
-                'transparent': !GameSettings.showButtons,
+                'transparent': !GameStore.showButtons,
                 'disabled': this.props.disableControls
             });
             betHiBtn = D.button(
@@ -137,7 +137,7 @@ define([
                     id: 'bet-hi-button',
                     className: betHiBtnClasses,
                     onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this.props._toggleDepositAddress : this._betHi,
-                    disabled: ((isBetting || this.props.disableControls) && GameSettings.showButtons)
+                    disabled: ((isBetting || this.props.disableControls) && GameStore.showButtons)
                 },
                 this.state.betTooHigh?
                     'Supported':
@@ -152,7 +152,7 @@ define([
                 'ctl-button': true,
                 'cant-bet': (this.state.notEnoughBalance || this.state.betTooHigh),
                 'betting': (isBetting && Engine.currentBet.cond === '<'),
-                'transparent': !GameSettings.showButtons,
+                'transparent': !GameStore.showButtons,
                 'disabled': this.props.disableControls
             });
             betLoBtn = D.button(
@@ -160,7 +160,7 @@ define([
                     id: 'bet-lo-button',
                     className: betLoBtnClasses,
                     onClick: this.state.betTooHigh? this.props._toggleSettings : this.state.notEnoughBalance? this.props._toggleDepositAddress : this._betLo,
-                    disabled: ((isBetting || this.props.disableControls) && GameSettings.showButtons)
+                    disabled: ((isBetting || this.props.disableControls) && GameStore.showButtons)
                 },
                 this.state.betTooHigh?
                     'Bet not':
@@ -173,14 +173,14 @@ define([
                 'btn': true,
                 'btn-default': true,
                 'ctl-button': true,
-                'transparent': !GameSettings.showButtons,
+                'transparent': !GameStore.showButtons,
                 'disabled': this.props.disableControls
             });
             chaseBetBtn = D.button({
                     id: 'bet-chase-bet-button',
                     className: chaseDivideBetBtnClasses,
                     onClick: this._chaseBet,
-                    disabled: ((isBetting || this.props.disableControls) && GameSettings.showButtons)
+                    disabled: ((isBetting || this.props.disableControls) && GameStore.showButtons)
                 },
                 D.span(null, 'x' + getBetMultiplier().toFixed(2)),
                 D.i({ className: 'fa fa-caret-square-o-up' })
@@ -189,7 +189,7 @@ define([
                     id: 'bet-divide-bet-button',
                     className: chaseDivideBetBtnClasses,
                     onClick: this._divideBet,
-                    disabled: ((isBetting || this.props.disableControls) && GameSettings.showButtons)
+                    disabled: ((isBetting || this.props.disableControls) && GameStore.showButtons)
                 },
                 D.i({ className: 'fa fa-caret-square-o-down' }),
                 D.span(null, '/' + getBetMultiplier().toFixed(2))
