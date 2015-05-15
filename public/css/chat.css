@@ -69,3 +69,21 @@
     border-radius: .25em;
     margin-right: 0.2em;
 }
+
+.chat-msg-uname {
+    background-color: #325579;
+    display: inline;
+    padding: .03em .25em;
+    border-radius: .25em;
+    margin-right: .2em;
+    font-family: Courier New;
+}
+
+.chat-msg-uname a{
+    color: #E0E0E3;
+    text-decoration: underline;
+}
+
+.chat-msg-uname a:hover{
+    color: coral;
+}
