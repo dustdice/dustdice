@@ -28,7 +28,6 @@ define([
                     '\u00a0',
                     D.b(null, this.props.user.uname),
                     this.props.role
-
                 )
             );
         }

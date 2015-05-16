@@ -92,7 +92,7 @@ define([
             Cookies.set('access_token', self.accessToken, { expires: data.expiresIn - 172800 });
 
             //Connect the chat
-            Chat.connect(self.accessToken);
+            Chat.connect(self.accessToken, self.username);
 
             self.trigger('get-user-data');
         }));
@@ -276,7 +276,7 @@ define([
     GameEngine.prototype.logOut = function() {
         Cookies.expire('access_token');
         localStorage.clear();
-        window.location = 'http://dustdice.com';
+        window.location = '/';
     };
 
 

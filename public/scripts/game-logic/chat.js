@@ -2,12 +2,14 @@ define([
     'lib/socket.io',
     'lib/events',
     'lib/lodash',
-    'lib/sha256'
+    'lib/sha256',
+    'game-logic/clib'
 ], function(
     io,
     Events,
     _,
-    SHA256
+    SHA256,
+    Clib
 ) {
     var chatHost = CHAT_URI || window.document.location.host.replace(/:3001$/, ':4000');
 
@@ -21,8 +23,9 @@ define([
         this.numUsers = null;
     };
 
-    WebApi.prototype.connect = function(accessToken) {
+    WebApi.prototype.connect = function(accessToken, username) {
         this.accessToken = accessToken;
+        this.username = username;
 
         this.ws = io(chatHost, { multiplex: false });
 
@@ -54,6 +57,7 @@ define([
             self.room = data.room;
             self.user = data.user;
             self.conStatus = 'JOINED';
+
             self.trigger('joined');
         });
 
@@ -67,6 +71,11 @@ define([
     };
 
     WebApi.prototype.onMessage = function(msg) {
+
+        //Test if the new message contains a mention to you
+        if (this.username != msg.user.uname && Clib.newMentionRegExp(this.username).test(msg.text))
+            Clib.beep();
+
         if (self.history.length > 500)
             self.history.splice(0, 400);
 
@@ -104,5 +113,13 @@ define([
     };
 
     return new WebApi();
+
+
+    function checkHistoryForMentions(history) {
+        for(var i = 0, len = history.length; i < len; i++) {
+            if(Clib.mentionRegExp.test(history[i].text))
+                history[i].mention = true;
+        }
+    }
 
 });

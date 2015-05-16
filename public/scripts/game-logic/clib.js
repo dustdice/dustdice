@@ -1,4 +1,7 @@
 define([], function () {
+
+    var audio = null;
+
     return {
 
         /** General stuff **/
@@ -138,8 +141,20 @@ define([], function () {
                 return JSON.parse(localStorage[name]);
             else
                 return def;
-        }
+        },
 
+        newMentionRegExp: function(username) {
+            return new RegExp('@' + username + '(?:$|[^a-z0-9_\-])', 'ig');
+        },
+
+        beep: function() { //Load when is required to avoid unnecessary load
+            if(!audio) {
+                audio = new Audio('/sounds/alert.wav');
+                audio.play();
+            } else {
+                audio.play();
+            }
+        }
 
     }
 

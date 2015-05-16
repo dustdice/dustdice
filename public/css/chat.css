@@ -34,6 +34,9 @@
     font-size: 1em;
     margin: 0;
 }
+#chat-header .close {
+    padding-right: 0.1em;
+}
 #chat-content {
     font-size: 0.8em;
     position: absolute;
@@ -62,28 +65,39 @@
 }
 
 .chat-msg-role {
-    background-color: #d9534f;
+    background-color: #B63A36;
     display: inline;
-    padding: .2em 0.3em;
-    font-size: 75%;
+    padding: 0.03em 0.4em;
+    font-size: 60%;
     border-radius: .25em;
     margin-right: 0.2em;
 }
 
 .chat-msg-uname {
-    background-color: #325579;
+    background-color: #2E5277;
     display: inline;
     padding: .03em .25em;
     border-radius: .25em;
     margin-right: .2em;
     font-family: Courier New;
+    color: #E0E0E3;
 }
 
 .chat-msg-uname a{
-    color: #E0E0E3;
-    text-decoration: underline;
+    color: inherit;
 }
 
-.chat-msg-uname a:hover{
+.chat-msg-text a {
     color: coral;
+    color: inherit;
+    font-family: Courier New;
+    font-weight: 600;
+}
+
+.chat-msg.mentioned .chat-msg-text a{
+    color: coral;
+}
+
+.chat-msg-text {
+    word-break: break-word;
 }

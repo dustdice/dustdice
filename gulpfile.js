@@ -76,8 +76,10 @@ gulp.task('copy:assets', function() {
         .pipe(gulp.dest('build/img'));
     var fontsStream = gulp.src('public/fonts/**')
         .pipe(gulp.dest('build/fonts'));
+    var soundsStream = gulp.src('public/sounds/**')
+        .pipe(gulp.dest('build/sounds'));
 
-    return merge(imgStream, fontsStream);
+    return merge(imgStream, fontsStream, soundsStream);
 });
 
 /** Hash the config.js and the app.css files  **/

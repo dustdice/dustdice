@@ -3,14 +3,16 @@ define([
     'game-logic/chat',
     'components/chat-message',
     'components/user-connected',
-    'lib/lodash'
+    'lib/lodash',
+    'stores/game'
 
 ], function(
     React,
     ChatAPI,
     ChatMessageClass,
     UserConnectedClass,
-    _
+    _,
+    GameStore
 ) {
     /* Constants */
     var SCROLL_OFFSET = 120; //Pixels needed to do auto scroll
@@ -18,6 +20,12 @@ define([
     var D = React.DOM;
     var ChatMessage = React.createFactory(ChatMessageClass);
     var UserConnected = React.createFactory(UserConnectedClass);
+
+    //Ugly hack to catch autolinker clicks
+    window.chatMessageOpenUserStats = function(user) {
+        GameStore.setUnsetModalFocus({ name: 'STATS', username: user });
+        event.stopPropagation();
+    };
 
     return React.createClass({
         displayName: 'Chat',
@@ -120,14 +128,13 @@ define([
                     D.div({ id: 'chat-header' },
                         D.h1(null, 'Users'),
                         D.button({ type: 'button', className: 'close pull right', onClick: this._toggleUsers },
-                            D.span({ className: 'glyphicon glyphicon-remove' })
+                            D.i({ className: 'fa fa-arrow-left' })
                         )
                     ),
                     D.div({ id: 'chat-content', ref: 'chat' },
                         usersConnected
                     )
                 );
-
             }
 
             //Message list && Connected
@@ -139,7 +146,7 @@ define([
                 D.div({ id: 'chat-header' },
                     D.h1(null, 'Chat'),
                     D.button({ type: 'button', className: 'close pull right', onClick: this.props.toggleShowChat },
-                        D.span({ className: 'glyphicon glyphicon-remove' })
+                        D.i({ className: 'fa fa-times' })
                     ),
                     D.a({ id: 'chat-users-count', onClick: this._toggleUsers, href: '#' },
                         'Users online:\u00a0', Object.keys(ChatAPI.room.users).length

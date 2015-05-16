@@ -128,9 +128,9 @@ define([
                             this.state.loading?
                                 D.i({ className: 'fa fa-refresh spin' }) :
                                 D.div(null,
-                                    D.p(null, D.b(null, 'Bets: '), notFound? '-' : Clib.formatDecimals(this.state.userInfo.bettedCount)),
-                                    D.p(null, D.b(null, 'Profit: '), notFound? '-' : Clib.formatSatoshis(this.state.userInfo.bettedProfit)),
-                                    D.p(null, D.b(null, 'Wagered: '), notFound? '-' : Clib.formatSatoshis(this.state.userInfo.bettedWager))
+                                    D.p(null, D.b(null, 'Bets: '), notFound? '-' : Clib.formatDecimals(this.state.userInfo.bettedCount), ' '+Clib.bitsTextTerm(this.state.userInfo.bettedCount)),
+                                    D.p(null, D.b(null, 'Profit: '), notFound? '-' : Clib.formatSatoshis(this.state.userInfo.bettedProfit), ' '+Clib.bitsTextTerm(this.state.userInfo.bettedProfit)),
+                                    D.p(null, D.b(null, 'Wagered: '), notFound? '-' : Clib.formatSatoshis(this.state.userInfo.bettedWager), ' '+Clib.bitsTextTerm(this.state.userInfo.bettedWager))
                                 )
                         )
                     )
