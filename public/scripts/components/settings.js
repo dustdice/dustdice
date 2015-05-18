@@ -42,7 +42,7 @@ define([
 
         getInitialState: function() {
             var wagerBitsFloored = Clib.satToBitFloored(Engine.wager);
-            var wagerValidation = Clib.validateBetBits(wagerBitsFloored, Engine.balance);
+            var wagerValidation = Clib.validateBitsInput(wagerBitsFloored, Engine.balance);
             return {
                 wagerInputText: String(wagerBitsFloored),
                 wagerValidity: wagerValidation[0],
@@ -77,7 +77,7 @@ define([
             var wagerBitsFloored = Clib.satToBitFloored(Engine.wager);
             if(wagerBitsFloored != this.state.wagerInputText) {
                 var wagerBitsString = String(wagerBitsFloored);
-                var wagerValidation = Clib.validateBetBits(wagerBitsString, Engine.balance);
+                var wagerValidation = Clib.validateBitsInput(wagerBitsString, Engine.balance);
                 this.setState({ wagerInputText: wagerBitsString, wagerValidity: wagerValidation[0], wagerValidityMessage: wagerValidation[1] });
             }
 
@@ -92,7 +92,7 @@ define([
         },
 
         _setWager: function(ev) {
-            var wagerValidation = Clib.validateBetBits(ev.target.value, Engine.balance);
+            var wagerValidation = Clib.validateBitsInput(ev.target.value, Engine.balance);
 
             this.setState({ wagerInputText: ev.target.value, wagerValidity: wagerValidation[0], wagerValidityMessage: wagerValidation[1] });
 
@@ -109,8 +109,6 @@ define([
                    Clib.floorHundreds(Engine.maxWin / (Engine.getPayout()-1) ))
               )
             );
-
-
         },
 
         _setClientSeed: function(ev) {

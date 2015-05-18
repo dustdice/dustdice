@@ -39,6 +39,12 @@ app.context.render = render({
     ext: 'html'
 });
 
+/** Add anti frame header to all pages **/
+app.use(function *(next) {
+    this.set("Content-Security-Policy", "frame-ancestors 'none'");
+    yield next;
+});
+
 app.use(router(app));
 
 //Landing page
@@ -73,4 +79,3 @@ app.get('/game', function *(next) {
 app.listen(port, function() {
     console.log('listening on *:', port);
 });
-

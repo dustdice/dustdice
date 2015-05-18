@@ -32,8 +32,9 @@ define([], function () {
             return Math.floor(number / 100) * 100;
         },
 
-        //Validate the input text or number of the wager in bits
-        validateBetBits: function(bet, balance) {
+        //Validate the input text or number of bits
+        //Should be integer, bigger than 0 and bigger than the balance
+        validateBitsInput: function(bet, balance) {
             var validity = 'valid', message = '';
             bet = Number(bet);
             if(!this.isInteger(bet)) {

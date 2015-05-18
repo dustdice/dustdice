@@ -55,7 +55,7 @@ define([
                 case 'MONEYPOT':
                     body = D.div({ className: 'modal-body' },
                         D.p(null, "You can deposit and withdraw funds from and to you MoneyPot account:"),
-                        D.a({ href: 'https://www.moneypot.com/apps/1-dust-dice'}, 'https://www.moneypot.com/apps/1-dust-dice')
+                        D.a({ href: 'https://www.moneypot.com/apps/1-dust-dice', target: '_blank' }, 'https://www.moneypot.com/apps/1-dust-dice')
                     );
                     break;
                 case 'FAUCET':

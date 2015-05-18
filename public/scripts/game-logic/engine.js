@@ -7,7 +7,7 @@ define([
     'lib/lodash',
     'game-logic/clib',
     'game-logic/chat',
-    'web-api/web-api',
+    'game-logic/web-api',
     'lib/sha256',
     'lib/cookies'
 ], function(
@@ -34,6 +34,7 @@ define([
         /** Initial State **/
 
         self.gameState = 'OFFLINE'; //STANDING_BY || BETTING || OFFLINE || REFRESHING
+        self.tipping = false;
 
         self.balance = null;
 
@@ -277,6 +278,26 @@ define([
         Cookies.expire('access_token');
         localStorage.clear();
         window.location = '/';
+    };
+
+    GameEngine.prototype.tip = function(username, bits) {
+        var self = this;
+
+        WebApi.tip(this.accessToken, username, bits, self.errorHandler(function(data) {
+            self.tipping = false;
+
+            self.balance -= data.amount;
+            self.trigger('tip-made', {
+                amount: data.amount,
+                to: data.to,
+                balance: self.balance,
+                wager: self.wager,
+                winChances: self.winChances
+            });
+        }));
+
+        self.tipping = true;
+        self.trigger('tipping');
     };
 
 

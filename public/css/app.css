@@ -56,6 +56,14 @@ html, body {
     text-align: right;
 }
 
+.align-left {
+    text-align: left;
+}
+
+.align-right {
+    text-align: right;
+}
+
 .clear {
     clear: both;
 }
@@ -619,6 +627,7 @@ input[type=range]:focus::-ms-fill-upper {
 /* ==========================================================================
     Tutorial (modal)
     ========================================================================== */
+
 #tutorial-carousel {
     -webkit-box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.75);
@@ -650,10 +659,23 @@ span.stats-user-not-found {
     outline: none;
 }
 
+#stats-container .tip-btn-cont {
+    position: relative;
+}
+
+#stats-container .tip-sent-msg {
+    font-size: .8em;
+    color: #137C02;
+    position: absolute;
+    left: 0;
+    bottom: 50%;
+}
+
 
 /* ==========================================================================
     Deposit Address (modal)
     ========================================================================== */
+
 #deposit-address-container .modal-body {
     text-align: center;
 }
@@ -666,6 +688,7 @@ span.stats-user-not-found {
     width: auto !important;
     height: auto !important;
 }
+
 
 /* ==========================================================================
     Animations

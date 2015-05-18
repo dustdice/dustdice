@@ -125,6 +125,20 @@ define([
         });
     };
 
+    WebApi.prototype.tip = function(accessToken, username, bits, callback) {
+        var body = JSON.stringify({
+            uname: username,
+            amount: bits*100
+        });
+
+        new Requester({
+           method: 'POST',
+            url: URL+'/v1/tip?access_token='+accessToken,
+            body: body,
+            callback: responseErrorHandler(callback)
+        });
+    };
+
     WebApi.prototype.claimFaucet = function(accessToken, response, callback) {
         var body = JSON.stringify({ response: response });
 
