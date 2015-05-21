@@ -89,8 +89,8 @@ define([
             self.maxWin = self.vaultBankroll * 0.01;
             self.gameState = 'STANDING_BY';
 
-            //Set the access token and the expiration date in a cookie two days earlier, we don't want to expire while the user is playing
-            Cookies.set('access_token', self.accessToken, { expires: data.expiresIn - 172800 });
+            //Set the is_logged and the expiration date in a cookie two days earlier, we don't want to expire while the user is playing
+            Cookies.set('is_logged', 'yes', { expires: data.expiresIn - 172800 });
 
             //Connect the chat
             Chat.connect(self.accessToken, self.username);
@@ -104,14 +104,11 @@ define([
     /** The first error on the engine is set and trigger the error, next errors are obviated **/
     GameEngine.prototype.setErrorState = function(errorMsg) {
         var self = this;
-        console.assert(errorMsg === 'undefined' || typeof errorMsg === 'string');
+        console.assert(typeof errorMsg === 'string');
 
-        if(self.error == false) {
-            if(errorMsg === 'undefined')
-                self.error = true;
-            else if(typeof errorMsg === 'string')
-                self.error = errorMsg;
-        }
+        if(self.error == false) //Just set an error one time
+            self.error = errorMsg;
+
         self.trigger('fatal-error');
     };
 
@@ -123,15 +120,14 @@ define([
             if (err) {
                 console.log(err);
 
-                //On any error expire the cookie to avoid redirecting cycles
-                Cookies.expire('access_token');
-
                 switch (err.error) {
-                    case 'AUTH_DISABLED':
+                    case 'AUTH_NOT_ENABLED':
                         self.setErrorState('This app is disabled, you can enable it back in MoneyPot.com');
+                        expireSession();
                         return;
                     case 'INVALID_ACCESS_TOKEN':
                         self.setErrorState('INVALID ACCOUNT');
+                        expireSession();
                         return;
                     case 'BANKROLL_TOO_SMALL':
                         self.gameState = 'STANDING_BY';
@@ -143,12 +139,19 @@ define([
                         self.trigger('user-alert', 'Not enough balance to bet');
                         return;
                     default:
-                        self.setErrorState(err.message);
+                        self.setErrorState(err.error);
+                        expireSession(); //We don't know the error so we assume that is fatal and expire cookie redirection
                         return;
                 }
 
             }
             callback(data);
+        };
+
+        //Remove cookie redirection and clear local storage access_token
+        function expireSession() {
+            Cookies.expire('is_logged');
+            delete localStorage['access_token'];
         }
     };
 
