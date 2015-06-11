@@ -9,7 +9,7 @@ define([
     if(PRODUCTION)
         console.assert(DELAY == 0);
 
-    var URL = PRODUCTION ? 'https://api.moneypot.com' : 'http://localhost:3000';
+    var URL = PRODUCTION ? 'https://api.moneypot.com' : 'http://localhost:2999';
 
     var WebApi = function() {};
 
