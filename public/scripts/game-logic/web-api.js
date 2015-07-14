@@ -209,16 +209,16 @@ define([
                         response.body = JSON.parse(self.xhr.response)
                     }catch(e) {
                         console.error('[XHR ERROR]: ', self.xhr);
-                        return self.options.callback(new Error('Wrong response from the server'));
+                        return self.options.callback({ error: 'Bad response from the server :(' });
                     }
                 } else {
                     console.error('[XHR ERROR]: ', self.xhr);
-                    return self.options.callback(new Error('No response from the server'));
+                    return self.options.callback({ error: 'Bad response from the server :(' });
                 }
 
                 if(status === 0) {
                     console.error('[XHR ERROR]: ', self.xhr);
-                    return self.options.callback(new Error('Problem reaching the server'));
+                    return self.options.callback({ error: 'Bad response from the server :(' });
                 }
 
                 if(DELAY)
