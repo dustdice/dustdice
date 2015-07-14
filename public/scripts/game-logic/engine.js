@@ -90,7 +90,7 @@ define([
             self.gameState = 'STANDING_BY';
 
             //Set the is_logged and the expiration date in a cookie two days earlier, we don't want to expire while the user is playing
-            Cookies.set('is_logged', 'yes', { expires: data.expiresIn - 172800 });
+            Cookies.set('is_logged', 'yes', { expires: (data.expiresIn - 172800) });
 
             //Connect the chat
             Chat.connect(self.accessToken, self.username);
@@ -123,11 +123,11 @@ define([
                 switch (err.error) {
                     case 'AUTH_NOT_ENABLED':
                         self.setErrorState('This app is disabled, you can enable it back in MoneyPot.com');
-                        expireSession();
+                        self.expireSession();
                         return;
                     case 'INVALID_ACCESS_TOKEN':
                         self.setErrorState('INVALID ACCOUNT');
-                        expireSession();
+                        self.expireSession();
                         return;
                     case 'BANKROLL_TOO_SMALL':
                         self.gameState = 'STANDING_BY';
@@ -140,19 +140,19 @@ define([
                         return;
                     default:
                         self.setErrorState(err.error);
-                        expireSession(); //We don't know the error so we assume that is fatal and expire cookie redirection
+                        self.expireSession(); //We don't know the error so we assume that is fatal and expire cookie redirection
                         return;
                 }
 
             }
             callback(data);
         };
+    };
 
-        //Remove cookie redirection and clear local storage access_token
-        function expireSession() {
-            Cookies.expire('is_logged');
-            delete localStorage['access_token'];
-        }
+    //Remove cookie redirection and clear local storage access_token
+    GameEngine.prototype.expireSession = function() {
+        Cookies.expire('is_logged');
+        delete localStorage['access_token'];
     };
 
 
@@ -279,9 +279,8 @@ define([
     };
 
     GameEngine.prototype.logOut = function() {
-        Cookies.expire('access_token');
-        localStorage.clear();
-        window.location = '/';
+        this.expireSession();
+        window.location = window.location.origin;
     };
 
     GameEngine.prototype.tip = function(username, bits) {
