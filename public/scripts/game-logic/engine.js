@@ -268,6 +268,7 @@ define([
     };
 
     GameEngine.prototype.setClientSeed = function(newSeed) {
+        console.assert(typeof newSeed === 'number');
         this.clientSeed = newSeed;
         this.trigger('set-client-seed');
     };

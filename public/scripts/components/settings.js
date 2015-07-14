@@ -118,7 +118,7 @@ define([
                 return this.setState({ clientSeedText: ev.target.value, invalidClientSeed: seed.message });
 
             this.setState({ clientSeedText: ev.target.value, invalidClientSeed: false });
-            Engine.setClientSeed(ev.target.value);
+            Engine.setClientSeed(Number(ev.target.value));
         },
 
         _genClientSeed: function() {
