@@ -73,7 +73,8 @@ define([
         } else if (localStorage['access_token']) {
             self.accessToken = localStorage['access_token'];
         } else {
-            self.setErrorState('Could not find a valid access token');
+            //If the user does not have a session send him to the landing page
+            return self.logOut();
         }
 
         WebApi.requestInitialData(self.accessToken, self.errorHandler(function(data) {
