@@ -21,6 +21,16 @@ define([
         this.history = [];
         this.cid = null;
         this.numUsers = null;
+        this.unreadMessages = 0;
+
+        document.addEventListener("visibilitychange", this.onVisibilityChange.bind());
+    };
+
+    WebApi.prototype.onVisibilityChange = function() {
+        if(document.visibilityState === 'visible') {
+            this.unreadMessages = 0;
+            document.title = 'DustDice Casino';
+        }
     };
 
     WebApi.prototype.connect = function(accessToken, username) {
@@ -80,6 +90,12 @@ define([
             self.history.splice(0, 400);
 
         this.room.history.push(msg);
+
+        if(document.visibilityState === 'hidden') {
+            this.unreadMessages += 1;
+            document.title = '[' + this.unreadMessages + '] DustDice Casino';
+        }
+
         this.trigger('message');
     };
 
