@@ -11,7 +11,7 @@ var compress = require('koa-compress');
 var port = process.env.PORT || 3001;
 var production = process.env.NODE_ENV === 'production';
 var redirectURI = process.env.REDIRECT_URI || 'http://localhost:'+port+'/game';
-var chatURI = process.env.CHAT_URI || 'http://localhost:4000';
+var chatURI = process.env.CHAT_URI || 'http://localhost:5001';
 var appId = process.env.APP_ID || 1;
 
 console.log('Running server, prod=', production);

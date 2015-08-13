@@ -60,7 +60,7 @@ define([
 
             var r = new RegExp('@' + username + '(?:$|[^a-z0-9_\-])', 'i');
             var mentioned = '';
-            if (username && this.props.message.user.uname != username && r.test(this.props.message.text))
+            if (username && this.props.message.user && (this.props.message.user.uname != username) && r.test(this.props.message.text))
                 mentioned = ' mentioned';
 
             Autolinker.link(
@@ -68,14 +68,16 @@ define([
                 { truncate: 50, replaceFn: replaceUsernameMentions }
             );
 
-            var role = (this.props.message.user.role !== 'member')?
+            var user = (this.props.message.user)? D.b({ className: 'chat-msg-uname', onClick: this._setUnsetModal({ name: 'STATS', username: this.props.message.user.uname }) },
+                D.a({ href: '#' }, this.props.message.user.uname)
+            ) : D.b({ className: 'chat-msg-sys' }, 'System');
+
+            var role = (this.props.message.user && (this.props.message.user.role !== 'member'))?
                 D.span({ className: 'chat-msg-role ' + this.props.message.user.role }, this.props.message.user.role) : null;
             return D.div({ className: 'chat-msg' + mentioned},
                 D.span(null,
                     role,
-                    D.b({ className: 'chat-msg-uname', onClick: this._setUnsetModal({ name: 'STATS', username: this.props.message.user.uname }) },
-                        D.a({ href: '#' }, this.props.message.user.uname)
-                    ),
+                    user,
                     D.b(null, ':\u00a0'),
                     D.span({ className: 'chat-msg-text', dangerouslySetInnerHTML: {
                         __html: Autolinker.link(

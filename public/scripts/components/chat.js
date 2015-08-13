@@ -71,7 +71,7 @@ define([
         _sendMessage: function(e) {
             if(e.keyCode == 13) {
                 var msg = e.target.value;
-                if(msg.length > 1 && msg.length < 500) {
+                if(msg.length > 1 && msg.length < 300) {
                     ChatAPI.sendMsg(msg);
                     e.target.value = '';
                 }
@@ -120,7 +120,7 @@ define([
 
             //Show users && connected
             if(this.state.showUsers) {
-                var usersConnected = _.map(ChatAPI.room.users, function(user, uname) {
+                var usersConnected = _.map(ChatAPI.userList, function(user, uname) {
                     return UserConnected({ user: user, key: uname });
                 });
 
@@ -138,7 +138,7 @@ define([
             }
 
             //Message list && Connected
-            var chatMessages = ChatAPI.room.history.map(function(message, index) {
+            var chatMessages = ChatAPI.history.map(function(message, index) {
                 return ChatMessage({ message: message, key: index });
             });
 
@@ -149,7 +149,7 @@ define([
                         D.i({ className: 'fa fa-times' })
                     ),
                     D.a({ id: 'chat-users-count', onClick: this._toggleUsers, href: '#' },
-                        'Users online:\u00a0', Object.keys(ChatAPI.room.users).length
+                        'Users online:\u00a0', Object.keys(ChatAPI.userList).length
                     )
                 ),
                 D.div({ id: 'chat-content', ref: 'chat' },

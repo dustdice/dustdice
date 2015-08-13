@@ -1,4 +1,3 @@
-npm-debug.log
-.idea
+.env
 node_modules/
 build/

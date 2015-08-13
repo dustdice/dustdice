@@ -11,29 +11,29 @@ define([
     SHA256,
     Clib
 ) {
-    var chatHost = CHAT_URI || window.document.location.host.replace(/:3001$/, ':4000');
+    var chatHost = CHAT_URI;
 
-    var WebApi = function() {
+    var Chat = function() {
         _.extend(this, Events);
 
         this.conStatus = 'DISCONNECTED'; // DISCONNECTED || CONNECTED || LOGGED || JOINED || ERROR
         this.error = false;
-        this.history = [];
-        this.cid = null;
-        this.numUsers = null;
+        this.history = null;
+        this.userList = null;
+        this.user = null;
         this.unreadMessages = 0;
 
         document.addEventListener("visibilitychange", this.onVisibilityChange.bind());
     };
 
-    WebApi.prototype.onVisibilityChange = function() {
+    Chat.prototype.onVisibilityChange = function() {
         if(document.visibilityState === 'visible') {
             this.unreadMessages = 0;
             document.title = 'DustDice Casino';
         }
     };
 
-    WebApi.prototype.connect = function(accessToken, username) {
+    Chat.prototype.connect = function(accessToken, username) {
         this.accessToken = accessToken;
         this.username = username;
 
@@ -47,16 +47,17 @@ define([
         this.ws.on('client_error', this.onError.bind(this));
         this.ws.on('user_joined', this.onUserJoined.bind(this));
         this.ws.on('user_left', this.onUserLeft.bind(this));
-        this.ws.on('system_message', this.onSystemMessage.bind(this));
     };
 
-    WebApi.prototype.onConnect = function() {
+    Chat.prototype.onConnect = function() {
         var self = this;
 
         var authPayload = {
             app_id: 1,
-            token_hash: SHA256.hash(self.accessToken)
+            access_token: self.accessToken,
+            subscriptions: ['CHAT']
         };
+
         self.ws.emit('auth', authPayload, function(err, data) {
             if(err) {
                 self.conStatus = 'ERROR';
@@ -64,7 +65,8 @@ define([
                 return;
             }
 
-            self.room = data.room;
+            self.history = data.chat.messages;
+            self.userList = data.chat.userlist;
             self.user = data.user;
             self.conStatus = 'JOINED';
 
@@ -75,21 +77,26 @@ define([
         this.trigger('change');
     };
 
-    WebApi.prototype.onDisconnect = function() {
+    Chat.prototype.onDisconnect = function() {
         this.conStatus = 'DISCONNECTED';
         this.trigger('disconnected');
     };
 
-    WebApi.prototype.onMessage = function(msg) {
+    /** Chat message
+     *
+     * if msg.user exist its an user message
+     * else its s system message e.g. 'Ryan muted sarah for 8 minutes'
+     */
+    Chat.prototype.onMessage = function(msg) {
 
         //Test if the new message contains a mention to you
-        if (this.username != msg.user.uname && Clib.newMentionRegExp(this.username).test(msg.text))
+        if (msg.user && (this.username != msg.user.uname) && Clib.newMentionRegExp(this.username).test(msg.text))
             Clib.beep();
 
         if (self.history.length > 500)
             self.history.splice(0, 400);
 
-        this.room.history.push(msg);
+        this.history.push(msg);
 
         if(document.visibilityState === 'hidden') {
             this.unreadMessages += 1;
@@ -99,37 +106,57 @@ define([
         this.trigger('message');
     };
 
-    WebApi.prototype.onUserJoined = function(user) {
+    Chat.prototype.onUserJoined = function(user) {
         if(this.conStatus === 'JOINED') {
-            this.room.users[user.uname] = user;
+            this.userList[user.uname] = user;
             this.trigger('user_joined');
         }
     };
 
-    WebApi.prototype.onUserLeft = function(user) {
-        delete this.room.users[user.uname];
+    Chat.prototype.onUserLeft = function(user) {
+        delete this.userList[user.uname];
         this.trigger('user_left');
     };
 
-    WebApi.prototype.onSystemMessage = function(message) {
-        console.log(message);
-    };
-
-    WebApi.prototype.onError = function(err) {
+    Chat.prototype.onError = function(err) {
         console.error('[Chat error] ', err);
     };
 
-    WebApi.prototype.disconnect = function() {
+    Chat.prototype.disconnect = function() {
         this.ws.disconnect();
     };
 
-    WebApi.prototype.sendMsg = function(msg) {
-        this.ws.emit('new_message', msg, function(err) {
+    Chat.prototype.sendMsg = function(msg) {
+        var self = this;
+
+        var msgPayload = {
+            text: msg
+        };
+
+        this.ws.emit('new_message', msgPayload, function(err, message) {
+            if (err) {
+                switch(err) {
+                    case 'USER_IS_MUTED':
+                        self.history.push({ text: 'You are muted.' });
+                        self.trigger('message');
+                        break;
+                    case 'INVALID_MUTE_COMMAND':
+                        self.history.push({ text: 'Invalid mute command.' });
+                        self.trigger('message');
+                        break;
+                    case 'USER_NOT_FOUND':
+                        self.history.push({ text: 'User not found.' });
+                        self.trigger('message');
+                        break;
+                    default:
+                        console.log('Error when submitting new_message to server:', err);
+                        break;
+                }
+            }
         });
     };
 
-    return new WebApi();
-
+    return new Chat();
 
     function checkHistoryForMentions(history) {
         for(var i = 0, len = history.length; i < len; i++) {
