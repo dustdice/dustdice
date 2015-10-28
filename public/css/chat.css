@@ -79,7 +79,7 @@
     padding: .03em .25em;
     border-radius: .25em;
     margin-right: .2em;
-    font-family: Courier New;
+    font-family: 'Montserrat', sans-serif; /*font-family: Courier New;*/
     color: #E0E0E3;
 }
 
@@ -90,7 +90,7 @@
 .chat-msg-text a {
     color: coral;
     color: inherit;
-    font-family: Courier New;
+    font-family: 'Montserrat', sans-serif; /*font-family: Courier New;*/
     font-weight: 600;
 }
 
