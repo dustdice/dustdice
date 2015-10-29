@@ -68,15 +68,15 @@ define([
                 { truncate: 50, replaceFn: replaceUsernameMentions }
             );
 
-            var user = (this.props.message.user)? D.b({ className: 'chat-msg-uname', onClick: this._setUnsetModal({ name: 'STATS', username: this.props.message.user.uname }) },
+            var user = (this.props.message.user)? D.b({ className: 'chat-msg-uname ' + this.props.message.user.role, onClick: this._setUnsetModal({ name: 'STATS', username: this.props.message.user.uname }) },
                 D.a({ href: '#' }, this.props.message.user.uname)
             ) : D.b({ className: 'chat-msg-sys' }, 'System');
 
-            var role = (this.props.message.user && (this.props.message.user.role !== 'member'))?
-                D.span({ className: 'chat-msg-role ' + this.props.message.user.role }, this.props.message.user.role) : null;
+            /*var role = (this.props.message.user && (this.props.message.user.role !== 'member'))?
+                D.span({ className: 'chat-msg-role ' + this.props.message.user.role }, this.props.message.user.role) : null;*/
             return D.div({ className: 'chat-msg' + mentioned},
                 D.span(null,
-                    role,
+                    //role,
                     user,
                     D.b(null, ':\u00a0'),
                     D.span({ className: 'chat-msg-text', dangerouslySetInnerHTML: {
