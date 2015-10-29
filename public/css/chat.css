@@ -73,6 +73,11 @@
     margin-right: 0.2em;
 }
 
+.OWNER {
+    background-color: #B63A36;
+    color: #E0E0E3;
+}
+
 .chat-msg-uname {
     background-color: #2E5277;
     display: inline;
