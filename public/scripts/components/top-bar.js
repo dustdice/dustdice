@@ -129,15 +129,15 @@ define([
                     (this.state.screenFull)? D.i({ className: 'fa fa-compress' }) : D.i({ className: 'fa fa-expand' })
                 ),
                 DropdownButton({ className: 'top-bar-menu-btn', bsStyle: 'default', pullRight: true, title: D.i({ className: 'fa fa-bars' }) },
-                    MenuItem({ onSelect: this.props.toggleTutorial }, 'Tutorial'),
                     MenuItem({ onSelect: this.props.toggleDepositAddress }, 'Deposit'),
-                    //MenuItem({ onSelect: this.props.toggleSettings }, 'Settings'),
-                   // MenuItem({ onSelect: this.props.toggleChat, onClick: function(e) {
+                    MenuItem({ onSelect: this.props.toggleSettings }, 'Settings'),
+                    MenuItem({ onSelect: this.props.toggleChat, onClick: function(e) {
                         e.stopPropagation(); //Avoid focus going to GAME after opening CHAT
                     } }, (GameStore.showChat? 'Hide' : 'Show') + ' Chat'),
                     //MenuItem({ onSelect: this.props.toggleStats }, 'Stats'),
-                    MenuItem({ href: '/faq' }, "FAQ", D.span({ className: 'glyphicon glyphicon-new-window' })),
-                    MenuItem({ href: 'https://www.moneypot.com' }, 'Account', D.span({ className: 'glyphicon glyphicon-new-window' })),
+                    MenuItem({ href: '/faq' }, "FAQ ", D.span({ className: 'glyphicon glyphicon-new-window' })),
+                    MenuItem({ href: 'https://www.moneypot.com' }, 'Account ', D.span({ className: 'glyphicon glyphicon-new-window' })),
+                    MenuItem({ onSelect: this.props.toggleTutorial }, 'Tutorial'),
                     MenuItem({ onSelect: this._logOut }, 'Log out ', D.span({ className: 'glyphicon glyphicon-new-window' }))
                 )
             );
