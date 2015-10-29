@@ -39,13 +39,13 @@ define([], function () {
             bet = Number(bet);
             if(!this.isInteger(bet)) {
                 validity = 'wrong';
-                message = 'Should be an integer';
+                message = 'Must be evenly divisible by 1.';
             } else if(bet < 1) {
                 validity = 'wrong';
-                message = 'Should be bigger than zero';
+                message = 'You can't tip 0 BTC.;
             } else if(bet > this.satToBit(balance)) {
                 validity = 'warning';
-                message = 'Not enough balance :o';
+                message = 'You don't have enough BTC to do that.;
             }
             return [validity, message];
         },
