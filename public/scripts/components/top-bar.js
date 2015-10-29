@@ -141,9 +141,6 @@ define([
                     MenuItem({ onSelect: this._logOut }, 'Log out ', D.span({ className: 'glyphicon glyphicon-new-window' }))
                 )
             );
-        },
-        balanceTimer: setInterval(function(){
-            Engine.refreshBalance();
-        }, 5000)
+        }
     });
 });
