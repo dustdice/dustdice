@@ -74,7 +74,7 @@
 }
 
 .OWNER {
-    background-color: #B63A36;
+    background-color: #B63A36 !important;
     color: #E0E0E3;
 }
 
