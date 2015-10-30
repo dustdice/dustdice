@@ -48,8 +48,8 @@ define([
                         D.img({ src: 'https://blockchain.info/qr?data='+Engine.depositAddress+'&size=200'}),
                         D.br(),
                         D.br(),
-                        D.b({ className: 'bitcoin-address' }, Engine.depositAddress)
                         D.p(null, "All amounts sent to this bitcoin address will automatically be credited into your DustDice account after a single bitcoin confirmation."),
+                        D.b({ className: 'bitcoin-address' }, Engine.depositAddress)
                     );
                     break;
                 case 'MONEYPOT':
