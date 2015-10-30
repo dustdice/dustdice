@@ -1,10 +1,12 @@
 define([
+    'game-logic/engine',
     'lib/socket.io',
     'lib/events',
     'lib/lodash',
     'lib/sha256',
     'game-logic/clib'
 ], function(
+    Engine,
     io,
     Events,
     _,
@@ -47,6 +49,8 @@ define([
         this.ws.on('client_error', this.onError.bind(this));
         this.ws.on('user_joined', this.onUserJoined.bind(this));
         this.ws.on('user_left', this.onUserLeft.bind(this));
+        
+        this.ws.on('balance_change', this.onBalanceChange.bind(this));
     };
 
     Chat.prototype.onConnect = function() {
@@ -55,7 +59,7 @@ define([
         var authPayload = {
             app_id: 1,
             access_token: self.accessToken,
-            subscriptions: ['CHAT']
+            subscriptions: ['CHAT', 'DEPOSITS']
         };
 
         self.ws.emit('auth', authPayload, function(err, data) {
@@ -80,6 +84,10 @@ define([
     Chat.prototype.onDisconnect = function() {
         this.conStatus = 'DISCONNECTED';
         this.trigger('disconnected');
+    };
+    
+    Chat.prototype.onBalanceChange = function() {
+        Engine.refreshBalance();
     };
 
     /** Chat message
