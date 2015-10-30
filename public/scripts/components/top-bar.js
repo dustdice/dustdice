@@ -72,8 +72,8 @@ define([
         },
         
         balanceTimer: setInterval(function(){
-+            Engine.refreshBalance(); // meh whatever let's try and see how it goes...
-+        }, 5000),
+            Engine.refreshBalance(); // meh whatever let's try and see how it goes...
+            }, 5000),
 
         _toggleChat: function() {
             GameStore.toggleShowChatFocus();
