@@ -45,10 +45,10 @@ define([
             switch(this.state.tab) {
                 case 'ADDRESS':
                     body = D.div({ className: 'modal-body' },
-                        D.b({ className: 'bitcoin-address' }, Engine.depositAddress)
                         D.img({ src: 'https://blockchain.info/qr?data='+Engine.depositAddress+'&size=200'}),
                         D.br(),
                         D.br(),
+                        D.b({ className: 'bitcoin-address' }, Engine.depositAddress)
                         D.p(null, "All amounts sent to this bitcoin address will automatically be credited into your DustDice account after a single bitcoin confirmation."),
                     );
                     break;
