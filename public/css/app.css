@@ -109,6 +109,7 @@ html, body {
 }
 
 #top-bar-balance {
+    font-size: 25px;
     position: absolute;
     top: 0;
     left: 45%;
@@ -173,10 +174,6 @@ h1 {
     font-size: .4em;
     line-height: .5em;
     float: right;
-}
-
-#top-bar-state {
-    font-size: 25px;
 }
 
 
