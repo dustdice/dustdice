@@ -98,10 +98,10 @@ define([
                         D.span({ className: 'ctl-state-button' },
                             D.i({ className: 'fa fa-refresh' + (Engine.gameState === 'REFRESHING'? ' spin': '') })
                         )*/
-                    ),
+                    )/*,
                     D.div({ className: 'top-bar-state-name' },
                         D.span(null, 'BALANCE')
-                    )
+                    )*/
                 ),
 
                 D.div({ id: 'top-bar-logo' },
