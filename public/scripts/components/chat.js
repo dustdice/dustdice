@@ -144,7 +144,7 @@ define([
 
             return D.div({ id: 'chat-inner-container', onClick: this._handleChatClick },
                 D.div({ id: 'chat-header' },
-                    D.h1(null, 'Chat'),
+                    /*D.h1(null, 'Chat'),*/
                     D.button({ type: 'button', className: 'close pull right', onClick: this.props.toggleShowChat },
                         D.i({ className: 'fa fa-times' })
                     ),
