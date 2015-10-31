@@ -255,9 +255,11 @@ h1 {
 }
 
 #chat-users-count {
-    float: right;
-    margin-right: 1em;
     line-height: 1em;
+}
+
+#chat-header{
+    text-align: center;
 }
 
 #chat-users-count *{
