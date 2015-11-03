@@ -105,7 +105,7 @@ define([
                 ),
 
                 D.div({ id: 'top-bar-logo' },
-                    D.img({ src: 'img/powder-white-icon.png' }),
+                    D.img({ src: 'img/small-circle-logo.png' }),
                     D.h1(null, '\u00a0Dust Dice')
                 ),
 
