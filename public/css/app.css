@@ -16,6 +16,16 @@ html, body {
     height: 100%;
 }
 
+/* plz don't judge me for this */
+#deposit-button {
+    position: absolute;
+    left: -100px;
+}
+
+#withdraw-button {
+    position: absolute;
+    left: calc(100% + 20px);
+}
 
 /* ==========================================================================
    Fake Icons due they are not in Font Awesome
