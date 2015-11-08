@@ -129,7 +129,22 @@ define([
                     (this.state.screenFull)? D.i({ className: 'fa fa-compress' }) : D.i({ className: 'fa fa-expand' })
                 ),
                 DropdownButton({ className: 'top-bar-menu-btn', bsStyle: 'default', pullRight: true, title: D.i({ className: 'fa fa-bars' }) },
-                    MenuItem({ onSelect: this.props.toggleDepositAddress }, 'Deposit'),
+                    MenuItem({ onSelect: /*this.props.toggleDepositAddress*/function(){
+                            var windowUrl = 'https://www.moneypot.com/dialog/deposit?app_id=1';
+                            var windowName = 'manage-auth';
+                            var windowOpts = 'width=420,height=350,left=100,top=100';
+                            var windowRef = window.open(windowUrl, windowName, windowOpts);
+                            windowRef.focus();
+                        } 
+                    }, 'Deposit'),
+                    MenuItem({ onSelect: function(){
+                            var windowUrl = 'https://www.moneypot.com/dialog/withdraw?app_id=1';
+                            var windowName = 'manage-auth';
+                            var windowOpts = 'width=420,height=350,left=100,top=100';
+                            var windowRef = window.open(windowUrl, windowName, windowOpts);
+                            windowRef.focus();
+                        } 
+                    }, 'Withdraw'),
                     MenuItem({ onSelect: this.props.toggleSettings }, 'Settings'),
                     MenuItem({ onSelect: this.props.toggleChat, onClick: function(e) {
                         e.stopPropagation(); //Avoid focus going to GAME after opening CHAT
