@@ -88,6 +88,30 @@ define([
 
             return D.div({ id: 'top-bar-box' },
                 D.div({ id: 'top-bar-balance', onClick: this._refreshBalance },
+                    D.button({
+                        id: 'deposit-button',
+                        type: 'button',
+                        className: 'btn btn-default top-bar-menu-btn hidden-xs',
+                        onClick: function(){
+                            var windowUrl = 'https://www.moneypot.com/dialog/deposit?app_id=1';
+                            var windowName = 'manage-auth';
+                            var windowOpts = 'width=420,height=350,left=100,top=100';
+                            var windowRef = window.open(windowUrl, windowName, windowOpts);
+                            windowRef.focus();
+                        }
+                    }, 'Deposit'),
+                    D.button({
+                        id: 'withdraw-button',
+                        type: 'button',
+                        className: 'btn btn-default top-bar-menu-btn hidden-xs',
+                        onClick: function(){
+                            var windowUrl = 'https://www.moneypot.com/dialog/withdraw?app_id=1';
+                            var windowName = 'manage-auth';
+                            var windowOpts = 'width=420,height=350,left=100,top=100';
+                            var windowRef = window.open(windowUrl, windowName, windowOpts);
+                            windowRef.focus();
+                        }
+                    }, 'Withdraw'),
                     D.div({ className: 'top-bar-state'},
                         D.div({ className: 'ctl-state-amount' },
                             D.span(null, Clib.formatSatoshis(Engine.balance, 2))
