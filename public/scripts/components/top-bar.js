@@ -129,7 +129,7 @@ define([
                     (this.state.screenFull)? D.i({ className: 'fa fa-compress' }) : D.i({ className: 'fa fa-expand' })
                 ),
                 DropdownButton({ className: 'top-bar-menu-btn', bsStyle: 'default', pullRight: true, title: D.i({ className: 'fa fa-bars' }) },
-                    MenuItem({ onSelect: /*this.props.toggleDepositAddress*/function(){
+                    MenuItem({ onClick: /*this.props.toggleDepositAddress*/function(){
                             var windowUrl = 'https://www.moneypot.com/dialog/deposit?app_id=1';
                             var windowName = 'manage-auth';
                             var windowOpts = 'width=420,height=350,left=100,top=100';
@@ -137,7 +137,7 @@ define([
                             windowRef.focus();
                         } 
                     }, 'Deposit'),
-                    MenuItem({ onSelect: function(){
+                    MenuItem({ onClick: function(){
                             var windowUrl = 'https://www.moneypot.com/dialog/withdraw?app_id=1';
                             var windowName = 'manage-auth';
                             var windowOpts = 'width=420,height=350,left=100,top=100';
