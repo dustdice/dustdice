@@ -153,7 +153,7 @@ define([
                     (this.state.screenFull)? D.i({ className: 'fa fa-compress' }) : D.i({ className: 'fa fa-expand' })
                 ),
                 DropdownButton({ className: 'top-bar-menu-btn', bsStyle: 'default', pullRight: true, title: D.i({ className: 'fa fa-bars' }) },
-                    MenuItem({ onClick: /*this.props.toggleDepositAddress*/function(){
+                    /*MenuItem({ onClick: function(){ // this.props.toggleDepositAddress
                             var windowUrl = 'https://www.moneypot.com/dialog/deposit?app_id=1';
                             var windowName = 'manage-auth';
                             var windowOpts = 'width=420,height=350,left=100,top=100';
@@ -172,7 +172,7 @@ define([
                     MenuItem({ onSelect: this.props.toggleSettings }, 'Settings'),
                     MenuItem({ onSelect: this.props.toggleChat, onClick: function(e) {
                         e.stopPropagation(); //Avoid focus going to GAME after opening CHAT
-                    } }, (GameStore.showChat? 'Hide' : 'Show') + ' Chat'),
+                    } }, (GameStore.showChat? 'Hide' : 'Show') + ' Chat'),*/
                     //MenuItem({ onSelect: this.props.toggleStats }, 'Stats'),
                     MenuItem({ href: '/faq' }, "FAQ ", D.span({ className: 'glyphicon glyphicon-new-window' })),
                     MenuItem({ href: 'https://www.moneypot.com' }, 'Account ', D.span({ className: 'glyphicon glyphicon-new-window' })),
