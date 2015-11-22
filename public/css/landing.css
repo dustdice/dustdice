@@ -68,8 +68,6 @@ background-color: rgba(44, 62, 80, 0.3);
 /* Customize container */
 @media (min-width: 768px) {
     #landing-container.container {
-        max-width: 730px;
-    
         background-color: #fff;
         color: #2C3E50;
 }
