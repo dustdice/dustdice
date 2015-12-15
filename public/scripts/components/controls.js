@@ -116,6 +116,17 @@ define([
                 Engine.setWager(newWager);
             }
         },
+        
+        _setWager: function(ev) {
+            var wagerValidation = Clib.validateBitsInput(ev.target.value, Engine.balance);
+
+            this.setState({ wagerInputText: ev.target.value, wagerValidity: wagerValidation[0], wagerValidityMessage: wagerValidation[1] });
+
+            if(wagerValidation[0] === 'wrong')
+                return;
+
+            Engine.setWager(Clib.bitToSat(parseInt(ev.target.value)));
+        },
 
         render: function() {
 
