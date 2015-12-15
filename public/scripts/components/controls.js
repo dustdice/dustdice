@@ -222,7 +222,7 @@ define([
                             ),
                             D.div({ className: 'crl-in-bottom' },
                                 D.div({ className: 'input-group clear' },
-                                    D.input({ type: 'text', className: 'form-control', id: 'set-input-wager', value: Clib.satToBitFloored(Engine.wager), onChange: this._setWager }),
+                                    D.input({ type: 'text', className: 'form-control', id: 'set-input-wager', placeholder: Clib.satToBitFloored(Engine.wager), onChange: this._setWager }),
                                     D.div({ className: 'input-group-addon'}, "bits")
                                 )
                                 /*D.div({ className: 'ctl-state-amount' },
