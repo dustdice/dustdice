@@ -227,21 +227,21 @@ define([
                             D.i({ className: 'fa fa-cog'})
                         ),
 
-                        D.div({ id: 'ctl-bet-box'/*, onClick: this.props._toggleSettings*/ },
+                        D.div({ id: 'ctl-bet-box', onClick: this.props._toggleSettings },
                             D.div({ className: 'ctl-state-name' },
                                 D.span(null, 'BET')
                             ),
                             D.div({ className: 'crl-in-bottom' },
-                                D.div({ className: 'input-group clear' },
+                                /*D.div({ className: 'input-group clear' },
                                     D.input({ type: 'text', className: 'form-control', id: 'set-input-wager', placeholder: Clib.satToBitFloored(Engine.wager), onChange: this._setWager }),
                                     D.div({ className: 'input-group-addon'}, "bits")
-                                )
-                                /*D.div({ className: 'ctl-state-amount' },
+                                )*/
+                                D.div({ className: 'ctl-state-amount' },
                                     D.span(null, Clib.satToBitFloored(Engine.wager))
                                 ),
                                 D.span({ className: 'ctrl-state-lbl' },
                                     '\u00a0', Clib.bitsTextTerm(Clib.satToBitFloored(Engine.wager))
-                                )*/
+                                )
                             )
                         ),
 
