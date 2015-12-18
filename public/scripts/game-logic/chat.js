@@ -108,7 +108,8 @@ define([
 
         if(document.visibilityState === 'hidden') {
             this.unreadMessages += 1;
-            document.title = '[' + this.unreadMessages + '] DustDice Casino';
+            /*document.title = '[' + this.unreadMessages + '] DustDice Casino';*/
+            document.title = '[New] DustDice Casino';
         }
 
         this.trigger('message');
