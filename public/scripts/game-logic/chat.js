@@ -14,7 +14,9 @@ define([
     Clib
 ) {
     var chatHost = CHAT_URI;
-
+    var mark = false;
+    var betsAmount = 0;
+    
     var Chat = function() {
         _.extend(this, Events);
 
@@ -77,6 +79,56 @@ define([
             self.conStatus = 'JOINED';
 
             self.trigger('joined');
+            
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    var data = JSON.parse(xhttp.responseText);
+                    
+                    var table = document.getElementById("allbets-list");
+                    
+                    for(var i=data.length-1; i>=0; i--){
+                        betsAmount++;
+        
+                        var id = data[i].id,
+                            profit = parseFloat(data[i].profit/100),
+                            username = data[i].uname,
+                            bet = parseFloat(data[i].wager/100).toFixed(0),
+                            multiplier = ((data[i].payouts[0].value/100)/bet);
+                        var win = profit >= 0;
+                        
+                        var row = table.insertRow(0);
+                        
+                        var cell1 = row.insertCell(0);
+                        var cell2 = row.insertCell(1);
+                        var cell3 = row.insertCell(2);
+                        var cell4 = row.insertCell(3);
+                        var cell5 = row.insertCell(4);
+                        
+                        cell1.innerHTML = "<a href=\"https://www.moneypot.com/bets/"+id+"\" target=\"blank\">"+id+"</a>";
+                        cell2.innerHTML = username;
+                        cell3.innerHTML = bet+" Bits";
+                        cell4.innerHTML = multiplier+"x";
+                        cell5.innerHTML = (win?"+":"")+profit;
+                        cell5.className = (win?"win":"lose");
+                        
+                        if(mark){
+                            row.className = "marked";
+                            mark = false;
+                        }else{
+                            row.className = "notMarked";
+                            mark = true;
+                        }
+                        
+                        if(betsAmount>100){
+                            table.deleteRow(table.rows[table.rows.length - 1]);
+                        }
+                    }
+                }
+            };
+            xhttp.open("GET", "https://api.moneypot.com/v1/list-bets?app_id=1&access_token="+authPayload.access_token, true);
+            xhttp.setRequestHeader("Content-type", "application/json");
+            xhttp.send();
         });
 
         self.conStatus = 'CONNECTED';
@@ -92,8 +144,6 @@ define([
         Engine.refreshBalance();
     };
     
-    var mark = false;
-    var betsAmount = 0;
     Chat.prototype.onNewBet = function(data) {
         betsAmount++;
         
