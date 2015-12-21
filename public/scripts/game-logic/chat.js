@@ -98,7 +98,7 @@ define([
         betsAmount++;
         
         var id = data.bet_id,
-            profit = parseFloat(data.profit/100).toFixed(0),
+            profit = parseFloat(data.profit/100),
             username = data.uname,
             bet = parseFloat(data.wager/100).toFixed(0),
             multiplier = ((data.payouts[0].value/100)/bet);
