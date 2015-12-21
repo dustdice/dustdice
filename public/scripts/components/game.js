@@ -215,7 +215,23 @@ define([
                 ),
 
                 D.div({ id: 'graph-container' },
-                    Graph()
+                    Graph(),
+                    D.div({ id: 'allbets-box' },
+                        D.table({
+                            id: 'allbets-table'
+                        },
+                            D.thead({ id: 'allbets-headList' },
+                                D.tr({},
+                                    D.th({}, "ID"),
+                                    D.th({}, "USER"),
+                                    D.th({}, "BET"),
+                                    D.th({}, "MULTIPLIER"),
+                                    D.th({}, "PROFIT")
+                                )
+                            ),
+                            D.tbody({ id: 'allbets-list' })
+                        )
+                    )
                 ),
 
                 D.div({ id: 'controls-container' },
