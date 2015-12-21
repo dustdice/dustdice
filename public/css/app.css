@@ -328,6 +328,62 @@ h1 {
     height: 100%;
 }
 
+#allbets-box {
+    display: none;
+    position: relative;
+    width: 100%;
+    height: 90%;
+    overflow-y: auto;
+    padding: 40px;
+}
+
+#allbets-box::-webkit-scrollbar {
+    width: 6px;
+}
+#allbets-box::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2); 
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+#allbets-box::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.2); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+}
+#allbets-box::-webkit-scrollbar-thumb:window-inactive {
+	background: rgba(0,0,0,0.2);
+}
+
+#allbets-table{
+    width: 100%;
+}
+
+#allbets-table #allbets-headList tr{
+    background: rgba(200,200,200,0.1);
+}
+
+#allbets-table #allbets-list tr.marked{
+    background: rgba(200,200,200,0.05);
+}
+
+#allbets-table #allbets-list tr.notMarked{
+    background: rgba(200,200,200,0);
+}
+
+#allbets-table #allbets-list tr td a{
+    color: #2980B9;
+}
+
+#allbets-table #allbets-list tr td.win{
+    color: #27AE60;
+}
+
+#allbets-table #allbets-list tr td.lose{
+    color: #C0392B;
+}
+
+
 
 /* ==========================================================================
     Bet Bar (bottom) and Bet Buttons (fixed)
@@ -432,7 +488,7 @@ h1 {
 
 #ctl-bet-box, #ctl-payout-box, #ctl-win-chances-box, #ctl-potential-profit-box {
     float: left;
-    width: calc(25% - 4.5em/4);
+    width: calc(21% - 4.5em/4);
     cursor: pointer;
 }
 
