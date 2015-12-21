@@ -84,9 +84,7 @@ define([
             xhttp.onreadystatechange = function() {
                 if (xhttp.readyState == 4 && xhttp.status == 200) {
                     var data = JSON.parse(xhttp.responseText);
-                    
                     var table = document.getElementById("allbets-list");
-                    
                     for(var i=data.length-1; i>=0; i--){
                         betsAmount++;
         
@@ -118,10 +116,6 @@ define([
                         }else{
                             row.className = "notMarked";
                             mark = true;
-                        }
-                        
-                        if(betsAmount>100){
-                            table.deleteRow(table.rows[table.rows.length - 1]);
                         }
                     }
                 }
@@ -180,7 +174,9 @@ define([
         }
         
         if(betsAmount>100){
-            table.deleteRow(table.rows[table.rows.length - 1]);
+            var rowCount = table.rows.length;
+            table.deleteRow(rowCount -1);
+            betsAmount = 100;
         }
         
     };
