@@ -51,6 +51,8 @@ define([
         this.ws.on('user_left', this.onUserLeft.bind(this));
         
         this.ws.on('balance_change', this.onBalanceChange.bind(this));
+        
+        this.ws.on('new_bet', this.onNewBet.bind(this));
     };
 
     Chat.prototype.onConnect = function() {
@@ -59,7 +61,7 @@ define([
         var authPayload = {
             app_id: 1,
             access_token: self.accessToken,
-            subscriptions: ['CHAT', 'DEPOSITS']
+            subscriptions: ['CHAT', 'DEPOSITS', 'BETS']
         };
 
         self.ws.emit('auth', authPayload, function(err, data) {
@@ -88,6 +90,49 @@ define([
     
     Chat.prototype.onBalanceChange = function() {
         Engine.refreshBalance();
+    };
+    
+    var mark = false;
+    var betsAmount = 0;
+    Chat.prototype.onNewBet = function(data) {
+        betsAmount++;
+        
+        var id = data.bet_id,
+            profit = parseFloat(data.profit/100).toFixed(0),
+            username = data.uname,
+            bet = parseFloat(data.wager/100).toFixed(0),
+            multiplier = ((data.payouts[0].value/100)/bet);
+        var win = profit >= 0;
+        
+        var table = document.getElementById("allbets-list");
+        
+        var row = table.insertRow(0);
+        
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+        var cell5 = row.insertCell(4);
+        
+        cell1.innerHTML = "<a href=\"https://www.moneypot.com/bets/"+id+"\" target=\"blank\">"+id+"</a>";
+        cell2.innerHTML = username;
+        cell3.innerHTML = bet+" Bits";
+        cell4.innerHTML = multiplier+"x";
+        cell5.innerHTML = (win?"+":"")+profit;
+        cell5.className = (win?"win":"lose");
+        
+        if(mark){
+            row.className = "marked";
+            mark = false;
+        }else{
+            row.className = "notMarked";
+            mark = true;
+        }
+        
+        if(betsAmount>100){
+            table.deleteRow(table.rows[table.rows.length - 1]);
+        }
+        
     };
 
     /** Chat message
