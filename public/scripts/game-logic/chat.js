@@ -56,6 +56,17 @@ define([
         
         this.ws.on('new_bet', this.onNewBet.bind(this));
     };
+    
+    Number.prototype.formatMoney = function(c, d, t){
+        var n = this, 
+            c = isNaN(c = Math.abs(c)) ? 2 : c, 
+            d = d == undefined ? "." : d, 
+            t = t == undefined ? "," : t, 
+            s = n < 0 ? "-" : "", 
+            i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+            j = (j = i.length) > 3 ? j % 3 : 0;
+        return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+    };
 
     Chat.prototype.onConnect = function() {
         var self = this;
@@ -89,9 +100,9 @@ define([
                         betsAmount++;
         
                         var id = data[i].id,
-                            profit = parseFloat(data[i].profit/100),
+                            profit = parseFloat(data[i].profit/100).formatMoney(2, '.', ','),
                             username = data[i].uname,
-                            bet = parseFloat(data[i].wager/100).toFixed(0),
+                            bet = parseFloat(data[i].wager/100).formatMoney(2, '.', ','),
                             multiplier = parseFloat(parseFloat((data[i].payouts[0].value/100)/bet).toFixed(2));
                         var win = profit >= 0;
                         
@@ -142,9 +153,9 @@ define([
         betsAmount++;
         
         var id = data.bet_id,
-            profit = parseFloat(data.profit/100),
+            profit = parseFloat(data.profit/100).formatMoney(2, '.', ','),
             username = data.uname,
-            bet = parseFloat(data.wager/100).toFixed(0),
+            bet = parseFloat(data.wager/100).toFixed(0).formatMoney(2, '.', ','),
             multiplier = parseFloat(parseFloat((data.payouts[0].value/100)/bet).toFixed(2));
         var win = profit >= 0;
         
