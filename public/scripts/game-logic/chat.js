@@ -102,7 +102,7 @@ define([
                         var id = data[i].id,
                             profit = parseFloat(data[i].profit/100).formatMoney(2, '.', ','),
                             username = data[i].uname,
-                            bet = parseFloat(data[i].wager/100).formatMoney(2, '.', ','),
+                            bet = parseFloat(data[i].wager/100).formatMoney(0, '.', ','),
                             multiplier = parseFloat(parseFloat((data[i].payouts[0].value/100)/bet).toFixed(2));
                         var win = profit >= 0;
                         
@@ -155,7 +155,7 @@ define([
         var id = data.bet_id,
             profit = parseFloat(data.profit/100).formatMoney(2, '.', ','),
             username = data.uname,
-            bet = parseFloat(data.wager/100).toFixed(0).formatMoney(2, '.', ','),
+            bet = parseFloat(data.wager/100).toFixed(0).formatMoney(0, '.', ','),
             multiplier = parseFloat(parseFloat((data.payouts[0].value/100)/bet).toFixed(2));
         var win = profit >= 0;
         
