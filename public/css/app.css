@@ -329,6 +329,8 @@ h1 {
 }
 
 #allbets-box {
+    background: url(http://i.imgur.com/snATFHj.png) no-repeat center;
+    background-size: cover;
     display: none;
     position: relative;
     width: 100%;
