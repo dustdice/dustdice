@@ -13,6 +13,7 @@ define([
     ReactBootstrap,
     GameStore
 ){
+    var tabs = 0;
     var D = React.DOM;
     var DropdownButton = React.createFactory(ReactBootstrap.DropdownButton);
     var MenuItem = React.createFactory(ReactBootstrap.MenuItem);
