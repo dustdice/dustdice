@@ -89,6 +89,29 @@ define([
             return D.div({ id: 'top-bar-box' },
                 D.div({ id: 'top-bar-balance', onClick: this._refreshBalance },
                     D.button({
+                        id: 'allbets-button',
+                        type: 'button',
+                        className: 'btn btn-default top-bar-menu-btn hidden-xs',
+                        onClick: function(){
+                            if(tabs==0){
+                                tabs = 1;
+                                document.getElementById('allbets-button').innerHTML = "Go back to Game";
+                                document.getElementById('graph-box').style.display = "none";
+                                document.getElementById('controls-container-buttons').style.display = "none";
+                                document.getElementById('allbets-box').style.display = "block";
+                            }else{
+                                tabs = 0;
+                                document.getElementById('allbets-button').innerHTML = "See All bets";
+                                document.getElementById('graph-box').style.display = "block";
+                                document.getElementById('controls-container-buttons').style.display = "block";
+                                document.getElementById('allbets-box').style.display = "none";
+                            }
+                        }
+                    }, (tabs==0?'All bets':'Back to Game')),
+                    D.button({
+                        id: ''
+                    })
+                    D.button({
                         id: 'deposit-button',
                         type: 'button',
                         className: 'btn btn-default top-bar-menu-btn hidden-xs',
