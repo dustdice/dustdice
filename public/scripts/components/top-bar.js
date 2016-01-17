@@ -149,7 +149,7 @@ define([
                     onClick: function(){
                         if(tabs==0){
                             tabs = 1;
-                            document.getElementById('allbets-button').innerHTML = "Go back to Game";
+                            document.getElementById('allbets-button').innerHTML = "Game";
                             document.getElementById('graph-box').style.display = "none";
                             document.getElementById('controls-container-buttons').style.display = "none";
                             document.getElementById('allbets-box').style.display = "block";
@@ -161,7 +161,7 @@ define([
                             document.getElementById('allbets-box').style.display = "none";
                         }
                     }
-                }, (tabs==0?'All bets':'Back to Game')),
+                }, (tabs==0?'See All bets':'Game')),
                 D.button({
                         id: 'faucet-button',
                         type: 'button',
