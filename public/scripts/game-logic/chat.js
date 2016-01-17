@@ -128,6 +128,12 @@ define([
                             row.className = "notMarked";
                             mark = true;
                         }
+                        
+                        if(betsAmount>80){
+                            var rowCount = table.rows.length;
+                            table.deleteRow(rowCount -1);
+                            betsAmount = 80;
+                        }
                     }
                 }
             };
@@ -184,10 +190,10 @@ define([
             mark = true;
         }
         
-        if(betsAmount>100){
+        if(betsAmount>80){
             var rowCount = table.rows.length;
             table.deleteRow(rowCount -1);
-            betsAmount = 100;
+            betsAmount = 80;
         }
         
     };
