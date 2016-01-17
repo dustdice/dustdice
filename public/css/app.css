@@ -11,6 +11,11 @@ html, body {
     font-size: 18px;
 }
 
+#allbets-button{
+    position: absolute;
+    left: 75%;
+}
+
 #game-container, #game-container>div {
     width: 100%;
     height: 100%;
