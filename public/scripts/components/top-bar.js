@@ -109,9 +109,6 @@ define([
                         }
                     }, (tabs==0?'All bets':'Back to Game')),
                     D.button({
-                        id: ''
-                    })
-                    D.button({
                         id: 'deposit-button',
                         type: 'button',
                         className: 'btn btn-default top-bar-menu-btn hidden-xs',
