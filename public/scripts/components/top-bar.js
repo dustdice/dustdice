@@ -155,13 +155,13 @@ define([
                             document.getElementById('allbets-box').style.display = "block";
                         }else{
                             tabs = 0;
-                            document.getElementById('allbets-button').innerHTML = "See All bets";
+                            document.getElementById('allbets-button').innerHTML = "All bets";
                             document.getElementById('graph-box').style.display = "block";
                             document.getElementById('controls-container-buttons').style.display = "block";
                             document.getElementById('allbets-box').style.display = "none";
                         }
                     }
-                }, (tabs==0?'See All bets':'Game')),
+                }, (tabs==0?'All bets':'Game')),
                 D.button({
                         id: 'faucet-button',
                         type: 'button',
